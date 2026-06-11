@@ -1,0 +1,24 @@
+/* ── StrixMind Design Tokens ── */
+:root {
+  --bg-from: #e8eaf6;
+  --glass-bg: rgba(255,255,255,0.55);
+  --glass-bg-strong: rgba(255,255,255,0.72);
+  --glass-border: rgba(255,255,255,0.85);
+  --shadow: rgba(99,88,210,0.10);
+  --shadow-strong: rgba(99,88,210,0.18);
+  --text: #1a1333;
+  --text-muted: #5b5478;
+  --text-dim: #9b92c0;
+  --accent: #6c63ff;
+  --accent-2: #a78bfa;
+  --accent-teal: #0ea5e9;
+  --accent-rose: #f472b6;
+  --accent-amber: #f59e0b;
+  --divider: rgba(108,99,255,0.10);
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Inter Tight', sans-serif;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+}

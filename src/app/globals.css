@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --mint: #D8E8E5;
+  --teal: #0A5C68;
+  --teal-light: #0e7a8a;
+  --dark: #0F172A;
+  --white: #FFFFFF;
+  --border: #E5E7EB;
+  --muted: #64748B;
+  --card-shadow: 0 4px 24px rgba(10,92,104,0.08);
+  --card-shadow-hover: 0 12px 48px rgba(10,92,104,0.16);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--mint); color: var(--dark); overflow-x: hidden; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--mint); }
+::-webkit-scrollbar-thumb { background: rgba(10,92,104,0.3); border-radius: 3px; }
+.grad-teal { background: linear-gradient(135deg,#0A5C68 0%,#14b8a6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
