@@ -2,112 +2,192 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-const S = {
-  section: { minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 72, position: "relative" as const, overflow: "hidden" as const, background: "#D8E8E5" },
-  circle: (w: number, top: string | number, right: string | number, dur = 30): React.CSSProperties => ({ position: "absolute", width: w, height: w, borderRadius: "50%", border: "1px solid rgba(10,92,104,0.07)", top, right, animation: `rotate-slow ${dur}s linear infinite`, pointerEvents: "none" as const }),
-};
-
 export default function HeroHomePageSection() {
-  const countRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const countRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
-    const targets = [500, 10, 98];
-    countRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const target = targets[i];
-      const start = performance.now();
-      const update = (now: number) => {
-        const p = Math.min((now - start) / 2000, 1);
-        const ease = 1 - Math.pow(1 - p, 4);
-        el.textContent = String(Math.round(ease * target));
-        if (p < 1) requestAnimationFrame(update);
-      };
-      setTimeout(() => requestAnimationFrame(update), 600 + i * 200);
-    });
+    const el = countRef.current;
+    if (!el) return;
+    const target = 2.1;
+    const start = performance.now();
+    const update = (now: number) => {
+      const p = Math.min((now - start) / 1800, 1);
+      const ease = 1 - Math.pow(1 - p, 4);
+      el.textContent = (ease * target).toFixed(1);
+      if (p < 1) requestAnimationFrame(update);
+    };
+    setTimeout(() => requestAnimationFrame(update), 400);
   }, []);
 
   return (
-    <section style={S.section}>
-      <style>{`@keyframes rotate-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes float-card{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}`}</style>
-      <div style={S.circle(700,-200,-200)}/>
-      <div style={S.circle(500,-100,-100,20)}/>
+    <section style={{
+      position: "relative",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+    }}>
+      {/* Background image layer */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: "url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1800&q=80')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        zIndex: 0,
+      }} />
+      {/* Dark overlay */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(to bottom, rgba(5,18,20,0.55) 0%, rgba(5,18,20,0.70) 100%)",
+        zIndex: 1,
+      }} />
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "5rem 2rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "center", position: "relative", zIndex: 2, width: "100%" }}>
-        {/* Left */}
-        <div>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.08)", border: "1px solid rgba(10,92,104,0.15)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.75rem" }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#0A5C68", display: "inline-block", animation: "pulse-dot 2s infinite" }} />
-            AI Business Platform
-          </div>
-          <style>{`@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}`}</style>
+      {/* Navbar */}
+      <nav style={{
+        position: "relative", zIndex: 10,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "1.5rem 2.5rem",
+      }}>
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M4 4 L11 2 L18 4 L18 11 Q18 18 11 21 Q4 18 4 11 Z" fill="rgba(255,255,255,0.9)" />
+            <path d="M8 11 L11 8 L14 11 L11 14 Z" fill="#0A5C68" />
+          </svg>
+          <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}>Vort</span>
+        </div>
 
-          <h1 style={{ fontSize: "clamp(2.8rem,6vw,4.5rem)", fontWeight: 800, lineHeight: 1.05, letterSpacing: "-0.04em", color: "#0F172A", marginBottom: "1.5rem" }}>
-            Automate Workflows.<br/>
-            <span style={{ background: "linear-gradient(135deg,#0A5C68 0%,#14b8a6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Scale Operations.
-            </span><br/>
-            Grow Without Limits.
-          </h1>
-
-          <p style={{ fontSize: "1.125rem", color: "#64748B", lineHeight: 1.75, fontWeight: 400, marginBottom: "2.5rem", maxWidth: 480 }}>
-            AI-powered CRM, workflow automation, lead management, customer support, and business intelligence — all in one platform.
-          </p>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" as const, marginBottom: "3rem" }}>
-            <Link href="/booking" style={{ fontSize: "1rem", fontWeight: 700, padding: "0.9rem 2.25rem", background: "#0A5C68", color: "#fff", borderRadius: 100, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 8px 32px rgba(10,92,104,0.30)", transition: "all 0.3s ease" }}>
-              Start Free Trial →
+        {/* Center pill nav */}
+        <div style={{
+          background: "rgba(255,255,255,0.95)",
+          borderRadius: 100,
+          padding: "0.35rem 0.5rem",
+          display: "flex", alignItems: "center", gap: "0.15rem",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.12)",
+        }}>
+          {["Home", "About Us", "Investment Criteria", "Portfolio"].map((label, i) => (
+            <Link
+              key={label}
+              href={`/${i === 0 ? "" : label.toLowerCase().replace(/ /g, "-")}`}
+              style={{
+                fontSize: "0.82rem", fontWeight: i === 0 ? 600 : 500,
+                color: i === 0 ? "#fff" : "#374151",
+                textDecoration: "none",
+                padding: "0.45rem 1rem",
+                borderRadius: 100,
+                background: i === 0 ? "#0A5C68" : "transparent",
+                transition: "background 0.2s",
+              }}
+            >
+              {label}
             </Link>
-            <Link href="/#demo" style={{ fontSize: "1rem", fontWeight: 600, padding: "0.9rem 2.25rem", background: "rgba(255,255,255,0.7)", border: "1.5px solid #E5E7EB", color: "#0F172A", borderRadius: 100, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem", backdropFilter: "blur(8px)" }}>
-              Book Demo
-            </Link>
+          ))}
+        </div>
+
+        {/* CTA button */}
+        <Link href="/contact" style={{
+          fontSize: "0.85rem", fontWeight: 600,
+          color: "#fff",
+          background: "#0A5C68",
+          padding: "0.6rem 1.4rem",
+          borderRadius: 100,
+          textDecoration: "none",
+          display: "inline-flex", alignItems: "center", gap: "0.4rem",
+          border: "1.5px solid rgba(255,255,255,0.15)",
+        }}>
+          Get In Touch →
+        </Link>
+      </nav>
+
+      {/* Hero content */}
+      <div style={{
+        position: "relative", zIndex: 5,
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        padding: "0 2.5rem 3rem",
+        maxWidth: 1280,
+        width: "100%",
+        margin: "0 auto",
+        alignSelf: "stretch",
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          {/* Left: headline + sub + buttons */}
+          <div style={{ maxWidth: 600 }}>
+            <h1 style={{
+              fontSize: "clamp(2.6rem, 5.5vw, 4.2rem)",
+              fontWeight: 700,
+              color: "#fff",
+              lineHeight: 1.1,
+              letterSpacing: "-0.03em",
+              margin: "0 0 1.25rem",
+            }}>
+              Building Long-Term Value<br />In Uncertain Markets
+            </h1>
+            <p style={{
+              fontSize: "0.9rem",
+              color: "rgba(255,255,255,0.72)",
+              lineHeight: 1.7,
+              margin: "0 0 2rem",
+              maxWidth: 420,
+            }}>
+              We invest with conviction, insight, and discipline — partnering with exceptional leaders to create lasting impact across evolving industries.
+            </p>
+            <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+              <Link href="/contact" style={{
+                fontSize: "0.9rem", fontWeight: 600,
+                color: "#0F172A",
+                background: "#fff",
+                padding: "0.75rem 1.75rem",
+                borderRadius: 100,
+                textDecoration: "none",
+                display: "inline-flex", alignItems: "center", gap: "0.4rem",
+              }}>
+                Get In Touch →
+              </Link>
+              <Link href="/#portfolio" style={{
+                fontSize: "0.9rem", fontWeight: 500,
+                color: "#fff",
+                background: "rgba(255,255,255,0.12)",
+                border: "1px solid rgba(255,255,255,0.25)",
+                padding: "0.75rem 1.75rem",
+                borderRadius: 100,
+                textDecoration: "none",
+                backdropFilter: "blur(8px)",
+              }}>
+                Our Portfolio
+              </Link>
+            </div>
           </div>
 
-          <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap" as const }}>
-            {[["500", "+", "Businesses"], ["10", "×", "Lead velocity"], ["98", "%", "Uptime SLA"]].map(([v, s, l], i) => (
-              <div key={l}>
-                <div style={{ fontSize: "2.25rem", fontWeight: 800, color: "#0F172A", letterSpacing: "-0.04em", lineHeight: 1 }}>
-                  <span ref={el => { countRefs.current[i] = el; }}>0</span>
-                  <span style={{ color: "#0A5C68" }}>{s}</span>
-                </div>
-                <div style={{ fontSize: "0.8rem", color: "#64748B", marginTop: "0.25rem", fontWeight: 500 }}>{l}</div>
-              </div>
-            ))}
+          {/* Right: stats card */}
+          <div style={{
+            background: "rgba(10,20,22,0.65)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 16,
+            padding: "1.5rem 2rem",
+            minWidth: 200,
+            textAlign: "left",
+          }}>
+            <div style={{ fontSize: "2.25rem", fontWeight: 700, color: "#fff", letterSpacing: "-0.04em", lineHeight: 1 }}>
+              $<span ref={countRef}>0.0</span>+
+            </div>
+            <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.6)", marginTop: "0.4rem" }}>
+              Invested across private markets
+            </div>
           </div>
         </div>
 
-        {/* Right — dashboard card */}
-        <div style={{ position: "relative" }}>
-          <div style={{ background: "#fff", borderRadius: 24, padding: "2rem", boxShadow: "0 24px 80px rgba(10,92,104,0.14)", border: "1px solid #E5E7EB", animation: "float-card 6s ease-in-out infinite" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-              <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "#0F172A" }}>Revenue Dashboard</div>
-              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#fff", background: "#0A5C68", padding: "0.25rem 0.65rem", borderRadius: 100, display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", animation: "pulse-dot 1.5s infinite", display: "inline-block" }} /> Live
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.25rem" }}>
-              {[["₹18.4L","Revenue"],["2,847","Active Leads"],["99.8%","Uptime"],["4.2s","Avg Response"]].map(([v,l]) => (
-                <div key={l} style={{ background: "#D8E8E5", borderRadius: 14, padding: "0.875rem", border: "1px solid #E5E7EB" }}>
-                  <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", letterSpacing: "-0.03em" }}>{v}</div>
-                  <div style={{ fontSize: "0.68rem", color: "#64748B", marginTop: "0.15rem" }}>{l}</div>
-                </div>
-              ))}
-            </div>
-            {[["WhatsApp rate","82%",82,"#0A5C68"],["Campaign opens","67%",67,"#10b981"],["Lead score","91%",91,"#f59e0b"]].map(([l,pct,w,c]) => (
-              <div key={String(l)} style={{ marginBottom: "0.6rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "#64748B", marginBottom: "0.3rem", fontWeight: 500 }}><span>{l}</span><span style={{ color: String(c), fontWeight: 700 }}>{pct}</span></div>
-                <div style={{ height: 5, background: "#D8E8E5", borderRadius: 100, overflow: "hidden", border: "1px solid #E5E7EB" }}><div style={{ height: "100%", width: `${w}%`, background: String(c), borderRadius: 100 }} /></div>
-              </div>
-            ))}
-          </div>
-          {/* Float badges */}
-          <div style={{ position: "absolute", bottom: -20, left: -30, background: "#fff", borderRadius: 18, padding: "1rem 1.25rem", border: "1px solid #E5E7EB", boxShadow: "0 12px 40px rgba(10,92,104,0.12)", display: "flex", alignItems: "center", gap: "0.75rem", animation: "float-card 5s ease-in-out infinite 1s" }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(34,197,94,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>✓</div>
-            <div><div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#0F172A" }}>Deal closed</div><div style={{ fontSize: "0.68rem", color: "#64748B" }}>₹2.4L — just now</div></div>
-          </div>
-          <div style={{ position: "absolute", top: -20, right: -20, background: "#fff", borderRadius: 18, padding: "1rem 1.25rem", border: "1px solid #E5E7EB", boxShadow: "0 12px 40px rgba(10,92,104,0.12)", display: "flex", alignItems: "center", gap: "0.75rem", animation: "float-card 7s ease-in-out infinite 2s" }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(10,92,104,0.10)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>🤖</div>
-            <div><div style={{ fontSize: "0.78rem", fontWeight: 700, color: "#0F172A" }}>AI Agent active</div><div style={{ fontSize: "0.68rem", color: "#64748B" }}>12 conversations</div></div>
-          </div>
+        {/* Scroll to Explore */}
+        <div style={{
+          position: "absolute", right: "2.5rem", bottom: "3rem",
+          display: "flex", alignItems: "center", gap: "0.4rem",
+          fontSize: "0.78rem", color: "rgba(255,255,255,0.55)",
+          fontWeight: 500, letterSpacing: "0.02em",
+        }}>
+          Scroll to Explore ↓
         </div>
       </div>
     </section>
