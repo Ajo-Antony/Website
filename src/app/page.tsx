@@ -3,10 +3,11 @@ import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomeP
 import FeaturesHomePageSection from "@/components/pages/homePage/FeaturesHomePageSection";
 import DemoHomePageSection from "@/components/pages/homePage/DemoHomePageSection";
 import WorkflowHomePageSection from "@/components/pages/homePage/WorkflowHomePageSection";
-import PricingHomePageSection from "@/components/pages/homePage/PricingHomePageSection";
 import TestimonialsHomePageSection from "@/components/pages/homePage/TestimonialsHomePageSection";
+import PricingHomePageSection from "@/components/pages/homePage/PricingHomePageSection";
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
 import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
+import CtaBannerHomePageSection from "@/components/pages/homePage/CtaBannerHomePageSection";
 
 export default function HomePage() {
   return (
@@ -16,9 +17,10 @@ export default function HomePage() {
       <FeaturesHomePageSection />
       <DemoHomePageSection />
       <WorkflowHomePageSection />
-      <PricingHomePageSection />
       <TestimonialsHomePageSection />
+      <PricingHomePageSection />
       <FaqHomePageSection />
+      <CtaBannerHomePageSection />
       <ContactHomePageSection />
     </>
   );

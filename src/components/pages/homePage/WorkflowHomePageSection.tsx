@@ -1,32 +1,84 @@
 "use client";
 
 const STEPS = [
-  { num:"01", title:"Connect your stack",   desc:"Link CRM, WhatsApp, email, and 500+ tools with one-click OAuth connectors." },
-  { num:"02", title:"Configure AI agents",  desc:"Choose pre-built templates or design custom workflows in the visual builder." },
-  { num:"03", title:"Launch campaigns",     desc:"Set your audience and goals — StrixMind writes, sends, and optimises." },
-  { num:"04", title:"Watch it compound",   desc:"Every interaction makes your agents smarter. Revenue compounds over time." },
+  {
+    num: "01",
+    icon: "🔌",
+    title: "Connect your stack",
+    desc: "Link your CRM, WhatsApp, email, calendar, and 500+ tools in seconds using one-click OAuth connectors — no developer needed.",
+  },
+  {
+    num: "02",
+    icon: "🧩",
+    title: "Configure AI agents",
+    desc: "Pick from ready-made templates — sales bot, support agent, lead qualifier — or build fully custom workflows in the visual builder.",
+  },
+  {
+    num: "03",
+    icon: "🚀",
+    title: "Launch campaigns",
+    desc: "Set your target audience and growth goal. StrixMind writes the copy, schedules sends, and A/B tests automatically.",
+  },
+  {
+    num: "04",
+    icon: "📈",
+    title: "Watch it compound",
+    desc: "Every interaction trains your agents to be smarter. Revenue compounds, costs fall, and your team focuses on what only humans can do.",
+  },
 ] as const;
 
 export default function WorkflowHomePageSection() {
   return (
-    <section id="workflow" style={{ background: "#fff", padding: "6rem 0" }}>
+    <section id="workflow" style={{ background: "#fff", padding: "7rem 0", borderTop: "1px solid #E5E7EB" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-          <div style={{ display: "inline-flex", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.08)", padding: "0.3rem 0.875rem", borderRadius: 100, marginBottom: "1.25rem" }}>How It Works</div>
-          <h2 style={{ fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>Up and running in<br/>three minutes.</h2>
-          <p style={{ fontSize: "1.05rem", color: "#64748B", maxWidth: 500, margin: "0 auto", lineHeight: 1.7, marginBottom: "4rem" }}>No engineers required. No complex setup. Just connect, configure, and grow.</p>
+
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.07)", border: "1px solid rgba(10,92,104,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
+            How It Works
+          </div>
+          <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
+            Up and running in<br />three minutes flat.
+          </h2>
+          <p style={{ fontSize: "1.1rem", color: "#64748B", maxWidth: 480, margin: "0 auto", lineHeight: 1.75 }}>
+            No engineers. No complex setup. Just connect, configure, and start growing today.
+          </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "2rem", position: "relative" }}>
-          <div style={{ position: "absolute", top: 32, left: "12%", right: "12%", height: 1, background: "#E5E7EB" }} />
+
+        {/* Steps */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "2rem", position: "relative" }}>
+          {/* Connector line */}
+          <div style={{ position: "absolute", top: 40, left: "13%", right: "13%", height: "1px", background: "linear-gradient(90deg, #0A5C68, #14b8a6, #0A5C68)", opacity: 0.2 }} />
+
           {STEPS.map((s, i) => (
             <div key={s.num} style={{ textAlign: "center", position: "relative" }}>
-              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#D8E8E5", border: "1px solid #E5E7EB", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.25rem", fontWeight: 800, color: "#0A5C68", position: "relative" as const, zIndex: 1, transition: "all 0.3s ease", cursor: "default" }}
-                onMouseEnter={e => { const d = e.currentTarget as HTMLDivElement; d.style.background = "#0A5C68"; d.style.color = "#fff"; d.style.transform = "scale(1.1)"; }}
-                onMouseLeave={e => { const d = e.currentTarget as HTMLDivElement; d.style.background = "#D8E8E5"; d.style.color = "#0A5C68"; d.style.transform = ""; }}>
-                {s.num}
+              {/* Step circle */}
+              <div
+                style={{ width: 80, height: 80, borderRadius: "50%", background: "#F0FAF9", border: "1.5px solid #E5E7EB", display: "flex", flexDirection: "column" as const, alignItems: "center", justifyContent: "center", margin: "0 auto 1.75rem", position: "relative" as const, zIndex: 1, transition: "all 0.3s ease", cursor: "default", gap: "0.1rem" }}
+                onMouseEnter={e => {
+                  const d = e.currentTarget as HTMLDivElement;
+                  d.style.background = "#0A5C68";
+                  d.style.borderColor = "#0A5C68";
+                  d.style.transform = "scale(1.08)";
+                  d.style.boxShadow = "0 8px 24px rgba(10,92,104,0.3)";
+                  (d.querySelector(".step-icon") as HTMLElement).style.filter = "brightness(10)";
+                  (d.querySelector(".step-num") as HTMLElement).style.color = "rgba(255,255,255,0.6)";
+                }}
+                onMouseLeave={e => {
+                  const d = e.currentTarget as HTMLDivElement;
+                  d.style.background = "#F0FAF9";
+                  d.style.borderColor = "#E5E7EB";
+                  d.style.transform = "";
+                  d.style.boxShadow = "";
+                  (d.querySelector(".step-icon") as HTMLElement).style.filter = "";
+                  (d.querySelector(".step-num") as HTMLElement).style.color = "#94A3B8";
+                }}
+              >
+                <div className="step-icon" style={{ fontSize: "1.4rem", lineHeight: 1, transition: "filter 0.3s" }}>{s.icon}</div>
+                <div className="step-num" style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", color: "#94A3B8", transition: "color 0.3s" }}>{s.num}</div>
               </div>
-              <div style={{ fontSize: "1rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.5rem", letterSpacing: "-0.01em" }}>{s.title}</div>
-              <p style={{ fontSize: "0.85rem", color: "#64748B", lineHeight: 1.6 }}>{s.desc}</p>
+              <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.6rem", letterSpacing: "-0.01em" }}>{s.title}</div>
+              <p style={{ fontSize: "0.875rem", color: "#64748B", lineHeight: 1.7 }}>{s.desc}</p>
             </div>
           ))}
         </div>

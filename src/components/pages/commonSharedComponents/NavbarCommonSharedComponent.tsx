@@ -36,8 +36,11 @@ export default function NavbarCommonSharedComponent() {
   return (
     <nav style={navStyle}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem", height: 72, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0F172A", textDecoration: "none", letterSpacing: "-0.03em" }}>
-          Strix<span style={{ color: "#0A5C68" }}>Mind</span>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.55rem", textDecoration: "none" }}>
+          <div style={{ width: 30, height: 30, borderRadius: 7, background: "#0A5C68", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M4 9 L9 4 L14 9 L9 14 Z" fill="white" opacity="0.9"/><path d="M6.5 9 L9 6.5 L11.5 9 L9 11.5 Z" fill="#14b8a6"/></svg>
+          </div>
+          <span style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0F172A", letterSpacing: "-0.03em" }}>StrixMind</span>
         </Link>
 
         <ul style={{ display: "flex", alignItems: "center", gap: "2.5rem", listStyle: "none" }} className="hidden md:flex">
