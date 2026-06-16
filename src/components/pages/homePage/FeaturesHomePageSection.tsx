@@ -40,7 +40,7 @@ export default function FeaturesHomePageSection() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
-          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.07)", border: "1px solid rgba(10,92,104,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
+          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Platform Features
           </div>
           <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.1rem" }}>
@@ -60,8 +60,8 @@ export default function FeaturesHomePageSection() {
               onMouseEnter={e => {
                 const d = e.currentTarget as HTMLDivElement;
                 d.style.transform = "translateY(-6px)";
-                d.style.boxShadow = "0 16px 48px rgba(10,92,104,0.13)";
-                d.style.borderColor = "rgba(10,92,104,0.2)";
+                d.style.boxShadow = "0 16px 48px rgba(0,99,229,0.13)";
+                d.style.borderColor = "rgba(0,99,229,0.2)";
               }}
               onMouseLeave={e => {
                 const d = e.currentTarget as HTMLDivElement;
@@ -70,13 +70,13 @@ export default function FeaturesHomePageSection() {
                 d.style.borderColor = "#E5E7EB";
               }}
             >
-              <div style={{ width: 54, height: 54, borderRadius: 16, background: "rgba(10,92,104,0.07)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem", fontSize: "1.5rem" }}>{f.icon}</div>
-              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" as const, color: "rgba(10,92,104,0.4)", marginBottom: "0.6rem" }}>{f.num}</div>
+              <div style={{ width: 54, height: 54, borderRadius: 16, background: "rgba(0,99,229,0.07)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem", fontSize: "1.5rem" }}>{f.icon}</div>
+              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" as const, color: "rgba(0,99,229,0.4)", marginBottom: "0.6rem" }}>{f.num}</div>
               <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "#0F172A", marginBottom: "0.75rem", letterSpacing: "-0.02em" }}>{f.title}</div>
               <p style={{ fontSize: "0.9rem", color: "#64748B", lineHeight: 1.75 }}>{f.desc}</p>
               <div style={{ display: "flex", flexWrap: "wrap" as const, gap: "0.4rem", marginTop: "1.5rem" }}>
                 {f.tags.map(t => (
-                  <span key={t} style={{ fontSize: "0.68rem", fontWeight: 600, color: "#0A5C68", background: "rgba(10,92,104,0.06)", border: "1px solid rgba(10,92,104,0.12)", padding: "0.2rem 0.65rem", borderRadius: 100 }}>{t}</span>
+                  <span key={t} style={{ fontSize: "0.68rem", fontWeight: 600, color: "#0063E5", background: "rgba(0,99,229,0.06)", border: "1px solid rgba(0,99,229,0.12)", padding: "0.2rem 0.65rem", borderRadius: 100 }}>{t}</span>
                 ))}
               </div>
             </div>

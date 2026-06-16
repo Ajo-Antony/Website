@@ -4,24 +4,34 @@ import NavbarCommonSharedComponent from "@/components/pages/commonSharedComponen
 import FooterCommonSharedComponent from "@/components/pages/commonSharedComponents/FooterCommonSharedComponent";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "StrixMind — AI-Powered Business Operating System",
-  description: "AI-powered CRM, workflow automation, lead management, customer support, and business intelligence in one platform.",
+  description: "AI-powered CRM, WhatsApp automation, lead management, multi-agent workflows, and revenue intelligence — all in one platform built for Indian businesses.",
+  keywords: ["AI CRM", "WhatsApp automation", "business automation", "AI agents", "India", "workflow automation", "lead management"],
   openGraph: {
-    title: "StrixMind",
+    title: "StrixMind — AI-Powered Business Operating System",
     description: "Automate Workflows. Scale Operations. Grow Without Limits.",
     siteName: "StrixMind",
-    // images: ["/images/hero/og-image.jpg"],
+    type: "website",
   },
-  twitter: { card: "summary_large_image", title: "StrixMind", description: "AI-Powered Business Operating System" },
+  twitter: {
+    card: "summary_large_image",
+    title: "StrixMind",
+    description: "AI-Powered Business Operating System for Indian businesses",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>
+      <body style={{ background: "#051A1C" }}>
         <NavbarCommonSharedComponent />
         <main>{children}</main>
         <FooterCommonSharedComponent />

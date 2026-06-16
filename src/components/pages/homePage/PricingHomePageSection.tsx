@@ -65,12 +65,12 @@ const PLANS = [
 
 export default function PricingHomePageSection() {
   return (
-    <section id="pricing" style={{ background: "#F0FAF9", padding: "7rem 0", borderTop: "1px solid #E5E7EB" }}>
+    <section id="pricing" style={{ background: "#EEF4FF", padding: "7rem 0", borderTop: "1px solid #E5E7EB" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
-          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.07)", border: "1px solid rgba(10,92,104,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
+          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Pricing
           </div>
           <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
@@ -90,8 +90,8 @@ export default function PricingHomePageSection() {
                 background: "#fff",
                 borderRadius: 28,
                 padding: "2.5rem",
-                border: plan.accent ? "2px solid #0A5C68" : "1.5px solid #E5E7EB",
-                boxShadow: plan.accent ? "0 24px 64px rgba(10,92,104,0.16)" : "none",
+                border: plan.accent ? "2px solid #0063E5" : "1.5px solid #E5E7EB",
+                boxShadow: plan.accent ? "0 24px 64px rgba(0,99,229,0.16)" : "none",
                 position: "relative",
                 overflow: "hidden",
                 transition: "all 0.35s ease",
@@ -99,7 +99,7 @@ export default function PricingHomePageSection() {
               onMouseEnter={e => {
                 const d = e.currentTarget as HTMLDivElement;
                 d.style.transform = "translateY(-6px)";
-                if (!plan.accent) d.style.boxShadow = "0 16px 48px rgba(10,92,104,0.1)";
+                if (!plan.accent) d.style.boxShadow = "0 16px 48px rgba(0,99,229,0.1)";
               }}
               onMouseLeave={e => {
                 const d = e.currentTarget as HTMLDivElement;
@@ -108,16 +108,16 @@ export default function PricingHomePageSection() {
               }}
             >
               {/* Accent top bar */}
-              {plan.accent && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0A5C68, #14b8a6)" }} />}
+              {plan.accent && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #0063E5, #6aabff)" }} />}
 
               {/* Popular badge */}
               {plan.accent && (
-                <div style={{ position: "absolute", top: "1.4rem", right: "1.4rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#fff", background: "#0A5C68", padding: "0.28rem 0.75rem", borderRadius: 100 }}>
+                <div style={{ position: "absolute", top: "1.4rem", right: "1.4rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#fff", background: "#0063E5", padding: "0.28rem 0.75rem", borderRadius: 100 }}>
                   Most Popular
                 </div>
               )}
 
-              <div style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#0A5C68", marginBottom: "0.75rem" }}>{plan.name}</div>
+              <div style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#0063E5", marginBottom: "0.75rem" }}>{plan.name}</div>
 
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem", marginBottom: "0.4rem" }}>
                 <span style={{ fontSize: "2.75rem", fontWeight: 800, color: "#0F172A", letterSpacing: "-0.04em", lineHeight: 1 }}>{plan.price}</span>
@@ -131,7 +131,7 @@ export default function PricingHomePageSection() {
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" as const, gap: "0.75rem", marginBottom: "2.25rem" }}>
                 {plan.features.map(f => (
                   <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: "0.65rem", fontSize: "0.875rem", color: "#374151" }}>
-                    <span style={{ color: "#0A5C68", fontWeight: 700, fontSize: "0.9rem", flexShrink: 0, marginTop: "0.05rem" }}>✓</span>
+                    <span style={{ color: "#0063E5", fontWeight: 700, fontSize: "0.9rem", flexShrink: 0, marginTop: "0.05rem" }}>✓</span>
                     {f}
                   </li>
                 ))}
@@ -149,8 +149,8 @@ export default function PricingHomePageSection() {
                   textDecoration: "none",
                   transition: "all 0.3s ease",
                   ...(plan.solid
-                    ? { background: "#0A5C68", color: "#fff", boxShadow: "0 8px 24px rgba(10,92,104,0.3)" }
-                    : { background: "#F0FAF9", color: "#0A5C68", border: "1.5px solid rgba(10,92,104,0.2)" }),
+                    ? { background: "#0063E5", color: "#fff", boxShadow: "0 8px 24px rgba(0,99,229,0.3)" }
+                    : { background: "#EEF4FF", color: "#0063E5", border: "1.5px solid rgba(0,99,229,0.2)" }),
                 }}
               >
                 {plan.cta}
@@ -161,7 +161,7 @@ export default function PricingHomePageSection() {
 
         {/* Bottom note */}
         <p style={{ textAlign: "center", marginTop: "2.5rem", fontSize: "0.85rem", color: "#94A3B8" }}>
-          All prices in INR. GST applicable. Annual plans available at 20% discount. <Link href="/#contact" style={{ color: "#0A5C68", fontWeight: 600, textDecoration: "none" }}>Talk to sales →</Link>
+          All prices in INR. GST applicable. Annual plans available at 20% discount. <Link href="/#contact" style={{ color: "#0063E5", fontWeight: 600, textDecoration: "none" }}>Talk to sales →</Link>
         </p>
       </div>
     </section>

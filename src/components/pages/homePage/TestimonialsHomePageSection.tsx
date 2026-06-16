@@ -4,7 +4,7 @@ const TESTIMONIALS = [
   {
     initials: "RK", name: "Rahul Krishnan", role: "Founder, UrbanScale Ventures",
     quote: "StrixMind cut our lead response time from 6 hours to under 30 seconds. Our close rate doubled within the first month. The WhatsApp bot alone paid for itself in week two.",
-    avatarBg: "#0A5C68", stars: 5,
+    avatarBg: "#0063E5", stars: 5,
   },
   {
     initials: "PS", name: "Priya Suresh", role: "Head of Growth, NovaBridge",
@@ -25,7 +25,7 @@ export default function TestimonialsHomePageSection() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
-          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0A5C68", background: "rgba(10,92,104,0.07)", border: "1px solid rgba(10,92,104,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
+          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Customer Stories
           </div>
           <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1 }}>
@@ -37,12 +37,12 @@ export default function TestimonialsHomePageSection() {
           {TESTIMONIALS.map(t => (
             <div
               key={t.name}
-              style={{ background: "#F8FFFE", borderRadius: 24, padding: "2.25rem", border: "1.5px solid #E5E7EB", position: "relative", overflow: "hidden", transition: "all 0.3s ease" }}
+              style={{ background: "#F8FAFF", borderRadius: 24, padding: "2.25rem", border: "1.5px solid #E5E7EB", position: "relative", overflow: "hidden", transition: "all 0.3s ease" }}
               onMouseEnter={e => {
                 const d = e.currentTarget as HTMLDivElement;
                 d.style.transform = "translateY(-5px)";
-                d.style.boxShadow = "0 16px 48px rgba(10,92,104,0.1)";
-                d.style.borderColor = "rgba(10,92,104,0.2)";
+                d.style.boxShadow = "0 16px 48px rgba(0,99,229,0.1)";
+                d.style.borderColor = "rgba(0,99,229,0.2)";
               }}
               onMouseLeave={e => {
                 const d = e.currentTarget as HTMLDivElement;
@@ -52,7 +52,7 @@ export default function TestimonialsHomePageSection() {
               }}
             >
               {/* Quote mark */}
-              <div style={{ position: "absolute", top: "1rem", right: "1.5rem", fontSize: "3.5rem", color: "rgba(10,92,104,0.08)", fontFamily: "Georgia, serif", lineHeight: 1, pointerEvents: "none", fontWeight: 700 }}>"</div>
+              <div style={{ position: "absolute", top: "1rem", right: "1.5rem", fontSize: "3.5rem", color: "rgba(0,99,229,0.08)", fontFamily: "Georgia, serif", lineHeight: 1, pointerEvents: "none", fontWeight: 700 }}>"</div>
 
               {/* Stars */}
               <div style={{ display: "flex", gap: "0.2rem", marginBottom: "1.25rem" }}>

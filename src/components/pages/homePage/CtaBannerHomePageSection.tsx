@@ -5,12 +5,12 @@ export default function CtaBannerHomePageSection() {
   return (
     <section style={{ background: "#051A1C", padding: "6rem 0", position: "relative", overflow: "hidden" }}>
       {/* BG glow */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 80% at 50% 50%, rgba(10,92,104,0.4) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 80% at 50% 50%, rgba(0,99,229,0.4) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 2rem", textAlign: "center", position: "relative", zIndex: 1 }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", color: "#5eead4", background: "rgba(20,184,166,0.1)", border: "1px solid rgba(20,184,166,0.2)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "2rem" }}>
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#14b8a6", display: "inline-block" }} />
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", color: "#6aabff", background: "rgba(0,99,229,0.1)", border: "1px solid rgba(0,99,229,0.2)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "2rem" }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#6aabff", display: "inline-block" }} />
           14-day free trial · No credit card required
         </div>
 
@@ -22,7 +22,7 @@ export default function CtaBannerHomePageSection() {
         </p>
 
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" as const }}>
-          <Link href="/booking" style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", background: "#0A5C68", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none", boxShadow: "0 0 40px rgba(10,92,104,0.5)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+          <Link href="/booking" style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", background: "#0063E5", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none", boxShadow: "0 0 40px rgba(0,99,229,0.5)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
             Start Free Trial →
           </Link>
           <Link href="/booking" style={{ fontSize: "1rem", fontWeight: 600, color: "rgba(255,255,255,0.75)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.14)", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none" }}>

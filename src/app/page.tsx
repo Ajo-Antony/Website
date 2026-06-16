@@ -6,8 +6,9 @@ import WorkflowHomePageSection from "@/components/pages/homePage/WorkflowHomePag
 import TestimonialsHomePageSection from "@/components/pages/homePage/TestimonialsHomePageSection";
 import PricingHomePageSection from "@/components/pages/homePage/PricingHomePageSection";
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
-import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
 import CtaBannerHomePageSection from "@/components/pages/homePage/CtaBannerHomePageSection";
+import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
+import BrandIdentitySection from "@/components/pages/homePage/BrandIdentitySection";
 
 export default function HomePage() {
   return (
@@ -19,6 +20,7 @@ export default function HomePage() {
       <WorkflowHomePageSection />
       <TestimonialsHomePageSection />
       <PricingHomePageSection />
+      <BrandIdentitySection />
       <FaqHomePageSection />
       <CtaBannerHomePageSection />
       <ContactHomePageSection />

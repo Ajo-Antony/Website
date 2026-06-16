@@ -5,11 +5,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        mint: "#D8E8E5",
-        teal: "#0A5C68",
-        "teal-light": "#0e7a8a",
-        "site-dark": "#0F172A",
-        muted: "#64748B",
+        // Brand palette from Strixmind Identity & Branding PDF
+        "brand-blue":      "#0063E5",
+        "brand-deep":      "#003E8F",
+        "brand-light":     "#6aabff",
+        "brand-black":     "#212121",
+        "site-dark":       "#051A1C",
+        "site-text":       "#0F172A",
+        "site-muted":      "#64748B",
+        "site-border":     "#E5E7EB",
+        "section-alt":     "#EEF4FF",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
@@ -18,6 +23,10 @@ const config: Config = {
         "2xl": "20px",
         "3xl": "24px",
         "4xl": "30px",
+      },
+      backgroundImage: {
+        "brand-gradient": "linear-gradient(135deg, #0063E5 0%, #003E8F 100%)",
+        "grid-faint": "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
       },
     },
   },
