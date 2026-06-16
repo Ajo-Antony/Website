@@ -87,10 +87,10 @@ export default function BrandIdentitySection() {
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Identity & Branding
           </div>
-          <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
             Built on Connected Intelligence.
           </h2>
-          <p style={{ fontSize: "1.05rem", color: "#64748B", maxWidth: 560, margin: "0 auto", lineHeight: 1.8 }}>
+          <p data-strix-fade-up style={{ fontSize: "1.05rem", color: "#64748B", maxWidth: 560, margin: "0 auto", lineHeight: 1.8 }}>
             The Strixmind identity unifies technological sophistication with approachable design — a visual system that scales from a mobile icon to enterprise deployments.
           </p>
         </div>
@@ -144,7 +144,7 @@ export default function BrandIdentitySection() {
           {/* Logo symbolism */}
           <div style={{ background: "#fff", borderRadius: 24, padding: "2.75rem", border: "1.5px solid #e5e7eb" }}>
             <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", marginBottom: "1rem" }}>Abstract Logo</div>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0F172A", marginBottom: "0.75rem", letterSpacing: "-0.025em" }}>Connected Intelligence</h3>
+            <h3 data-strix-slide-up style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0F172A", marginBottom: "0.75rem", letterSpacing: "-0.025em" }}>Connected Intelligence</h3>
             <p style={{ fontSize: "0.9rem", color: "#64748B", lineHeight: 1.8, marginBottom: "2rem" }}>
               The central node symbolises AI-driven intelligence. Surrounding interconnected nodes represent data, machine learning, autonomous agents, and digital systems — Strixmind's ability to unify emerging technologies into scalable solutions.
             </p>

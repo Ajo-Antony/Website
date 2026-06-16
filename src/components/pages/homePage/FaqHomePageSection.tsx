@@ -50,7 +50,7 @@ export default function FaqHomePageSection() {
             <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
               FAQ
             </div>
-            <h2 style={{ fontSize: "clamp(2rem,3.5vw,3rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.25rem" }}>
+            <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,3.5vw,3rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.25rem" }}>
               Got questions?<br />We've got<br />answers.
             </h2>
             <p style={{ fontSize: "0.95rem", color: "#64748B", lineHeight: 1.75, marginBottom: "2rem" }}>

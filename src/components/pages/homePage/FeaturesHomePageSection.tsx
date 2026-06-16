@@ -40,22 +40,23 @@ export default function FeaturesHomePageSection() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
-          <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
+          <div data-strix-tag-badge style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Platform Features
           </div>
-          <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.1rem" }}>
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.1rem" }}>
             Everything your business<br />needs to scale with AI.
           </h2>
-          <p style={{ fontSize: "1.1rem", color: "#64748B", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
+          <p data-strix-fade-up style={{ fontSize: "1.1rem", color: "#64748B", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
             Six fully integrated modules that work together from day one — no separate subscriptions, no integration headaches.
           </p>
         </div>
 
         {/* Cards grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))", gap: "1.5rem" }}>
+        <div data-strix-stagger-grid style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))", gap: "1.5rem" }}>
           {FEATURES.map((f, i) => (
             <div
               key={f.num}
+              data-strix-grid-item
               style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 24, padding: "2.25rem", transition: "all 0.35s ease", cursor: "default", transitionDelay: `${i * 0.05}s` }}
               onMouseEnter={e => {
                 const d = e.currentTarget as HTMLDivElement;

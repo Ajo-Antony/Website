@@ -73,10 +73,10 @@ export default function PricingHomePageSection() {
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             Pricing
           </div>
-          <h2 style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1rem" }}>
             Simple, transparent pricing.
           </h2>
-          <p style={{ fontSize: "1.1rem", color: "#64748B", maxWidth: 460, margin: "0 auto", lineHeight: 1.75 }}>
+          <p data-strix-fade-up style={{ fontSize: "1.1rem", color: "#64748B", maxWidth: 460, margin: "0 auto", lineHeight: 1.75 }}>
             No credit card required. 14-day free trial on all plans. Cancel any time.
           </p>
         </div>

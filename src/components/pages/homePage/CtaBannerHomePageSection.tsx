@@ -14,10 +14,10 @@ export default function CtaBannerHomePageSection() {
           14-day free trial · No credit card required
         </div>
 
-        <h2 style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", fontWeight: 800, color: "#fff", lineHeight: 1.08, letterSpacing: "-0.04em", marginBottom: "1.5rem" }}>
+        <h2 data-strix-slide-up style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", fontWeight: 800, color: "#fff", lineHeight: 1.08, letterSpacing: "-0.04em", marginBottom: "1.5rem" }}>
           Start automating your<br />business today.
         </h2>
-        <p style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75, marginBottom: "2.75rem", maxWidth: 480, margin: "0 auto 2.75rem" }}>
+        <p data-strix-fade-up style={{ fontSize: "1.1rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.75, marginBottom: "2.75rem", maxWidth: 480, margin: "0 auto 2.75rem" }}>
           Join 500+ businesses across India using StrixMind to generate more leads, close more deals, and grow without limits.
         </p>
 

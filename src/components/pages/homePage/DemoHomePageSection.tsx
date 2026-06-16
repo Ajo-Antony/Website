@@ -25,7 +25,7 @@ export default function DemoHomePageSection() {
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.07)", border: "1px solid rgba(0,99,229,0.14)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             AI Platform
           </div>
-          <h2 style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.9rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.1rem" }}>
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(1.9rem, 3.5vw, 2.9rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "#0F172A", lineHeight: 1.1, marginBottom: "1.1rem" }}>
             Watch your business<br />run on autopilot.
           </h2>
           <p style={{ fontSize: "1rem", color: "#64748B", lineHeight: 1.8, marginBottom: "2rem" }}>
