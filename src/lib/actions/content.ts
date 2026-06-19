@@ -5,6 +5,51 @@ import { createClient } from "@/lib/supabase/server";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import type { ContentValue } from "@/lib/cms/types";
 
+/**
+ * Deep-merge: DB values win over defaults.
+ * Arrays are replaced entirely — a saved `members` array fully
+ * replaces the default one. This is intentional: the admin
+ * explicitly chose those members.
+ * 
+ * IMPORTANT: we only replace with a DB array if it has at least one
+ * non-empty item. A fully-empty array (e.g. []) defers to defaults.
+ */
+function isEmptyItem(item: unknown): boolean {
+  if (typeof item !== "object" || item === null) return !item;
+  return Object.values(item as Record<string, unknown>).every(
+    (v) => v === "" || v === null || v === undefined || (Array.isArray(v) && v.length === 0)
+  );
+}
+
+function mergeContent(fallback: ContentValue, saved: ContentValue): ContentValue {
+  if (typeof saved !== "object" || saved === null || Array.isArray(saved)) return saved ?? fallback;
+  if (typeof fallback !== "object" || fallback === null || Array.isArray(fallback)) return saved;
+
+  const result: Record<string, unknown> = { ...(fallback as Record<string, unknown>) };
+  for (const key of Object.keys(saved as Record<string, unknown>)) {
+    const savedVal = (saved as Record<string, unknown>)[key];
+    const fallbackVal = (fallback as Record<string, unknown>)[key];
+
+    if (Array.isArray(savedVal)) {
+      // Only use the saved array if it has at least one non-empty item
+      const nonEmpty = savedVal.filter((item) => !isEmptyItem(item));
+      result[key] = nonEmpty.length > 0 ? savedVal : (fallbackVal ?? savedVal);
+    } else if (
+      savedVal !== null &&
+      typeof savedVal === "object" &&
+      typeof fallbackVal === "object" &&
+      fallbackVal !== null &&
+      !Array.isArray(fallbackVal)
+    ) {
+      result[key] = mergeContent(fallbackVal as ContentValue, savedVal as ContentValue);
+    } else {
+      // For scalar fields: use saved value if non-empty, else keep fallback
+      result[key] = (savedVal !== "" && savedVal !== null && savedVal !== undefined) ? savedVal : (fallbackVal ?? savedVal);
+    }
+  }
+  return result as ContentValue;
+}
+
 /** Reads one section's content, falling back to the built-in default if the
  *  row doesn't exist yet (e.g. fresh database) or Supabase is unreachable. */
 export async function getContent(key: string): Promise<ContentValue> {
@@ -12,7 +57,7 @@ export async function getContent(key: string): Promise<ContentValue> {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("site_content").select("value").eq("key", key).maybeSingle();
-    if (data?.value) return { ...fallback, ...(data.value as ContentValue) };
+    if (data?.value) return mergeContent(fallback, data.value as ContentValue);
   } catch {
     // Network/config issue — fall through to defaults so the site still renders.
   }
@@ -27,7 +72,7 @@ export async function getContentMany(keys: string[]): Promise<Record<string, Con
     const supabase = await createClient();
     const { data } = await supabase.from("site_content").select("key, value").in("key", keys);
     for (const row of data ?? []) {
-      result[row.key] = { ...(result[row.key] ?? {}), ...(row.value as ContentValue) };
+      result[row.key] = mergeContent(result[row.key] ?? {}, row.value as ContentValue);
     }
   } catch {
     // fall back to defaults already populated above

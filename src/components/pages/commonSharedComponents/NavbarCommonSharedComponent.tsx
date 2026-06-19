@@ -1,3 +1,6 @@
+/**
+ * src/components/pages/commonSharedComponents/NavbarCommonSharedComponent.tsx
+ */
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -6,15 +9,31 @@ import { StrixmindIcon } from "@/components/ui/StrixmindLogo";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 type NavLink = { label: string; href: string };
-
 interface NavbarProps {
   links?: NavLink[];
   signInLabel?: string;
   ctaLabel?: string;
   ctaHref?: string;
 }
-
 const DEFAULTS = CONTENT_DEFAULTS["global.nav"] as { links: NavLink[]; signInLabel: string; ctaLabel: string; ctaHref: string };
+
+function IconMenu({ size = 20, color = "currentColor" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="3" y1="6"  x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+function IconClose({ size = 20, color = "currentColor" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="18" y1="6"  x2="6"  y2="18" />
+      <line x1="6"  y1="6"  x2="18" y2="18" />
+    </svg>
+  );
+}
 
 export default function NavbarCommonSharedComponent({
   links = DEFAULTS.links,
@@ -34,9 +53,6 @@ export default function NavbarCommonSharedComponent({
 
   useEffect(() => setOpen(false), [pathname]);
 
-  // The homepage renders its own embedded nav inside the Hero section
-  // (same data-strix-nav contract) so the GSAP scroll-compress hook only
-  // ever finds one navbar per page.
   if (pathname === "/") return null;
 
   return (
@@ -68,16 +84,10 @@ export default function NavbarCommonSharedComponent({
         </ul>
 
         <div className="hidden lg:flex items-center gap-3">
-          <Link
-            href="/#contact"
-            className="text-sm font-semibold px-5 py-2 rounded-full border border-accent/30 text-accent hover:bg-accent/8 transition-colors no-underline"
-          >
+          <Link href="/#contact" className="text-sm font-semibold px-5 py-2 rounded-full border border-accent/30 text-accent hover:bg-accent/8 transition-colors no-underline">
             {signInLabel}
           </Link>
-          <Link
-            href={ctaHref}
-            className="text-sm font-bold px-6 py-2.5 rounded-full bg-gradient-to-br from-accent to-accent-2 text-white shadow-[0_8px_24px_rgba(108,99,255,0.32)] hover:shadow-[0_10px_32px_rgba(108,99,255,0.45)] hover:-translate-y-0.5 transition-all no-underline"
-          >
+          <Link href={ctaHref} className="text-sm font-bold px-6 py-2.5 rounded-full bg-gradient-to-br from-accent to-accent-2 text-white shadow-[0_8px_24px_rgba(108,99,255,0.32)] hover:shadow-[0_10px_32px_rgba(108,99,255,0.45)] hover:-translate-y-0.5 transition-all no-underline">
             {ctaLabel}
           </Link>
         </div>
@@ -87,7 +97,7 @@ export default function NavbarCommonSharedComponent({
           aria-label="Toggle menu"
           className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-line text-ink"
         >
-          {open ? "✕" : "☰"}
+          {open ? <IconClose size={18} color="#1a1333" /> : <IconMenu size={18} color="#1a1333" />}
         </button>
       </div>
 

@@ -48,10 +48,11 @@ export default function FaqHomePageSection({
                     background: open === i ? "#6c63ff" : "#F1EFFE",
                     border: "1px solid #E5E0FA",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "0.7rem", color: open === i ? "#fff" : "#6c63ff",
                     transform: open === i ? "rotate(180deg)" : "none",
                     transition: "all 0.3s ease", flexShrink: 0,
-                  }}>▼</span>
+                  }}>
+                    <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={open === i ? "#fff" : "#6c63ff"} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
+                  </span>
                 </button>
 
                 <div style={{

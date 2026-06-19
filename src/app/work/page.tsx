@@ -1,9 +1,52 @@
+/**
+ * src/app/work/page.tsx
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   Public "Work Hub" page — the central landing for StrixMind's
+ *   public-facing portfolio content.
+ *
+ * ROUTE:      /work
+ * LAYOUT:     src/app/work/layout.tsx  (adds work-scoped CSS vars)
+ *
+ * SECTIONS:
+ *   1. Hero           — headline, badge, two CTAs
+ *   2. Three hubs     — Projects / Blog / Gallery navigation cards
+ *   3. Featured projects — up to 3 featured, from Supabase
+ *   4. Latest blog    — up to 3 recent published posts
+ *   5. Gallery preview— up to 6 recent gallery images
+ *   6. CTA banner     — gradient call-to-action
+ *
+ * DATA:
+ *   Supabase real-time fetch (revalidate: 0) + CMS via getContent("work.hub")
+ *   Types: src/lib/types/content.ts  (Project, BlogPost, GalleryImage)
+ *
+ * ICONS (replaces emoji in the three-hub section):
+ *   💼 Projects → IconBriefcase
+ *   📝 Blog     → IconEdit
+ *   🖼️ Gallery  → IconGallery
+ * ─────────────────────────────────────────────────────────────
+ */
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Project, BlogPost, GalleryImage } from "@/lib/types/content";
 import { getContent } from "@/lib/actions/content";
+import { IconBriefcase, IconEdit, IconGallery } from "@/components/ui/SvgIcons";
+import type { ElementType } from "react";
 
 export const revalidate = 0;
+
+interface HubItem {
+  href: string;
+  Icon: ElementType<{ size?: number; color?: string }>;
+  title: string;
+  desc: string;
+}
+
+const HUB_ITEMS: HubItem[] = [
+  { href: "/work/projects", Icon: IconBriefcase, title: "Projects", desc: "Client case studies — the problem, the build, the outcome." },
+  { href: "/work/blog",     Icon: IconEdit,      title: "Blog",     desc: "Notes on building, shipping, and growing StrixMind." },
+  { href: "/work/gallery",  Icon: IconGallery,   title: "Gallery",  desc: "Snapshots from behind the scenes and finished work." },
+];
 
 export default async function WorkHubPage() {
   const supabase = await createClient();
@@ -16,8 +59,8 @@ export default async function WorkHubPage() {
   ]);
 
   const featuredProjects = (projects ?? []) as Project[];
-  const latestPosts = (posts ?? []) as BlogPost[];
-  const galleryPreview = (images ?? []) as GalleryImage[];
+  const latestPosts      = (posts ?? [])    as BlogPost[];
+  const galleryPreview   = (images ?? [])   as GalleryImage[];
 
   return (
     <>
@@ -45,20 +88,22 @@ export default async function WorkHubPage() {
         </div>
       </section>
 
-      {/* Three hubs */}
+      {/* Three hubs — SVG icons replace emojis */}
       <section className="px-6 py-20 bg-work-gray">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            { href: "/work/projects", icon: "💼", title: "Projects", desc: "Client case studies — the problem, the build, the outcome." },
-            { href: "/work/blog", icon: "📝", title: "Blog", desc: "Notes on building, shipping, and growing StrixMind." },
-            { href: "/work/gallery", icon: "🖼️", title: "Gallery", desc: "Snapshots from behind the scenes and finished work." },
-          ].map((item) => (
+          {HUB_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="bg-white rounded-3xl p-8 border border-work-line hover:border-accent/40 hover:-translate-y-1 transition-all duration-200"
+              className="bg-white rounded-3xl p-8 border border-work-line hover:border-accent/40 hover:-translate-y-1 transition-all duration-200 group"
             >
-              <div className="text-3xl mb-4">{item.icon}</div>
+              {/* Icon container — subtle hover fill animation */}
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: "rgba(108,99,255,0.07)", transition: "background 0.3s, transform 0.3s" }}
+              >
+                <item.Icon size={22} color="#6c63ff" />
+              </div>
               <h3 className="text-xl font-bold text-work-dark mb-2">{item.title}</h3>
               <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               <div className="mt-5 text-sm font-bold text-accent flex items-center gap-1.5">

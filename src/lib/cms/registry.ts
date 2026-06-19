@@ -1,3 +1,35 @@
+/*
+ * src/lib/cms/registry.ts
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   The CMS content registry — the single source of truth for
+ *   all editable site content. Defines defaults AND field schemas
+ *   for every content key.
+ *
+ * HOW IT WORKS:
+ *   1. CONTENT_DEFAULTS   — plain JS objects, used as fallbacks when
+ *                           Supabase has no stored value for a key.
+ *   2. CONTENT_SCHEMAS    — field definitions used by ContentForm.tsx
+ *                           to render the right editor UI per field type.
+ *   3. getContent(key)    — server action reads Supabase first, falls
+ *                           back to CONTENT_DEFAULTS[key] if missing.
+ *
+ * CMS KEYS REGISTERED:
+ *   global.nav        — Navbar links, CTA label/href, sign-in label
+ *   global.footer     — Footer tagline, columns, socials, bottom text
+ *   home.hero         — Hero badge, headline, subheadline, CTAs
+ *   home.services     — Services eyebrow, heading, 6× service items
+ *   home.pricing      — Pricing eyebrow, heading, 3 plan objects
+ *   work.hub          — Work hub badge, headings, CTAs, bottom CTA
+ *   (+ more — see file)
+ *
+ * USED BY:
+ *   src/lib/actions/content.ts   — getContent / upsertContent
+ *   src/components/admin/ContentForm.tsx  — admin editor
+ *   All section components that accept CMS-driven props
+ * ─────────────────────────────────────────────────────────────
+ */
+
 import type { SectionSchema, FieldDef, FieldType, ContentValue } from "./types";
 
 function f(key: string, label: string, type: FieldType = "text", extra: Partial<FieldDef> = {}): FieldDef {
@@ -478,10 +510,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     eyebrow: "Advantages",
     heading: "Built different,\nby design.",
     items: [
-      { icon: "🔀", title: "Provider-agnostic AI routing", desc: "Route tasks to GPT-4o, Gemini, or Claude based on cost and latency. No vendor lock-in, ever." },
-      { icon: "⚡", title: "Sub-second response latency", desc: "Edge-deployed agents, smart caching, and optimised token management keep every interaction instant." },
-      { icon: "🛡️", title: "Enterprise-grade security", desc: "SOC 2 aligned, end-to-end encrypted data pipelines, and role-based access control." },
-      { icon: "📚", title: "Real-time knowledge base", desc: "Upload docs and FAQs. Agents reference your knowledge instantly — always accurate, always on-brand." },
+      { icon: "shuffle", title: "Provider-agnostic AI routing", desc: "Route tasks to GPT-4o, Gemini, or Claude based on cost and latency. No vendor lock-in, ever." },
+      { icon: "bolt", title: "Sub-second response latency", desc: "Edge-deployed agents, smart caching, and optimised token management keep every interaction instant." },
+      { icon: "shield", title: "Enterprise-grade security", desc: "SOC 2 aligned, end-to-end encrypted data pipelines, and role-based access control." },
+      { icon: "book", title: "Real-time knowledge base", desc: "Upload docs and FAQs. Agents reference your knowledge instantly — always accurate, always on-brand." },
     ],
     previewLabel: "Live Platform Preview",
     stats: [
@@ -502,10 +534,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     heading: "Up and running in three minutes flat.",
     subheading: "No engineers. No complex setup. Just connect, configure, and start growing today.",
     steps: [
-      { icon: "🔌", title: "Connect your stack", desc: "Link CRM, WhatsApp, email, calendar, and 500+ tools in seconds using one-click OAuth connectors — no developer needed." },
-      { icon: "🧩", title: "Configure AI agents", desc: "Pick from ready-made templates — sales bot, support agent, lead qualifier — or build fully custom workflows in the visual builder." },
-      { icon: "🚀", title: "Launch campaigns", desc: "Set your target audience and growth goal. StrixMind writes copy, schedules sends, and A/B tests automatically." },
-      { icon: "📈", title: "Watch it compound", desc: "Every interaction trains agents to be smarter. Revenue compounds, costs fall, and your team focuses on what only humans can do." },
+      { icon: "plug", title: "Connect your stack", desc: "Link CRM, WhatsApp, email, calendar, and 500+ tools in seconds using one-click OAuth connectors — no developer needed." },
+      { icon: "puzzle", title: "Configure AI agents", desc: "Pick from ready-made templates — sales bot, support agent, lead qualifier — or build fully custom workflows in the visual builder." },
+      { icon: "rocket", title: "Launch campaigns", desc: "Set your target audience and growth goal. StrixMind writes copy, schedules sends, and A/B tests automatically." },
+      { icon: "chart-up", title: "Watch it compound", desc: "Every interaction trains agents to be smarter. Revenue compounds, costs fall, and your team focuses on what only humans can do." },
     ],
   },
   "home.mission": {
@@ -601,10 +633,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     heading: "Let's talk about\nyour growth.",
     subheading: "Ready to automate your business?",
     infoItems: [
-      { icon: "📧", label: "Email us", value: "hello@strixmind.ai" },
-      { icon: "📍", label: "Our office", value: "Kerala, India" },
-      { icon: "⏱️", label: "Response time", value: "Within 2 business hours" },
-      { icon: "🕐", label: "Office hours", value: "Mon – Fri, 9 AM – 6 PM IST" },
+      { icon: "mail", label: "Email us", value: "hello@strixmind.ai" },
+      { icon: "map-pin", label: "Our office", value: "Kerala, India" },
+      { icon: "clock", label: "Response time", value: "Within 2 business hours" },
+      { icon: "clock", label: "Office hours", value: "Mon – Fri, 9 AM – 6 PM IST" },
     ],
   },
 
@@ -630,10 +662,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     eyebrow: "Values",
     heading: "What we believe.",
     items: [
-      { icon: "🎯", title: "Radical simplicity", desc: "Complex AI made simple. If your team needs a manual to use a feature, we haven't done our job." },
-      { icon: "⚡", title: "Speed is a feature", desc: "Every decision — design, infra, AI routing — is made to remove milliseconds and friction from your workflow." },
-      { icon: "🔒", title: "Privacy by default", desc: "Your data never trains our models. What's yours stays yours, encrypted end-to-end, always." },
-      { icon: "🌱", title: "Growth over perfection", desc: "We ship, learn, and improve. Your feedback directly shapes our next release." },
+      { icon: "target", title: "Radical simplicity", desc: "Complex AI made simple. If your team needs a manual to use a feature, we haven't done our job." },
+      { icon: "bolt", title: "Speed is a feature", desc: "Every decision — design, infra, AI routing — is made to remove milliseconds and friction from your workflow." },
+      { icon: "lock", title: "Privacy by default", desc: "Your data never trains our models. What's yours stays yours, encrypted end-to-end, always." },
+      { icon: "sprout", title: "Growth over perfection", desc: "We ship, learn, and improve. Your feedback directly shapes our next release." },
     ],
   },
   "about.team": {
@@ -655,12 +687,12 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   },
   "services.list": {
     items: [
-      { icon: "🤖", title: "AI Agents", desc: "Deploy intelligent agents for sales, support, HR, and legal. Each agent learns your business, handles queries 24/7, and escalates complex cases to your team.", image: "" },
-      { icon: "⚡", title: "Workflow Automation", desc: "Build powerful automations with our visual drag-and-drop builder. Connect 500+ integrations and custom nodes to create any business flow imaginable.", image: "" },
-      { icon: "👥", title: "Intelligent CRM", desc: "A CRM that updates itself. AI enriches contacts, scores pipeline deals, and surfaces the highest-value actions for your team every single day.", image: "" },
-      { icon: "💬", title: "WhatsApp Automation", desc: "Connect WhatsApp Business API and deploy intelligent bots for bookings, follow-ups, support, and broadcast campaigns — all in one place.", image: "" },
-      { icon: "📊", title: "Revenue Analytics", desc: "Unified dashboards combining pipeline, campaign, and agent performance data with AI-generated insights and 90-day revenue forecasts.", image: "" },
-      { icon: "🚀", title: "Campaign Outreach", desc: "Multi-channel campaigns across email, SMS, and social — written, A/B tested, and continuously optimised by AI to maximise every conversion.", image: "" },
+      { icon: "robot", title: "AI Agents", desc: "Deploy intelligent agents for sales, support, HR, and legal. Each agent learns your business, handles queries 24/7, and escalates complex cases to your team.", image: "" },
+      { icon: "bolt", title: "Workflow Automation", desc: "Build powerful automations with our visual drag-and-drop builder. Connect 500+ integrations and custom nodes to create any business flow imaginable.", image: "" },
+      { icon: "users", title: "Intelligent CRM", desc: "A CRM that updates itself. AI enriches contacts, scores pipeline deals, and surfaces the highest-value actions for your team every single day.", image: "" },
+      { icon: "chat", title: "WhatsApp Automation", desc: "Connect WhatsApp Business API and deploy intelligent bots for bookings, follow-ups, support, and broadcast campaigns — all in one place.", image: "" },
+      { icon: "chart", title: "Revenue Analytics", desc: "Unified dashboards combining pipeline, campaign, and agent performance data with AI-generated insights and 90-day revenue forecasts.", image: "" },
+      { icon: "rocket", title: "Campaign Outreach", desc: "Multi-channel campaigns across email, SMS, and social — written, A/B tested, and continuously optimised by AI to maximise every conversion.", image: "" },
     ],
   },
   "services.cta": {
@@ -680,10 +712,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   },
   "contact.info": {
     items: [
-      { icon: "📧", label: "Email", value: "hello@strixmind.ai" },
-      { icon: "📍", label: "Location", value: "Kerala, India" },
-      { icon: "⏰", label: "Response time", value: "Within 2 business hours" },
-      { icon: "📞", label: "Office hours", value: "Mon–Fri, 9 AM – 6 PM IST" },
+      { icon: "mail", label: "Email", value: "hello@strixmind.ai" },
+      { icon: "map-pin", label: "Location", value: "Kerala, India" },
+      { icon: "clock", label: "Response time", value: "Within 2 business hours" },
+      { icon: "phone", label: "Office hours", value: "Mon–Fri, 9 AM – 6 PM IST" },
     ],
   },
 

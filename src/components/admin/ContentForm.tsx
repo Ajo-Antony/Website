@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { FieldDef, SectionSchema, ContentValue } from "@/lib/cms/types";
 import { updateContent, resetContent, uploadContentImage } from "@/lib/actions/content";
+import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 const inputCls =
   "w-full px-3.5 py-2.5 border border-line rounded-xl text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors";
@@ -46,14 +47,20 @@ function BooleanField({ field, value, onChange }: { field: FieldDef; value: bool
 function ImageField({ field, value, onChange }: { field: FieldDef; value: string; onChange: (v: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleFile(file: File) {
     setBusy(true);
+    setError(null);
     const fd = new FormData();
     fd.set("file", file);
     const res = await uploadContentImage(fd);
     setBusy(false);
-    if (res.url) onChange(res.url);
+    if (res.url) {
+      onChange(res.url);
+    } else if (res.error) {
+      setError(res.error);
+    }
   }
 
   return (
@@ -67,7 +74,7 @@ function ImageField({ field, value, onChange }: { field: FieldDef; value: string
           <div className="w-16 h-16 rounded-lg border border-dashed border-line shrink-0 flex items-center justify-center text-ink-dim text-xs">none</div>
         )}
         <div className="flex-1 min-w-0">
-          <input className={inputCls + " mb-2"} value={value ?? ""} placeholder="Image URL" onChange={(e) => onChange(e.target.value)} />
+          <input className={inputCls + " mb-2"} value={value ?? ""} placeholder="Image URL or upload below" onChange={(e) => onChange(e.target.value)} />
           <input
             ref={fileRef}
             type="file"
@@ -75,14 +82,26 @@ function ImageField({ field, value, onChange }: { field: FieldDef; value: string
             className="hidden"
             onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
           />
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={busy}
-            className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-ink-soft hover:bg-surface-alt transition-colors disabled:opacity-50"
-          >
-            {busy ? "Uploading…" : "Upload image"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={busy}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-ink-soft hover:bg-surface-alt transition-colors disabled:opacity-50"
+            >
+              {busy ? "Uploading…" : "Upload image"}
+            </button>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-line text-rose hover:bg-rose/10 transition-colors"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          {error && <p className="text-xs text-rose mt-1">{error}</p>}
         </div>
       </div>
     </div>
@@ -110,10 +129,11 @@ function StringListField({ field, value, onChange }: { field: FieldDef; value: s
             <button
               type="button"
               onClick={() => onChange(items.filter((_, idx) => idx !== i))}
-              className="px-2.5 rounded-lg border border-line text-ink-dim hover:text-rose hover:border-rose/40 transition-colors text-sm"
+              className="px-2.5 rounded-lg border border-line text-ink-dim hover:text-rose hover:border-rose/40 transition-colors flex items-center justify-center"
+              style={{ minWidth: 36 }}
               aria-label="Remove"
             >
-              ✕
+              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
             </button>
           </div>
         ))}
@@ -215,9 +235,46 @@ function FieldEditor({ field, value, onChange }: { field: FieldDef; value: unkno
   }
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────
+/**
+ * Ensure the initialValue is properly seeded with defaults.
+ * If the DB returned an empty members array (or no members key at all),
+ * we fall back to the defaults so the admin form always shows real data.
+ */
+function seedWithDefaults(schemaKey: string, value: ContentValue): ContentValue {
+  const defaults = (CONTENT_DEFAULTS[schemaKey] ?? {}) as Record<string, unknown>;
+  const seeded = { ...value } as Record<string, unknown>;
+
+  for (const [k, defVal] of Object.entries(defaults)) {
+    if (Array.isArray(defVal)) {
+      const current = seeded[k];
+      if (!Array.isArray(current) || current.length === 0) {
+        // No saved array or empty array → use defaults
+        seeded[k] = defVal;
+      } else {
+        // Saved array exists — but check if ALL items are blank
+        const allBlank = (current as unknown[]).every(
+          (item) =>
+            typeof item === "object" &&
+            item !== null &&
+            Object.values(item as Record<string, unknown>).every(
+              (v) => v === "" || v === null || v === undefined
+            )
+        );
+        if (allBlank) seeded[k] = defVal;
+      }
+    } else if (seeded[k] === undefined) {
+      seeded[k] = defVal;
+    }
+  }
+
+  return seeded as ContentValue;
+}
+
 // ── Top-level form ───────────────────────────────────────────────────────
 export default function ContentForm({ schema, initialValue }: { schema: SectionSchema; initialValue: ContentValue }) {
-  const [value, setValue] = useState<ContentValue>(initialValue);
+  // Seed with defaults so the form never shows blank data for existing defaults
+  const [value, setValue] = useState<ContentValue>(() => seedWithDefaults(schema.key, initialValue));
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const router = useRouter();
@@ -243,6 +300,8 @@ export default function ContentForm({ schema, initialValue }: { schema: SectionS
     setSaving(true);
     await resetContent(schema.key);
     setSaving(false);
+    // Re-seed from defaults after reset
+    setValue(seedWithDefaults(schema.key, (CONTENT_DEFAULTS[schema.key] ?? {}) as ContentValue));
     router.refresh();
   }
 

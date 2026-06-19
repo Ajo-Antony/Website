@@ -1,10 +1,17 @@
 "use client";
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
+import { IconMail, IconMapPin, IconClock, IconPhone, IconCheckCircle } from "@/components/ui/SvgIcons";
+import type { ElementType } from "react";
 
 interface InfoItem { icon: string; label: string; value: string }
 interface ContactContentProps { items?: InfoItem[] }
 const D = CONTENT_DEFAULTS["contact.info"] as Required<ContactContentProps>;
+
+// SVG icons indexed to match the original emoji order: 📧 📍 ⏰ 📞
+const INFO_ICONS: ElementType<{ size?: number; color?: string }>[] = [
+  IconMail, IconMapPin, IconClock, IconPhone,
+];
 
 export default function ContactContentPageSection({ items = D.items }: ContactContentProps) {
   const [form, setForm] = useState({ name:"", email:"", company:"", message:"" });
@@ -14,18 +21,23 @@ export default function ContactContentPageSection({ items = D.items }: ContactCo
     <section style={{ padding:"4rem 0 8rem", background:"#fff", borderTop:"1px solid #E5E0FA" }}>
       <div style={{ maxWidth:1280, margin:"0 auto", padding:"0 2rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"4rem", alignItems:"start" }}>
         <div style={{ display:"flex", flexDirection:"column" as const, gap:"1.25rem" }}>
-          {items.map(item=>(
+          {items.map((item, i) => {
+            const Icon = INFO_ICONS[i % INFO_ICONS.length];
+            return (
             <div key={item.label} style={{ display:"flex", gap:"1.25rem", padding:"1.25rem", background:"#F8F7FF", borderRadius:18, border:"1px solid #E5E0FA" }}>
-              <div style={{ width:44, height:44, minWidth:44, borderRadius:12, background:"rgba(108,99,255,0.10)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"1.2rem" }}>{item.icon}</div>
+              <div style={{ width:44, height:44, minWidth:44, borderRadius:12, background:"rgba(108,99,255,0.10)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <Icon size={20} color="#6c63ff" />
+              </div>
               <div><div style={{ fontSize:"0.72rem", fontWeight:700, letterSpacing:"0.1em", textTransform:"uppercase" as const, color:"#9b92c0", marginBottom:"0.3rem" }}>{item.label}</div><div style={{ fontSize:"0.95rem", fontWeight:600, color:"#1a1333" }}>{item.value}</div></div>
             </div>
-          ))}
+            );
+          })}
         </div>
         <div style={{ background:"#fff", borderRadius:28, padding:"2.5rem", border:"1px solid #E5E0FA", boxShadow:"0 12px 48px rgba(108,99,255,0.10)", position:"relative", overflow:"hidden" }}>
           <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,#6c63ff,#a78bfa)" }} />
           {sent ? (
             <div style={{ textAlign:"center", padding:"3rem 0" }}>
-              <div style={{ fontSize:"3rem", marginBottom:"1rem" }}>✅</div>
+              <div style={{ marginBottom:"1rem", display:"flex", justifyContent:"center" }}><IconCheckCircle size={48} color="#22c55e" strokeWidth={1.5} /></div>
               <div style={{ fontSize:"1.25rem", fontWeight:800, color:"#1a1333" }}>Message sent!</div>
               <p style={{ color:"#5b5478", marginTop:"0.5rem" }}>We'll be in touch within 2 hours.</p>
             </div>

@@ -1,87 +1,39 @@
-# StrixMind — Next.js Website
+# Section Designer — Editor Redesign
 
-## Folder Structure
+Drop-in replacement files. Copy these into your project at the matching paths
+(overwriting the originals), commit, and redeploy.
 
-```
-strixmind/
-├── public/
-│   └── images/
-│       ├── hero/         ← Drop hero/banner images here
-│       ├── team/         ← Team member photos here
-│       ├── services/     ← Service section images here
-│       ├── gallery/      ← Gallery/showcase images here
-│       └── clients/      ← Client logos here
-│
-├── src/
-│   ├── app/              ← Next.js App Router pages
-│   │   ├── page.tsx      ← Home page
-│   │   ├── layout.tsx    ← Root layout
-│   │   ├── about/
-│   │   ├── services/
-│   │   ├── contact/
-│   │   └── blog/
-│   │
-│   ├── components/
-│   │   ├── commonSharedComponents/
-│   │   │   ├── NavbarCommonSharedComponent.tsx
-│   │   │   └── FooterCommonSharedComponent.tsx
-│   │   └── pages/
-│   │       ├── homePage/
-│   │       ├── aboutPage/
-│   │       ├── servicesPage/
-│   │       └── contactPage/
-│   │
-│   ├── lib/              ← Utility functions, API helpers
-│   ├── hooks/            ← Custom React hooks
-│   ├── types/            ← TypeScript interfaces
-│   ├── styles/           ← Global CSS / design tokens
-│   └── supabase/         ← Supabase client config
-```
+## Files in this package
 
-## Adding Images
+- `src/components/pages/adminPage/SectionDesigner/icons.tsx` — NEW
+  Dedicated stroke-based SVG icon set for the editor (section categories,
+  panel tabs, and UI actions). Nothing here is an emoji.
 
-Simply drop image files into the relevant folder under `public/images/`:
-- Hero backgrounds → `public/images/hero/`
-- Team photos → `public/images/team/`
-- Then reference them as `/images/team/your-photo.jpg`
+- `src/components/pages/adminPage/SectionDesigner/SectionDesignerClient.tsx` — MODIFIED
+  - Page switcher (Home/About/Services) is now a real segmented control with
+    icons instead of emoji-labelled buttons.
+  - Each section row gets a tinted icon badge matched to its category
+    (hero, services, FAQ, etc.) instead of a raw emoji glyph.
+  - "Styled" / "Hidden" badges, the Design button, the visibility toggle,
+    and the toast notifications all use SVG icons now.
+  - Legend at the bottom is a single tidy status bar.
 
-## Getting Started
+- `src/components/pages/adminPage/SectionDesigner/DesignPanel.tsx` — MODIFIED
+  - The six section tabs (Background, Typography, Layout, Marquee, Slider,
+    Images) are now a compact icon rail, Figma/Canva-style, with the active
+    tab's name shown as a heading above the panel content.
+  - Alignment controls, marquee direction, upload buttons, close/save/reset
+    buttons — all emoji replaced with icons, including a proper spinner for
+    loading states.
 
-```bash
-npm install
-npm run dev
-```
+- `src/components/pages/adminPage/AdminShell.tsx` — MODIFIED
+  Sidebar nav: the Section Designer item used a 🎨 emoji while every other
+  item used an SVG icon — that's fixed, plus "↗ View site" now uses a real
+  external-link icon.
 
-## Admin Dashboard & "Work" Section (Gallery / Blog / Projects)
+- `src/components/ui/SvgIcons.tsx` — MODIFIED (additive only)
+  Added `IconPalette` and `IconExternalLink` so AdminShell can be fully
+  emoji-free. Nothing existing was changed or removed.
 
-There's now a real, login-protected admin dashboard at `/admin` for managing
-the Gallery, Blog, and Projects shown publicly at `/work`. It's backed by
-Supabase (database + auth + file storage).
-
-### 1. Connect Supabase
-
-1. Create a project at [supabase.com](https://supabase.com) if you don't have one.
-2. Copy `.env.local.example` to `.env.local` and fill in your project's URL and anon key (Project Settings → API).
-3. Open the Supabase SQL Editor, paste the contents of `supabase/schema.sql`, and run it. This creates the `gallery_images`, `blog_posts`, and `projects` tables, sets up Row Level Security, and creates a public `media` storage bucket for uploaded images.
-
-### 2. Create your admin login
-
-This app has **no public sign-up form** — that's intentional, since anyone who
-can authenticate gets full write access to your content. Create your one
-admin account manually:
-
-1. Supabase Dashboard → Authentication → Users → **Add user**.
-2. Enter your email and a password. Confirm the email (or disable email confirmation in Auth settings) so you can log in immediately.
-3. Go to **Authentication → Settings** and turn **off** "Enable email signups" so no one else can create an account.
-
-### 3. Log in
-
-Visit `/admin/login` with the email/password you just created. From there
-you can:
-- **Gallery** — upload images with an optional caption, hide/show or delete them.
-- **Blog** — write posts in Markdown, set a cover image, publish/unpublish.
-- **Projects** — add case studies (client, category, year, status, tags, results, cover image), mark as Featured to show on the `/work` homepage.
-
-Everything you publish shows up live at `/work`, `/work/gallery`, `/work/blog`,
-and `/work/projects` — no redeploy needed.
-
+No logic, data shapes, or server actions were touched — this is a visual-only
+pass. Verified with `tsc --noEmit` (zero errors).

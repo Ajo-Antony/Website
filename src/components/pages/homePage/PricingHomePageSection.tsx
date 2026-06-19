@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 import Link from "next/link";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
@@ -63,7 +63,7 @@ export default function PricingHomePageSection({
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" as const, gap: "0.75rem", marginBottom: "2.25rem", padding: 0 }}>
                 {plan.features.map(feat => (
                   <li key={feat} style={{ display: "flex", alignItems: "flex-start", gap: "0.65rem", fontSize: "0.875rem", color: "#3a3458" }}>
-                    <span style={{ color: "#6c63ff", fontWeight: 700, fontSize: "0.9rem", flexShrink: 0, marginTop: "0.05rem" }}>✓</span>
+                    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="#6c63ff" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "0.1rem" }} aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
                     {feat}
                   </li>
                 ))}
