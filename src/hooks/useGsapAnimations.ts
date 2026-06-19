@@ -287,7 +287,7 @@ export function useGsapAnimations() {
               const dist = Math.sqrt(dx * dx + dy * dy);
               if (dist < 120) {
                 ctx.beginPath();
-                ctx.strokeStyle = `rgba(0,99,229,${(1 - dist / 120) * 0.25})`;
+                ctx.strokeStyle = `rgba(108,99,255,${(1 - dist / 120) * 0.22})`;
                 ctx.lineWidth = 1;
                 ctx.moveTo(NODES[i].x, NODES[i].y);
                 ctx.lineTo(NODES[j].x, NODES[j].y);
@@ -299,7 +299,7 @@ export function useGsapAnimations() {
           NODES.forEach(n => {
             ctx.beginPath();
             ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(0,99,229,0.5)";
+            ctx.fillStyle = "rgba(108,99,255,0.45)";
             ctx.fill();
             // Update pos
             n.x += n.vx; n.y += n.vy;

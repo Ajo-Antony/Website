@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import NavbarCommonSharedComponent from "@/components/pages/commonSharedComponents/NavbarCommonSharedComponent";
 import FooterCommonSharedComponent from "@/components/pages/commonSharedComponents/FooterCommonSharedComponent";
 import GsapScripts from "@/components/ui/GsapScripts";
 import AnimationBoot from "@/components/ui/AnimationBoot";
+import { getContentMany } from "@/lib/actions/content";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -25,28 +33,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const content = await getContentMany(["global.nav", "global.footer"]);
+
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <GsapScripts />
       </head>
-      <body style={{ background: "#051A1C", overflowX: "hidden" }}>
+      <body>
         {/* Reading progress bar */}
         <div
           id="strix-progress-bar"
           style={{
             position: "fixed", top: 0, left: 0, right: 0, height: 2, zIndex: 9999,
-            background: "linear-gradient(90deg, #0063E5, #6aabff)",
+            background: "linear-gradient(90deg, #6c63ff, #a78bfa)",
             transformOrigin: "left center",
             transform: "scaleX(0)",
             pointerEvents: "none",
           }}
         />
         <AnimationBoot />
-        <NavbarCommonSharedComponent />
+        <NavbarCommonSharedComponent {...(content["global.nav"] as any)} />
         <main>{children}</main>
-        <FooterCommonSharedComponent />
+        <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
       </body>
     </html>
   );

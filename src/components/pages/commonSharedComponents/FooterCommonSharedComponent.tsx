@@ -1,94 +1,71 @@
 "use client";
 import Link from "next/link";
 import { StrixmindIcon } from "@/components/ui/StrixmindLogo";
+import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
-const LINKS = {
-  "Product": [
-    { label: "Features", href: "/#features" },
-    { label: "Platform Demo", href: "/#demo" },
-    { label: "Pricing", href: "/#pricing" },
-    { label: "Changelog", href: "/changelog" },
-    { label: "Roadmap", href: "/roadmap" },
-  ],
-  "Use Cases": [
-    { label: "WhatsApp Automation", href: "/#features" },
-    { label: "AI CRM", href: "/#features" },
-    { label: "Lead Generation", href: "/#features" },
-    { label: "Campaign Outreach", href: "/#features" },
-    { label: "Revenue Analytics", href: "/#features" },
-  ],
-  "Company": [
-    { label: "About Us", href: "/about" },
-    { label: "Brand Identity", href: "/#brand" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/#contact" },
-    { label: "Kerala, India 🇮🇳", href: "/" },
-  ],
-  "Support": [
-    { label: "Documentation", href: "/docs" },
-    { label: "FAQ", href: "/#faq" },
-    { label: "Book a Demo", href: "/booking" },
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-  ],
-};
+type LinkItem = { label: string; href: string };
+type Column = { heading: string; links: LinkItem[] };
 
-const SOCIALS = [
-  { label: "X", href: "https://x.com/strixmind" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/strixmind" },
-  { label: "GitHub", href: "https://github.com/strixmind" },
-  { label: "YouTube", href: "https://youtube.com/@strixmind" },
-];
+interface FooterProps {
+  tagline?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  statusLabel?: string;
+  columns?: Column[];
+  socials?: LinkItem[];
+  bottomText?: string;
+}
 
-export default function FooterCommonSharedComponent() {
+const DEFAULTS = CONTENT_DEFAULTS["global.footer"] as Required<FooterProps>;
+
+export default function FooterCommonSharedComponent({
+  tagline = DEFAULTS.tagline,
+  ctaLabel = DEFAULTS.ctaLabel,
+  ctaHref = DEFAULTS.ctaHref,
+  statusLabel = DEFAULTS.statusLabel,
+  columns = DEFAULTS.columns,
+  socials = DEFAULTS.socials,
+  bottomText = DEFAULTS.bottomText,
+}: FooterProps) {
   return (
-    <footer style={{ background: "#051A1C", color: "#fff", paddingTop: "5rem" }}>
-      {/* Top gradient accent */}
-      <div style={{ height: 3, background: "linear-gradient(90deg, #0063E5, #003E8F, #0063E5)" }} />
+    <footer className="relative pt-20 bg-gradient-to-b from-white to-surface-alt border-t border-line overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-accent via-accent-2 to-accent" />
 
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "4rem 2rem 0" }}>
-
-        {/* Top row */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.4fr repeat(4, 1fr)", gap: "3rem", paddingBottom: "4rem", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-
-          {/* Brand col */}
+      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 pt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)] gap-10 lg:gap-12 pb-16 border-b border-line">
+          {/* Brand column */}
           <div>
-            <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.65rem", textDecoration: "none", marginBottom: "1.5rem" }}>
-              <div style={{ width: 36, height: 36, borderRadius: 9, background: "#051A1C", border: "1px solid rgba(0,99,229,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <StrixmindIcon size={26} theme="dark" />
+            <Link href="/" className="inline-flex items-center gap-2.5 no-underline mb-5">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-accent-2 flex items-center justify-center shadow-[0_4px_16px_rgba(108,99,255,0.35)]">
+                <StrixmindIcon size={24} theme="dark" />
               </div>
-              <span style={{ fontWeight: 800, color: "#fff", letterSpacing: "-0.04em", fontSize: "1.1rem" }}>
-                strix<span style={{ color: "#0063E5" }}>mind</span>
+              <span className="font-extrabold text-ink tracking-tight text-[1.1rem]">
+                strix<span className="text-accent">mind</span>
               </span>
             </Link>
 
-            <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.4)", lineHeight: 1.85, marginBottom: "1.75rem", maxWidth: 240 }}>
-              AI-powered business automation for Indian businesses. Scale without limits.
-            </p>
+            <p className="text-sm text-ink-soft leading-[1.85] mb-6 max-w-[240px]">{tagline}</p>
 
-            {/* Status */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem", fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 6px rgba(34,197,94,0.6)", animation: "pulse 2s infinite" }} />
-              All systems operational
+            <div className="flex items-center gap-2 mb-5 text-xs text-ink-dim">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              {statusLabel}
             </div>
 
-            <Link href="/booking" style={{ display: "inline-flex", fontSize: "0.85rem", fontWeight: 700, color: "#fff", background: "#0063E5", padding: "0.65rem 1.5rem", borderRadius: 100, textDecoration: "none", boxShadow: "0 0 20px rgba(0,99,229,0.3)", transition: "all 0.3s" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "#0052c2"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "#0063E5"; }}>
-              Start Free Trial →
+            <Link
+              href={ctaHref}
+              className="inline-flex text-sm font-bold text-white bg-gradient-to-br from-accent to-accent-2 px-6 py-2.5 rounded-full no-underline shadow-[0_8px_24px_rgba(108,99,255,0.32)] hover:shadow-[0_10px_30px_rgba(108,99,255,0.45)] hover:-translate-y-0.5 transition-all"
+            >
+              {ctaLabel}
             </Link>
           </div>
 
           {/* Link columns */}
-          {Object.entries(LINKS).map(([heading, items]) => (
-            <div key={heading}>
-              <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" as const, color: "rgba(255,255,255,0.35)", marginBottom: "1.25rem" }}>{heading}</div>
-              <div style={{ display: "flex", flexDirection: "column" as const, gap: "0.7rem" }}>
-                {items.map(item => (
-                  <Link key={item.label} href={item.href}
-                    style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", textDecoration: "none", transition: "color 0.2s" }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}>
+          {columns.map((col) => (
+            <div key={col.heading}>
+              <div className="text-[0.7rem] font-bold tracking-[0.14em] uppercase text-ink-dim mb-5">{col.heading}</div>
+              <div className="flex flex-col gap-2.5">
+                {col.links.map((item) => (
+                  <Link key={item.label} href={item.href} className="text-sm text-ink-soft hover:text-accent transition-colors no-underline">
                     {item.label}
                   </Link>
                 ))}
@@ -98,16 +75,13 @@ export default function FooterCommonSharedComponent() {
         </div>
 
         {/* Bottom row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.75rem 0", flexWrap: "wrap" as const, gap: "1rem" }}>
-          <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.25)" }}>
-            © {new Date().getFullYear()} StrixMind Technologies Pvt. Ltd. · Made with ❤️ in Kerala, India
+        <div className="flex items-center justify-between flex-wrap gap-4 py-7">
+          <div className="text-[0.8rem] text-ink-dim">
+            © {new Date().getFullYear()} {bottomText}
           </div>
-          <div style={{ display: "flex", gap: "1.5rem" }}>
-            {SOCIALS.map(s => (
-              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.3)", textDecoration: "none", transition: "color 0.2s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}>
+          <div className="flex gap-6">
+            {socials.map((s) => (
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="text-[0.8rem] text-ink-dim hover:text-accent transition-colors no-underline">
                 {s.label}
               </a>
             ))}

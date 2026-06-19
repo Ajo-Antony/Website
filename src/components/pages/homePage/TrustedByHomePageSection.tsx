@@ -1,24 +1,53 @@
 "use client";
+import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
-const LOGOS = ["NovaBridge","UrbanScale","Tessera Labs","ZenithCorp","ArcVentures","PeakFlow","BrightStack","NexaGrowth"];
+interface TrustedByProps {
+  heading?: string;
+  logos?: string[];
+}
 
-export default function TrustedByHomePageSection() {
+const D = CONTENT_DEFAULTS["home.trustedBy"] as Required<TrustedByProps>;
+
+export default function TrustedByHomePageSection({ heading = D.heading, logos = D.logos }: TrustedByProps) {
+  // Duplicate the list so the marquee loops seamlessly.
+  const track = [...logos, ...logos];
+
   return (
-    <section style={{ background: "#F8FAFF", padding: "3rem 0", borderTop: "1px solid #E5E7EB", borderBottom: "1px solid #E5E7EB" }}>
+    <section style={{ background: "rgba(255,255,255,0.5)", padding: "3rem 0", borderTop: "1px solid var(--divider)", borderBottom: "1px solid var(--divider)", overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
-        <div style={{ textAlign: "center", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "#94A3B8", marginBottom: "2rem" }}>
-          Trusted by 500+ businesses across India
+        <div style={{ textAlign: "center", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "#9b92c0", marginBottom: "2rem" }}>
+          {heading}
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "3.5rem", flexWrap: "wrap" as const }}>
-          {LOGOS.map(l => (
-            <span key={l}
-              style={{ fontWeight: 800, fontSize: "1rem", color: "rgba(0,99,229,0.25)", letterSpacing: "-0.02em", transition: "color 0.2s", cursor: "default", userSelect: "none" as const }}
-              onMouseEnter={e => (e.currentTarget.style.color = "rgba(0,99,229,0.55)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(0,99,229,0.25)")}
-            >{l}</span>
+      </div>
+
+      {/* Marquee track */}
+      <div style={{ position: "relative", width: "100%", maskImage: "linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "3.5rem",
+            width: "max-content",
+            animation: "strix-marquee 28s linear infinite",
+          }}
+        >
+          {track.map((l, i) => (
+            <span
+              key={`${l}-${i}`}
+              style={{ fontWeight: 800, fontSize: "1.1rem", color: "rgba(108,99,255,0.32)", letterSpacing: "-0.02em", whiteSpace: "nowrap", userSelect: "none" as const }}
+            >
+              {l}
+            </span>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes strix-marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+      `}</style>
     </section>
   );
 }

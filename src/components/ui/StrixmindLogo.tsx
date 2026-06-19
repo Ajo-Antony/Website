@@ -12,8 +12,8 @@ interface StrixmindLogoProps {
 // Based on the branding PDF: Connected Intelligence — central node = AI intelligence,
 // surrounding nodes = data, ML, agents, digital systems
 export function StrixmindIcon({ size = 36, theme = "dark" }: { size?: number; theme?: "dark" | "light" }) {
-  const accent = "#0063E5";
-  const center = "#0063E5";
+  const accent = "#6c63ff";
+  const center = "#6c63ff";
   const nodeLight = theme === "dark" ? "#FFFFFF" : "#FFFFFF";
   const nodeDark = theme === "dark" ? "#212121" : "#212121";
   const lineColor = theme === "dark" ? "rgba(255,255,255,0.35)" : "rgba(0,62,143,0.4)";
@@ -52,8 +52,8 @@ export function StrixmindIcon({ size = 36, theme = "dark" }: { size?: number; th
 
 // The wordmark SVG — "strixmind" lowercase with custom letterforms
 export function StrixmindWordmark({ height = 22, theme = "dark" }: { height?: number; theme?: "dark" | "light" }) {
-  const color = theme === "dark" ? "#FFFFFF" : "#0F172A";
-  const accent = "#0063E5";
+  const color = theme === "dark" ? "#FFFFFF" : "#1a1333";
+  const accent = "#6c63ff";
   return (
     <span style={{
       fontFamily: "'Inter', sans-serif",
@@ -80,8 +80,8 @@ export default function StrixmindLogo({ size = 36, variant = "full", theme = "da
         width: size,
         height: size,
         borderRadius: size * 0.22,
-        background: "#051A1C",
-        border: "1px solid rgba(0,99,229,0.3)",
+        background: "linear-gradient(135deg,#6c63ff,#a78bfa)",
+        border: "none",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

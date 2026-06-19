@@ -8,12 +8,6 @@ const BULLETS = [
   { icon: "📚", title: "Real-time knowledge base",     desc: "Upload your docs, FAQs, and SOPs — agents stay accurate, on-brand, and always up-to-date." },
 ] as const;
 
-const BARS: [string, string, number, string][] = [
-  ["WhatsApp response rate", "82%", 82, "#0063E5"],
-  ["Campaign open rate",     "67%", 67, "#10b981"],
-  ["Lead qualification",     "91%", 91, "#f59e0b"],
-  ["Workflow automation",    "95%", 95, "#0063E5"],
-];
 
 export default function DemoHomePageSection() {
   return (
@@ -49,50 +43,37 @@ export default function DemoHomePageSection() {
           </Link>
         </div>
 
-        {/* Right: live dashboard card */}
+        {/* Right: platform preview card */}
         <div style={{ background: "#fff", borderRadius: 28, padding: "2rem", boxShadow: "0 24px 80px rgba(0,99,229,0.12)", border: "1.5px solid #E5E7EB", position: "relative" as const, overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg, #0063E5, #6aabff)" }} />
 
           {/* Header row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid #F1F5F9" }}>
             <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0F172A" }}>StrixMind Platform</div>
-            <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#fff", background: "#0063E5", padding: "0.28rem 0.75rem", borderRadius: 100, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#fff", display: "inline-block" }} />Live
+            <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" as const, color: "#0063E5", background: "rgba(0,99,229,0.08)", border: "1px solid rgba(0,99,229,0.2)", padding: "0.28rem 0.75rem", borderRadius: 100 }}>
+              Preview
             </div>
           </div>
 
-          {/* Metric tiles */}
+          {/* Connected modules */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.5rem" }}>
             {[
-              ["2,847", "Active Leads", "#0063E5"],
-              ["₹18.4L", "Revenue This Month", "#0F172A"],
-              ["99.8%", "Agent Uptime", "#0063E5"],
-              ["4.2s", "Avg Response Time", "#0F172A"],
-            ].map(([val, label, color]) => (
-              <div key={String(label)} style={{ background: "#F8FAFF", borderRadius: 16, padding: "1.1rem", border: "1px solid #E5E7EB" }}>
-                <div style={{ fontSize: "1.6rem", fontWeight: 800, letterSpacing: "-0.04em", color: String(color) }}>{val}</div>
-                <div style={{ fontSize: "0.7rem", color: "#94A3B8", marginTop: "0.2rem", fontWeight: 500 }}>{label}</div>
+              ["💬", "WhatsApp", "Automated replies & broadcasts"],
+              ["📥", "CRM & Leads", "Capture, score, and route"],
+              ["✉️", "Email Campaigns", "Sequences & A/B testing"],
+              ["🧩", "Workflows", "Multi-agent orchestration"],
+            ].map(([icon, label, desc]) => (
+              <div key={label} style={{ background: "#F8FAFF", borderRadius: 16, padding: "1.1rem", border: "1px solid #E5E7EB" }}>
+                <div style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>{icon}</div>
+                <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0F172A" }}>{label}</div>
+                <div style={{ fontSize: "0.7rem", color: "#94A3B8", marginTop: "0.15rem" }}>{desc}</div>
               </div>
             ))}
           </div>
 
-          {/* Progress bars */}
-          {BARS.map(([label, pct, width, color]) => (
-            <div key={String(label)} style={{ marginBottom: "0.9rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.72rem", color: "#64748B", marginBottom: "0.35rem", fontWeight: 500 }}>
-                <span>{label}</span>
-                <span style={{ color: String(color), fontWeight: 700 }}>{pct}</span>
-              </div>
-              <div style={{ height: 7, background: "#F1F5F9", borderRadius: 100, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${width}%`, background: String(color), borderRadius: 100 }} />
-              </div>
-            </div>
-          ))}
-
           {/* Footer */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "1.25rem", paddingTop: "1.25rem", borderTop: "1px solid #F1F5F9", fontSize: "0.72rem", color: "#94A3B8", fontWeight: 500 }}>
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-            All systems operational · 47 AI agents running
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", paddingTop: "1.25rem", borderTop: "1px solid #F1F5F9", fontSize: "0.78rem", color: "#64748B", fontWeight: 500 }}>
+            One platform. Every channel connected.
           </div>
         </div>
       </div>

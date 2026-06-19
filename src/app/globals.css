@@ -4,41 +4,55 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400;1,14..32,500&display=swap');
 
-/* ── StrixMind Brand Tokens ── */
+/* ── StrixMind Design Tokens — Light Premium Glass ──
+   Single source of truth for every page (Home, About, Services,
+   Contact, Booking, Work, Admin). Edit here to re-theme the whole site. */
 :root {
-  /* Brand blues (from branding PDF: #212121, #0063E5, #003E8F) */
-  --brand-blue:       #0063E5;
-  --brand-blue-deep:  #003E8F;
-  --brand-blue-light: #6aabff;
-  --brand-black:      #212121;
-
-  /* Surface palette */
-  --bg-base:          #f8f9fa;
-  --bg-section-alt:   #F0FAF9;
-  --bg-dark:          #051A1C;
+  /* Surfaces */
+  --bg-from:      #f7f6fd;
+  --bg-to:        #eef0fb;
+  --surface:      #ffffff;
+  --surface-alt:  #f3f1ff;
+  --glass-bg:        rgba(255,255,255,0.55);
+  --glass-bg-strong: rgba(255,255,255,0.74);
+  --glass-border:    rgba(255,255,255,0.85);
 
   /* Text */
-  --text-primary:   #0F172A;
-  --text-muted:     #64748B;
-  --text-dim:       #94A3B8;
+  --text:        #1a1333;
+  --text-muted:  #5b5478;
+  --text-dim:    #9b92c0;
 
-  /* Border */
-  --border:         #E5E7EB;
-  --border-dark:    rgba(255,255,255,0.07);
+  /* Accent palette */
+  --accent:       #6c63ff; /* primary violet */
+  --accent-2:     #a78bfa; /* light violet */
+  --accent-deep:  #4c46c4; /* deep violet — hover / shadow */
+  --accent-teal:  #0ea5e9; /* secondary sky */
+  --accent-rose:  #f472b6;
+  --accent-amber: #f59e0b;
 
-  /* Shadows */
-  --shadow-card:        0 4px 24px rgba(0,99,229,0.07);
-  --shadow-card-hover:  0 16px 56px rgba(0,99,229,0.14);
-  --shadow-cta:         0 0 40px rgba(0,99,229,0.45);
+  /* Lines & shadows */
+  --border:        #E5E0FA;
+  --divider:        rgba(108,99,255,0.10);
+  --shadow:         rgba(99,88,210,0.10);
+  --shadow-strong:  rgba(99,88,210,0.18);
+
+  /* Fonts */
+  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-base);
-  color: var(--text-primary);
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, var(--bg-from) 0%, var(--bg-to) 100%);
+  color: var(--text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -46,141 +60,68 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: #051A1C; }
-::-webkit-scrollbar-thumb { background: rgba(0,99,229,0.4); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,99,229,0.7); }
+::-webkit-scrollbar-track { background: var(--bg-to); }
+::-webkit-scrollbar-thumb { background: rgba(108,99,255,0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(108,99,255,0.6); }
 
-/* Utility gradient classes */
-.grad-blue {
-  background: linear-gradient(135deg, #0063E5 0%, #003E8F 100%);
+/* Utility gradient text classes */
+.grad-text {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
-.grad-blue-light {
-  background: linear-gradient(135deg, #6aabff 0%, #0063E5 100%);
+.grad-text-teal {
+  background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 /* Keyframes */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-@keyframes node-orbit {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+@keyframes pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(108,99,255,0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(108,99,255,0); } }
+@keyframes node-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
 /* Prose-level link style */
-a { color: var(--brand-blue); }
+a { color: var(--accent); }
 
 /* ── GSAP / Lenis animation support ── */
-
-/* Smooth scroll managed by Lenis — disable native */
 html.lenis { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-/* Navbar collapse when data-scrolled is set (GSAP also handles this) */
-[data-strix-nav][data-scrolled="true"] [data-strix-logo-text] {
-  opacity: 0.85;
-}
+[data-strix-nav][data-scrolled="true"] [data-strix-logo-text] { opacity: 0.9; }
 
-/* Slide-up elements start hidden (GSAP overrides on scroll) */
 [data-strix-slide-up],
 [data-strix-fade-up],
 [data-strix-panel-reveal],
 [data-strix-tag-badge],
-[data-strix-stagger-grid] [data-strix-grid-item] {
-  will-change: transform, opacity;
-}
+[data-strix-stagger-grid] [data-strix-grid-item] { will-change: transform, opacity; }
 
-/* Pre-animation hidden state for elements that need it */
 [data-strix-hero-badge],
 [data-strix-hero-sub],
 [data-strix-hero-ctas],
-[data-strix-hero-stats] {
-  will-change: transform, opacity;
-}
+[data-strix-hero-stats] { will-change: transform, opacity; }
 
-/* Step connector */
-[data-strix-connector] {
-  will-change: transform;
-  transform-origin: left center;
-}
+[data-strix-connector] { will-change: transform; transform-origin: left center; }
 
-/* Card hover lift */
-[data-strix-grid-item] {
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
-}
-[data-strix-grid-item]:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 60px rgba(0,99,229,0.12);
-}
+[data-strix-grid-item] { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease; }
+[data-strix-grid-item]:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(108,99,255,0.16); }
 
-/* Square grid items */
-[data-strix-square] {
-  will-change: transform, opacity;
-  transform-origin: center;
-}
+[data-strix-square] { will-change: transform, opacity; transform-origin: center; }
 
-/* Smooth card border highlight on hover */
-[data-strix-grid-item] > div {
-  transition: border-color 0.3s ease;
-}
-[data-strix-grid-item]:hover > div {
-  border-color: rgba(0,99,229,0.35) !important;
-}
+[data-strix-grid-item] > div { transition: border-color 0.3s ease; }
+[data-strix-grid-item]:hover > div { border-color: rgba(108,99,255,0.35) !important; }
 
-/* Canvas node bg */
-#strix-hero-canvas {
-  will-change: opacity;
-}
+#strix-hero-canvas { will-change: opacity; }
+#strix-progress-bar { will-change: transform; }
 
-/* Progress bar initial */
-#strix-progress-bar {
-  will-change: transform;
-}
+[data-strix-catch-word] { display: inline-block; color: rgba(26,19,51,0.18); transition: color 0.3s; }
 
-/* Keyframes */
-@keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,99,229,0.4); }
-  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(0,99,229,0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Catchphrase word colour reveal helper */
-[data-strix-catch-word] {
-  display: inline-block;
-  color: rgba(255,255,255,0.15);
-  transition: color 0.3s;
-}
+/* Typography utility for the mono "tech label" accent used across sections */
+.font-mono-label { font-family: var(--font-mono); }
