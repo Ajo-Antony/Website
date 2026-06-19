@@ -80,7 +80,7 @@ function buildSectionStyle(d: DesignSettings): CSSProperties {
   if (d.paddingBottom !== undefined) style.paddingBottom = `${d.paddingBottom}rem`;
 
   // Text colours (CSS vars so they cascade into children)
-  if (d.textColor)    style.setProperty ? undefined : (style.color = d.textColor);
+  if (d.textColor)    style.color = d.textColor;
   if (d.textAlign)    style.textAlign = d.textAlign;
 
   // Border
