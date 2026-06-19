@@ -15,7 +15,7 @@ export default function TeamPageSection({ eyebrow = D.eyebrow, heading = D.headi
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1.5rem" }}>
           {members.map((m, i) => (
             <div key={m.name} style={{ background: "#F4F2FE", borderRadius: 22, padding: "2rem", border: "1px solid #E5E0FA", textAlign: "center", transition: "transform 0.3s ease, box-shadow 0.3s ease" }}>
-              {m.photo ? (
+              {m.photo && m.photo.trim() ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={m.photo} alt={m.name} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", margin: "0 auto 1.25rem", display: "block" }} />
               ) : (

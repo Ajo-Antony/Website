@@ -478,7 +478,7 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
       { label: "GitHub", href: "https://github.com/strixmind" },
       { label: "YouTube", href: "https://youtube.com/@strixmind" },
     ],
-    bottomText: "StrixMind Technologies Pvt. Ltd. · Made with ❤️ in Kerala, India",
+    bottomText: `© ${new Date().getFullYear()} StrixMind Technologies Pvt. Ltd. · Made with ❤️ in Kerala, India`,
   },
 
   "home.hero": {

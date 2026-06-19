@@ -92,7 +92,7 @@ export default function FooterCommonSharedComponent({
         {/* Bottom row */}
         <div className="flex items-center justify-between flex-wrap gap-4 py-7">
           <div className="text-[0.8rem] text-ink-dim">
-            © {new Date().getFullYear()} {bottomText}
+            {bottomText}
           </div>
           <div className="flex gap-6">
             {socials.map((s) => (

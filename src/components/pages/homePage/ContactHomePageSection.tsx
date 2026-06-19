@@ -65,9 +65,6 @@ export default function ContactHomePageSection({
             <h3 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#1a1333", letterSpacing: "-0.025em", marginBottom: "0.875rem" }}>
               {subheading}
             </h3>
-            <p style={{ fontSize: "0.975rem", color: "#5b5478", lineHeight: 1.8, marginBottom: "2.5rem" }}>
-              Whether you want a quick product walkthrough, need help choosing the right plan, or want to discuss a custom enterprise setup — our team in Kerala is ready to help.
-            </p>
 
             {infoItems.map((item, i) => {
               const Icon = INFO_ICONS[i % INFO_ICONS.length];
