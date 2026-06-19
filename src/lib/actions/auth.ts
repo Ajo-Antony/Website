@@ -7,7 +7,18 @@ export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
 
-  const supabase = await createClient();
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch {
+    redirect(
+      `/admin/login?error=${encodeURIComponent(
+        "Server isn't configured correctly (missing Supabase environment variables). Contact the site admin."
+      )}`
+    );
+    return;
+  }
+
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {

@@ -1,4 +1,5 @@
 "use client";
+import { IconGallery } from "@/components/ui/SvgIcons";
 
 // ── IMAGE GUIDE ─────────────────────────────────────────────────
 // Gallery images: /public/images/gallery/gallery-1.jpg  (800×600)
@@ -41,7 +42,7 @@ export default function GalleryHomePageSection() {
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ""; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 24px rgba(99,88,210,0.08)"; }}
             >
               {/* Replace with <Image src={`/images/gallery/gallery-${i+1}.jpg`} ... /> */}
-              <div style={{ fontSize: "2rem", opacity: 0.5 }}>🖼</div>
+              <IconGallery size={32} color="#6c63ff" strokeWidth={1.4} style={{ opacity: 0.55 }} />
               <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#5b5478" }}>{item.label}</div>
               <div style={{ fontSize: "0.72rem", color: "#9b92c0", fontWeight: 300 }}>Drop image → /public/images/gallery/</div>
             </div>

@@ -243,6 +243,90 @@ export const IconContent = (p: IconProps) =>
     p
   );
 
+// IconShuffle  → replaces 🔀  (Provider-agnostic AI routing)
+export const IconShuffle = (p: IconProps) =>
+  svg(
+    <>
+      <polyline points="16 3 21 3 21 8" />
+      <line x1="4" y1="20" x2="21" y2="3" />
+      <polyline points="21 16 21 21 16 21" />
+      <line x1="15" y1="15" x2="21" y2="21" />
+      <line x1="4" y1="4" x2="9" y2="9" />
+    </>,
+    p
+  );
+
+// IconPlug  → replaces 🔌  (Connect your stack)
+export const IconPlug = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M9 2v6" />
+      <path d="M15 2v6" />
+      <path d="M6 8h12v3a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8z" />
+      <path d="M12 17v5" />
+    </>,
+    p
+  );
+
+// IconMapPin  → replaces 📍  (Location / office address)
+export const IconMapPin = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </>,
+    p
+  );
+
+// IconClock  → replaces 🕐 ⏰ ⏱️  (Office hours / response time)
+export const IconClock = (p: IconProps) =>
+  svg(
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </>,
+    p
+  );
+
+// IconPhone  → replaces 📞  (Office hours / call)
+export const IconPhone = (p: IconProps) =>
+  svg(
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />,
+    p
+  );
+
+// IconLock  → replaces 🔒  (Privacy by default)
+export const IconLock = (p: IconProps) =>
+  svg(
+    <>
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </>,
+    p
+  );
+
+// IconSprout  → replaces 🌱  (Growth over perfection)
+export const IconSprout = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M7 20h10" />
+      <path d="M12 20v-7" />
+      <path d="M9 13c-3 0-5-2-5-5 3 0 5 2 5 5z" />
+      <path d="M12 13c0-4 2.5-7 7-7 0 4-2.5 7-7 7z" />
+    </>,
+    p
+  );
+
+// IconCheckCircle  → replaces ✅ 🎉  (Success / form sent confirmation)
+export const IconCheckCircle = (p: IconProps) =>
+  svg(
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="8 12.5 11 15.5 16 9" />
+    </>,
+    p
+  );
+
 // ─── Animated Variants ─────────────────────────────────────────
 
 /**
