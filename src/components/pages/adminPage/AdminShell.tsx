@@ -5,21 +5,20 @@
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth";
 import {
-  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase,
+  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink,
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
 interface NavItem {
   href: string;
   label: string;
-  Icon?: ElementType<{ size?: number; color?: string }>;
-  emoji?: string;
+  Icon: ElementType<{ size?: number; color?: string }>;
 }
 
 const NAV: NavItem[] = [
   { href: "/admin",                  label: "Overview",          Icon: IconOverview  },
   { href: "/admin/content",          label: "Site Content",      Icon: IconContent   },
-  { href: "/admin/section-designer", label: "Section Designer",  emoji: "🎨"         },
+  { href: "/admin/section-designer", label: "Section Designer",  Icon: IconPalette   },
   { href: "/admin/gallery",          label: "Gallery",           Icon: IconGallery   },
   { href: "/admin/blog",             label: "Blog",              Icon: IconEdit      },
   { href: "/admin/projects",         label: "Projects",          Icon: IconBriefcase },
@@ -48,19 +47,16 @@ export default function AdminShell({ active, children }: { active: string; child
                     : "text-white/65 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                {item.emoji ? (
-                  <span className="text-base leading-none">{item.emoji}</span>
-                ) : item.Icon ? (
-                  <item.Icon size={16} color={isActive ? "#fff" : "rgba(255,255,255,0.65)"} />
-                ) : null}
+                <item.Icon size={16} color={isActive ? "#fff" : "rgba(255,255,255,0.65)"} />
                 {item.label}
               </Link>
             );
           })}
         </nav>
         <div className="px-3 py-4 border-t border-white/10 flex flex-col gap-1">
-          <Link href="/work" target="_blank" className="px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">
-            ↗ View site
+          <Link href="/work" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">
+            <IconExternalLink size={16} color="rgba(255,255,255,0.65)" />
+            View site
           </Link>
           <form action={logout}>
             <button type="submit" className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-white/65 hover:bg-white/10 hover:text-white transition-colors">

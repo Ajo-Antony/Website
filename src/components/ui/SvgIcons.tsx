@@ -175,6 +175,28 @@ export const IconBriefcase = (p: IconProps) =>
     p
   );
 
+export const IconPalette = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M12 2.5a9.5 9.5 0 1 0 0 19c1.1 0 1.8-.78 1.8-1.78 0-.46-.18-.9-.48-1.24-.3-.34-.46-.78-.46-1.24 0-1 .8-1.8 1.8-1.8h2.1A3.8 3.8 0 0 0 20.6 11.6C20.6 6.6 16.7 2.5 12 2.5Z" />
+      <circle cx="6.8" cy="11.5" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="9.2" cy="7" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="14.8" cy="7" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="17.2" cy="11.5" r="1.3" fill="currentColor" stroke="none" />
+    </>,
+    p
+  );
+
+export const IconExternalLink = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M9.5 4.5h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-4" />
+      <path d="M14 3.5h6.5V10" />
+      <path d="M20.2 3.8 11 13" />
+    </>,
+    p
+  );
+
 export const IconEdit = (p: IconProps) =>
   svg(
     <>
