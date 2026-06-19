@@ -1,35 +1,3 @@
-/*
- * src/lib/cms/registry.ts
- * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   The CMS content registry — the single source of truth for
- *   all editable site content. Defines defaults AND field schemas
- *   for every content key.
- *
- * HOW IT WORKS:
- *   1. CONTENT_DEFAULTS   — plain JS objects, used as fallbacks when
- *                           Supabase has no stored value for a key.
- *   2. CONTENT_SCHEMAS    — field definitions used by ContentForm.tsx
- *                           to render the right editor UI per field type.
- *   3. getContent(key)    — server action reads Supabase first, falls
- *                           back to CONTENT_DEFAULTS[key] if missing.
- *
- * CMS KEYS REGISTERED:
- *   global.nav        — Navbar links, CTA label/href, sign-in label
- *   global.footer     — Footer tagline, columns, socials, bottom text
- *   home.hero         — Hero badge, headline, subheadline, CTAs
- *   home.services     — Services eyebrow, heading, 6× service items
- *   home.pricing      — Pricing eyebrow, heading, 3 plan objects
- *   work.hub          — Work hub badge, headings, CTAs, bottom CTA
- *   (+ more — see file)
- *
- * USED BY:
- *   src/lib/actions/content.ts   — getContent / upsertContent
- *   src/components/admin/ContentForm.tsx  — admin editor
- *   All section components that accept CMS-driven props
- * ─────────────────────────────────────────────────────────────
- */
-
 import type { SectionSchema, FieldDef, FieldType, ContentValue } from "./types";
 
 function f(key: string, label: string, type: FieldType = "text", extra: Partial<FieldDef> = {}): FieldDef {

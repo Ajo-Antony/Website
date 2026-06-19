@@ -1,7 +1,5 @@
 "use client";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { IconShuffle, IconBolt, IconShield, IconBook } from "@/components/ui/SvgIcons";
-import type { ElementType } from "react";
 
 interface Diff { icon: string; title: string; desc: string }
 interface Stat { val: string; label: string }
@@ -15,11 +13,6 @@ const D = CONTENT_DEFAULTS["home.whyUs"] as Required<WhyUsProps>;
 const COLORS = ["#6c63ff", "#0ea5e9", "#f472b6", "#f59e0b"];
 const BGS = ["rgba(108,99,255,0.08)", "rgba(14,165,233,0.08)", "rgba(244,114,182,0.08)", "rgba(245,158,11,0.08)"];
 const BAR_GRADS = ["linear-gradient(90deg,#0ea5e9,#38bdf8)", "linear-gradient(90deg,#6c63ff,#a78bfa)", "linear-gradient(90deg,#f472b6,#fb7185)"];
-
-// SVG icons indexed to match the original emoji order: 🔀 ⚡ 🛡️ 📚
-const ICONS: ElementType<{ size?: number; color?: string }>[] = [
-  IconShuffle, IconBolt, IconShield, IconBook,
-];
 
 export default function FeatureServicesHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, items = D.items,
@@ -40,22 +33,17 @@ export default function FeatureServicesHomePageSection({
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {items.map((it, i) => {
-                const Icon = ICONS[i % ICONS.length];
-                return (
+              {items.map((it, i) => (
                 <div key={it.title}
                   style={{ display: "flex", gap: "1.25rem", padding: "1.5rem", borderRadius: 18, background: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.85)", backdropFilter: "blur(16px)", boxShadow: "0 4px 20px rgba(99,88,210,0.08)" }}
                 >
-                  <div style={{ width: 42, height: 42, minWidth: 42, borderRadius: 12, background: BGS[i % BGS.length], display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon size={20} color={COLORS[i % COLORS.length]} />
-                  </div>
+                  <div style={{ width: 42, height: 42, minWidth: 42, borderRadius: 12, background: BGS[i % BGS.length], display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>{it.icon}</div>
                   <div>
                     <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.875rem", fontWeight: 700, color: "#1a1333", marginBottom: "0.3rem" }}>{it.title}</div>
                     <p style={{ fontSize: "0.82rem", color: "#5b5478", fontWeight: 300, lineHeight: 1.65 }}>{it.desc}</p>
                   </div>
                 </div>
-                );
-              })}
+              ))}
             </div>
           </div>
 

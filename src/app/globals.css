@@ -1,20 +1,3 @@
-/**
- * src/app/globals.css
- * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   Global CSS — Tailwind directives, CSS custom properties,
- *   base resets, and custom animation keyframes.
- *
- * SECTIONS:
- *   @tailwind base/components/utilities  — Tailwind injection
- *   :root {}                             — CSS design tokens (colours, fonts)
- *   Custom animations                    — pulse, fade-in, slide-up used
- *                                          by GSAP fallbacks and hero badge
- *
- * LOADED BY:  src/app/layout.tsx  (import "./globals.css")
- * ─────────────────────────────────────────────────────────────
- */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

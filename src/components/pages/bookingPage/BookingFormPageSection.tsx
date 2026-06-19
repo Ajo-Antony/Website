@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { IconCheckCircle } from "@/components/ui/SvgIcons";
 
 interface SlotsProps { slots?: string[] }
 const D = CONTENT_DEFAULTS["booking.slots"] as Required<SlotsProps>;
@@ -20,7 +19,7 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
           <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,#6c63ff,#a78bfa)" }} />
           {booked ? (
             <div style={{ textAlign:"center", padding:"3rem 0" }}>
-              <div style={{ marginBottom:"1rem", display:"flex", justifyContent:"center" }}><IconCheckCircle size={44} color="#22c55e" strokeWidth={1.5} /></div>
+              <div style={{ fontSize:"3rem", marginBottom:"1rem" }}>🎉</div>
               <div style={{ fontSize:"1.25rem", fontWeight:800, color:"#1a1333", marginBottom:"0.75rem" }}>You're booked!</div>
               <p style={{ color:"#5b5478" }}>Confirmation sent to <strong>{form.email}</strong>. See you at <strong>{slot}</strong>.</p>
             </div>

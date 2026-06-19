@@ -5,37 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import type { ContentValue } from "@/lib/cms/types";
 
-/**
- * Deep-merge helper: DB values win over defaults.
- * Arrays are replaced entirely (not concatenated) because
- * a saved `members` array should fully replace the default one.
- */
-function mergeContent(fallback: ContentValue, saved: ContentValue): ContentValue {
-  if (typeof saved !== "object" || saved === null || Array.isArray(saved)) return saved ?? fallback;
-  if (typeof fallback !== "object" || fallback === null || Array.isArray(fallback)) return saved;
-
-  const result: Record<string, unknown> = { ...(fallback as Record<string, unknown>) };
-  for (const key of Object.keys(saved as Record<string, unknown>)) {
-    const savedVal = (saved as Record<string, unknown>)[key];
-    const fallbackVal = (fallback as Record<string, unknown>)[key];
-    // Arrays: saved value wins entirely (replaces default array)
-    if (Array.isArray(savedVal)) {
-      result[key] = savedVal;
-    } else if (
-      savedVal !== null &&
-      typeof savedVal === "object" &&
-      typeof fallbackVal === "object" &&
-      fallbackVal !== null &&
-      !Array.isArray(fallbackVal)
-    ) {
-      result[key] = mergeContent(fallbackVal as ContentValue, savedVal as ContentValue);
-    } else {
-      result[key] = savedVal;
-    }
-  }
-  return result as ContentValue;
-}
-
 /** Reads one section's content, falling back to the built-in default if the
  *  row doesn't exist yet (e.g. fresh database) or Supabase is unreachable. */
 export async function getContent(key: string): Promise<ContentValue> {
@@ -43,7 +12,7 @@ export async function getContent(key: string): Promise<ContentValue> {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("site_content").select("value").eq("key", key).maybeSingle();
-    if (data?.value) return mergeContent(fallback, data.value as ContentValue);
+    if (data?.value) return { ...fallback, ...(data.value as ContentValue) };
   } catch {
     // Network/config issue — fall through to defaults so the site still renders.
   }
@@ -58,7 +27,7 @@ export async function getContentMany(keys: string[]): Promise<Record<string, Con
     const supabase = await createClient();
     const { data } = await supabase.from("site_content").select("key, value").in("key", keys);
     for (const row of data ?? []) {
-      result[row.key] = mergeContent(result[row.key] ?? {}, row.value as ContentValue);
+      result[row.key] = { ...(result[row.key] ?? {}), ...(row.value as ContentValue) };
     }
   } catch {
     // fall back to defaults already populated above

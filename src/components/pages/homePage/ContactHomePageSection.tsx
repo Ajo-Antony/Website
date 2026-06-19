@@ -1,18 +1,11 @@
 "use client";
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { IconMail, IconMapPin, IconClock, IconCheckCircle } from "@/components/ui/SvgIcons";
-import type { ElementType } from "react";
 
 interface InfoItem { icon: string; label: string; value: string }
 interface ContactProps { eyebrow?: string; heading?: string; subheading?: string; infoItems?: InfoItem[] }
 
 const D = CONTENT_DEFAULTS["home.contact"] as Required<ContactProps>;
-
-// SVG icons indexed to match the original emoji order: 📧 📍 ⏱️ 🕐
-const INFO_ICONS: ElementType<{ size?: number; color?: string }>[] = [
-  IconMail, IconMapPin, IconClock, IconClock,
-];
 
 export default function ContactHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, subheading = D.subheading, infoItems = D.infoItems,
@@ -69,20 +62,15 @@ export default function ContactHomePageSection({
               Whether you want a quick product walkthrough, need help choosing the right plan, or want to discuss a custom enterprise setup — our team in Kerala is ready to help.
             </p>
 
-            {infoItems.map((item, i) => {
-              const Icon = INFO_ICONS[i % INFO_ICONS.length];
-              return (
+            {infoItems.map(item => (
               <div key={item.label} style={{ display: "flex", gap: "1.25rem", padding: "1.25rem", background: "#fff", borderRadius: 18, border: "1.5px solid #E5E0FA", marginBottom: "1rem", alignItems: "center" }}>
-                <div style={{ width: 46, height: 46, minWidth: 46, borderRadius: 14, background: "rgba(108,99,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Icon size={20} color="#6c63ff" />
-                </div>
+                <div style={{ width: 46, height: 46, minWidth: 46, borderRadius: 14, background: "rgba(108,99,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem" }}>{item.icon}</div>
                 <div>
                   <div style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#9b92c0", marginBottom: "0.25rem" }}>{item.label}</div>
                   <div style={{ fontSize: "0.975rem", fontWeight: 600, color: "#1a1333" }}>{item.value}</div>
                 </div>
               </div>
-              );
-            })}
+            ))}
           </div>
 
           <div style={{ background: "#fff", borderRadius: 28, padding: "2.75rem", border: "1.5px solid #E5E0FA", boxShadow: "0 16px 56px rgba(108,99,255,0.10)", position: "relative", overflow: "hidden" }}>
@@ -90,7 +78,7 @@ export default function ContactHomePageSection({
 
             {sent ? (
               <div style={{ textAlign: "center", padding: "3rem 0" }}>
-                <div style={{ marginBottom: "1.25rem", display: "flex", justifyContent: "center" }}><IconCheckCircle size={52} color="#22c55e" strokeWidth={1.5} /></div>
+                <div style={{ fontSize: "3.5rem", marginBottom: "1.25rem" }}>🎉</div>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1a1333", marginBottom: "0.75rem", letterSpacing: "-0.02em" }}>Message sent!</div>
                 <p style={{ color: "#5b5478", fontSize: "0.95rem", lineHeight: 1.7 }}>We'll get back to you within 2 business hours. Check your inbox for a confirmation.</p>
               </div>

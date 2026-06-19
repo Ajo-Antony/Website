@@ -1,18 +1,3 @@
-/**
- * src/components/pages/commonSharedComponents/FooterCommonSharedComponent.tsx
- * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   Shared Footer rendered on all public pages.
- *   Brand column (logo + tagline + status indicator + CTA button),
- *   four link columns, social links, and copyright row.
- *
- * USED BY:   src/app/layout.tsx  →  <FooterCommonSharedComponent />
- * CMS KEY:   "global.footer"  (src/lib/cms/registry.ts)
- *
- * PROPS (all optional — fall back to CMS defaults):
- *   tagline, ctaLabel, ctaHref, statusLabel, columns, socials, bottomText
- * ─────────────────────────────────────────────────────────────
- */
 "use client";
 import Link from "next/link";
 import { StrixmindIcon } from "@/components/ui/StrixmindLogo";

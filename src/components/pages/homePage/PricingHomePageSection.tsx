@@ -1,4 +1,4 @@
- "use client";
+"use client";
 import Link from "next/link";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
