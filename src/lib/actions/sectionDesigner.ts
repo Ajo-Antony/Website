@@ -13,6 +13,11 @@ import type { SectionDesign, SectionDesignUpdate, DesignSettings } from "@/lib/t
 // Default fallback when Supabase has no row yet
 const DEFAULT_DESIGN: DesignSettings = {};
 
+/** Resolve a section_key prefix to its public URL */
+function getPublicPath(page: string): string {
+  return page === "home" ? "/" : `/${page}`;
+}
+
 /** Fetch all section designs for a given page, ordered by sort_order */
 export async function getSectionDesigns(page: string): Promise<SectionDesign[]> {
   try {
@@ -64,7 +69,13 @@ export async function getSectionDesign(sectionKey: string): Promise<SectionDesig
   }
 }
 
-/** Toggle visibility of a section */
+/**
+ * Toggle visibility of a section.
+ *
+ * After writing to Supabase we aggressively revalidate both the
+ * admin designer page AND the public page so the change is
+ * reflected immediately without a manual redeploy.
+ */
 export async function toggleSectionVisibility(
   sectionKey: string,
   isVisible: boolean
@@ -78,10 +89,14 @@ export async function toggleSectionVisibility(
 
     if (error) return { error: error.message };
 
-    // Revalidate the correct public page
+    // Revalidate every path that might show this section
     const page = sectionKey.split(".")[0];
-    revalidatePath(page === "home" ? "/" : `/${page}`);
-    revalidatePath("/admin/section-designer");
+    const publicPath = getPublicPath(page);
+
+    revalidatePath(publicPath, "page");          // public page — force re-render
+    revalidatePath("/admin/section-designer", "page"); // admin designer
+    revalidatePath("/admin", "layout");           // admin shell (just in case)
+
     return {};
   } catch (e: any) {
     return { error: e.message };
@@ -103,8 +118,11 @@ export async function updateSectionDesign(
     if (error) return { error: error.message };
 
     const page = sectionKey.split(".")[0];
-    revalidatePath(page === "home" ? "/" : `/${page}`);
-    revalidatePath("/admin/section-designer");
+    const publicPath = getPublicPath(page);
+
+    revalidatePath(publicPath, "page");
+    revalidatePath("/admin/section-designer", "page");
+
     return {};
   } catch (e: any) {
     return { error: e.message };
@@ -123,7 +141,6 @@ export async function reorderSections(
       updated_at: new Date().toISOString(),
     }));
 
-    // Upsert each row's sort order
     for (const u of updates) {
       const { error } = await supabase
         .from("section_designs")
@@ -132,8 +149,8 @@ export async function reorderSections(
       if (error) return { error: error.message };
     }
 
-    revalidatePath("/");
-    revalidatePath("/admin/section-designer");
+    revalidatePath("/", "page");
+    revalidatePath("/admin/section-designer", "page");
     return {};
   } catch (e: any) {
     return { error: e.message };

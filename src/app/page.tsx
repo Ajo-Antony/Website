@@ -1,9 +1,13 @@
 /**
- * src/app/page.tsx  (UPDATED)
+ * src/app/page.tsx
  * ─────────────────────────────────────────────────────────────
  * Home page — fetches both CMS content AND section designs,
- * then renders each section inside a SectionWrapper that applies
- * custom colours, backgrounds, visibility settings, etc.
+ * then renders each section inside a SectionWrapper.
+ *
+ * VISIBILITY: sections with is_visible = false are fully
+ * excluded from the render tree on the server — the browser
+ * never receives that HTML.  Only an admin change (which calls
+ * revalidatePath) will update what's shown.
  * ─────────────────────────────────────────────────────────────
  */
 import HeroHomePageSection from "@/components/pages/homePage/HeroHomePageSection";
@@ -24,7 +28,10 @@ import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
 
+// Always fetch fresh — visibility changes must reflect immediately
+// after an admin toggles them (revalidatePath triggers a new render)
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services", "home.whyUs",
@@ -38,41 +45,31 @@ export default async function HomePage() {
     getSectionDesigns("home"),
   ]);
 
-  // Build a lookup map: section_key → SectionDesign
-  const sectionMap = Object.fromEntries(
-    rawSections.map((s: SectionDesign) => [s.section_key, s])
-  );
-
-  // Helper to get visibility + design for a key
-  function sd(key: string) {
-    const s = sectionMap[key];
-    return {
-      design:    s?.design ?? {},
-      isVisible: s?.is_visible !== false, // default visible if not in DB
-    };
-  }
-
-  // Sort sections by sort_order for rendering
-  const orderedSections = rawSections.sort((a: SectionDesign, b: SectionDesign) => a.sort_order - b.sort_order);
+  // Only render sections that are explicitly visible (is_visible !== false)
+  // Sections hidden by the admin are dropped here on the server — the
+  // browser never receives them, so CSS tricks cannot reveal them.
+  const visibleSections = rawSections
+    .filter((s: SectionDesign) => s.is_visible !== false)
+    .sort((a: SectionDesign, b: SectionDesign) => a.sort_order - b.sort_order);
 
   return (
     <>
-      {orderedSections.map((section: SectionDesign) => {
-        const { design, isVisible } = sd(section.section_key);
+      {visibleSections.map((section: SectionDesign) => {
+        const design = section.design ?? {};
 
         return (
           <SectionWrapper
             key={section.section_key}
             sectionKey={section.section_key}
             design={design}
-            isVisible={isVisible}
+            isVisible={true} // already filtered above
           >
             {section.section_key === "home.hero" && (
               <HeroHomePageSection
-                navLinks={c["global.nav"].links as any}
-                signInLabel={c["global.nav"].signInLabel as any}
-                ctaLabel={c["global.nav"].ctaLabel as any}
-                ctaHref={c["global.nav"].ctaHref as any}
+                navLinks={c["global.nav"]?.links as any}
+                signInLabel={c["global.nav"]?.signInLabel as any}
+                ctaLabel={c["global.nav"]?.ctaLabel as any}
+                ctaHref={c["global.nav"]?.ctaHref as any}
                 {...(c["home.hero"] as any)}
               />
             )}
