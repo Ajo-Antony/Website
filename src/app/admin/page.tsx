@@ -1,24 +1,20 @@
 /**
  * src/app/admin/page.tsx
  * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   Admin Overview page — the landing screen after login.
- *   Shows live counts for gallery images, blog posts, and projects
- *   pulled from Supabase, rendered as clickable stat cards.
+ * Admin Overview page — the landing screen after login.
+ * Shows live counts for gallery images, blog posts, and projects
+ * pulled from Supabase, rendered as clickable stat cards.
  *
  * ROUTE:    /admin
- * AUTH:     Protected — middleware redirects unauthenticated users
- *           to /admin/login  (see src/lib/supabase/server.ts)
- *
- * DATA:     Supabase .count() queries (server component, no caching)
- *
- * ICONS (replaces emojis):
- *   🖼️ Gallery images → IconGallery
- *   📝 Blog posts     → IconEdit
- *   💼 Projects       → IconBriefcase
+ * AUTH:     Double-guarded:
+ *           1. middleware.ts redirects unauthenticated requests
+ *              to /admin/login before this page even loads.
+ *           2. Server component calls getUser() for a verified
+ *              identity check (defence-in-depth).
  * ─────────────────────────────────────────────────────────────
  */
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminShell from "@/components/pages/adminPage/AdminShell";
 import { IconGallery, IconEdit, IconBriefcase } from "@/components/ui/SvgIcons";
@@ -33,6 +29,10 @@ interface StatCard {
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
+
+  // Server-side auth guard — verifies with Supabase, not just the cookie.
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/admin/login");
 
   const [{ count: galleryCount }, { count: blogCount }, { count: projectCount }] = await Promise.all([
     supabase.from("gallery_images").select("*", { count: "exact", head: true }),
@@ -58,7 +58,6 @@ export default async function AdminOverviewPage() {
             href={c.href}
             className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-accent/40 hover:shadow-lg transition-all group"
           >
-            {/* SVG icon with hover colour transition — replaces emoji */}
             <div
               className="mb-3 w-10 h-10 rounded-xl flex items-center justify-center"
               style={{ background: "rgba(108,99,255,0.07)", transition: "background 0.3s" }}

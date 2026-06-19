@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/admin/login";
-  const isAdminRoute = pathname.startsWith("/admin");
+  const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
 
   // If env vars are missing, block all admin routes (fail closed)
   if (!supabaseUrl || !supabaseAnonKey) {
@@ -40,26 +40,24 @@ export async function middleware(request: NextRequest) {
       },
     });
 
-    // getSession() reads the JWT from the cookie — no network round-trip.
-    // This is intentional for middleware: fast, works on Vercel Edge, and
-    // sufficient to gate access (the session cookie is HttpOnly + signed).
-    // Individual server components use getUser() to verify with Supabase
-    // when they need a guaranteed-fresh identity check.
-    const { data: { session } } = await supabase.auth.getSession();
+    // Use getUser() to verify the session server-side with Supabase Auth.
+    // This prevents forged/expired JWTs from bypassing the guard.
+    const { data: { user } } = await supabase.auth.getUser();
 
     // Not logged in → redirect to login
-    if (isAdminRoute && !isLoginPage && !session) {
+    if (isAdminRoute && !isLoginPage && !user) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
-      // Preserve the intended destination so we can redirect after login
       url.searchParams.set("next", pathname);
       return NextResponse.redirect(url);
     }
 
     // Already logged in → skip the login page
-    if (isLoginPage && session) {
+    if (isLoginPage && user) {
+      const next = request.nextUrl.searchParams.get("next") ?? "/admin";
       const url = request.nextUrl.clone();
-      url.pathname = "/admin";
+      url.pathname = next.startsWith("/admin") ? next : "/admin";
+      url.searchParams.delete("next");
       return NextResponse.redirect(url);
     }
 
@@ -77,5 +75,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  // Match /admin AND all /admin/* sub-routes
+  matcher: ["/admin", "/admin/:path*"],
 };
