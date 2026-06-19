@@ -1,3 +1,22 @@
+/**
+ * src/app/layout.tsx
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   Root layout — wraps EVERY page on the site.
+ *   Loads Inter + JetBrains Mono fonts, injects the shared
+ *   Navbar and Footer, adds a reading progress bar, and boots
+ *   GSAP scroll animations via AnimationBoot.
+ *
+ * AFFECTS:   All routes (/, /about, /services, /contact, /work/*, /admin/*)
+ * CMS DATA:  global.nav + global.footer (fetched server-side on every request)
+ *
+ * KEY CHILDREN:
+ *   GsapScripts   → injects CDN script tags into <head>
+ *   AnimationBoot → client component that calls useGsapAnimations() on mount
+ *   NavbarCommonSharedComponent → shared sticky navbar (hidden on / — hero has its own)
+ *   FooterCommonSharedComponent → shared footer
+ * ─────────────────────────────────────────────────────────────
+ */
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import NavbarCommonSharedComponent from "@/components/pages/commonSharedComponents/NavbarCommonSharedComponent";

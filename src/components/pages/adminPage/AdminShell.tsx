@@ -1,12 +1,46 @@
+/**
+ * AdminShell.tsx
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   Persistent admin sidebar layout wrapper used by every page
+ *   under /admin/*. Renders the dark sidebar with navigation
+ *   links and wraps page content in <main>.
+ *
+ * LOCATION:  src/components/pages/adminPage/AdminShell.tsx
+ * ROUTES:    /admin, /admin/content, /admin/gallery,
+ *            /admin/blog, /admin/projects
+ *
+ * PROPS:
+ *   active   — current href, used to highlight the active nav item
+ *   children — page content rendered in the main area
+ *
+ * NAV ICONS (replaces emoji):
+ *   📊 Overview     → IconOverview  (grid of 4 squares)
+ *   🧩 Site Content → IconContent   (document with lines)
+ *   🖼️ Gallery      → IconGallery   (landscape image)
+ *   📝 Blog         → IconEdit      (pencil on document)
+ *   💼 Projects     → IconBriefcase (briefcase)
+ * ─────────────────────────────────────────────────────────────
+ */
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth";
+import {
+  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase,
+} from "@/components/ui/SvgIcons";
+import type { ElementType } from "react";
 
-const NAV = [
-  { href: "/admin", label: "Overview", icon: "📊" },
-  { href: "/admin/content", label: "Site Content", icon: "🧩" },
-  { href: "/admin/gallery", label: "Gallery", icon: "🖼️" },
-  { href: "/admin/blog", label: "Blog", icon: "📝" },
-  { href: "/admin/projects", label: "Projects", icon: "💼" },
+interface NavItem {
+  href: string;
+  label: string;
+  Icon: ElementType<{ size?: number; color?: string }>;
+}
+
+const NAV: NavItem[] = [
+  { href: "/admin",         label: "Overview",     Icon: IconOverview  },
+  { href: "/admin/content", label: "Site Content", Icon: IconContent   },
+  { href: "/admin/gallery", label: "Gallery",      Icon: IconGallery   },
+  { href: "/admin/blog",    label: "Blog",         Icon: IconEdit      },
+  { href: "/admin/projects",label: "Projects",     Icon: IconBriefcase },
 ];
 
 export default function AdminShell({ active, children }: { active: string; children: React.ReactNode }) {
@@ -32,7 +66,8 @@ export default function AdminShell({ active, children }: { active: string; child
                     : "text-white/65 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                <span>{item.icon}</span>
+                {/* SVG icon replaces emoji — adapts colour to active state */}
+                <item.Icon size={16} color={isActive ? "#fff" : "rgba(255,255,255,0.65)"} />
                 {item.label}
               </Link>
             );

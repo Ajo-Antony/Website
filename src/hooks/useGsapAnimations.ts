@@ -1,3 +1,27 @@
+/**
+ * src/hooks/useGsapAnimations.ts
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   Master GSAP animation hook. Reads data-strix-* attributes from
+ *   the DOM and creates ScrollTrigger animations for each.
+ *
+ * CALLED BY:  src/components/ui/AnimationBoot.tsx  (on mount, client-side)
+ *
+ * ATTRIBUTES HANDLED:
+ *   data-strix-slide-up      — slides element up from +40px on scroll enter
+ *   data-strix-fade-up       — fades in + slight upward drift
+ *   data-strix-stagger-grid  — staggers children with data-strix-grid-item
+ *   data-strix-parallax="N" — parallax offset multiplier on scroll
+ *   data-strix-hero-badge    — hero badge pop-in
+ *   data-strix-hero-headline — GSAP word-split title reveal
+ *   data-strix-hero-sub      — hero subheading fade
+ *   data-strix-hero-ctas     — CTA buttons slide in
+ *   data-strix-nav           — navbar compress on scroll (shrinks padding, adds bg)
+ *   data-strix-tag-badge     — eyebrow label entrance animation
+ *   data-strix-square-grid   — hero bottom grid wave animation
+ *   strix-hero-canvas        — canvas particle network (by id, not data attr)
+ * ─────────────────────────────────────────────────────────────
+ */
 "use client";
 import { useEffect } from "react";
 

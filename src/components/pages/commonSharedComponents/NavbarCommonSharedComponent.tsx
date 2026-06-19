@@ -1,3 +1,19 @@
+/**
+ * src/components/pages/commonSharedComponents/NavbarCommonSharedComponent.tsx
+ * ─────────────────────────────────────────────────────────────
+ * FILE PURPOSE:
+ *   Shared sticky Navbar rendered on all pages EXCEPT "/" (homepage
+ *   uses its own embedded nav inside HeroHomePageSection).
+ *
+ * BEHAVIOUR:
+ *   - Transparent on page load; gains white/blur background after 60px scroll
+ *   - Mobile: collapses to hamburger (✕ / ☰) with slide-down link panel
+ *   - Driven by CMS key "global.nav" (links, sign-in label, CTA label/href)
+ *
+ * USED BY:   src/app/layout.tsx  →  <NavbarCommonSharedComponent />
+ * CMS KEY:   "global.nav"  (src/lib/cms/registry.ts)
+ * ─────────────────────────────────────────────────────────────
+ */
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
