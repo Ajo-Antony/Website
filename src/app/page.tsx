@@ -23,6 +23,7 @@ import BrandIdentitySection from "@/components/pages/homePage/BrandIdentitySecti
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
 import CtaBannerHomePageSection from "@/components/pages/homePage/CtaBannerHomePageSection";
 import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
+import CapabilitiesShowcaseSection from "@/components/pages/homePage/CapabilitiesShowcaseSection";
 import SectionWrapper from "@/components/pages/homePage/SectionWrapper";
 import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
@@ -112,6 +113,8 @@ export default async function HomePage() {
           </SectionWrapper>
         );
       })}
+      {/* Static section — not admin/CMS managed, see component header comment */}
+      <CapabilitiesShowcaseSection />
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
+import { AuroraBackground } from "@/components/ui/aurora-background";
 
 interface CtaProps {
   badge?: string;
@@ -25,8 +26,8 @@ export default function CtaBannerHomePageSection({
 }: CtaProps) {
   return (
     <section style={{ background: "linear-gradient(135deg,#6c63ff 0%,#8b7cf6 50%,#a78bfa 100%)", padding: "6rem 0", position: "relative", overflow: "hidden" }}>
-      {/* BG glow + grid */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 80% at 50% 30%, rgba(255,255,255,0.18) 0%, transparent 70%)", pointerEvents: "none" }} />
+      {/* Animated aurora glow — replaces the old static radial+grid overlay */}
+      <AuroraBackground className="absolute inset-0 pointer-events-none" showRadialGradient={false} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 2rem", textAlign: "center", position: "relative", zIndex: 1 }}>

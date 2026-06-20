@@ -1,10 +1,27 @@
 import type { Config } from "tailwindcss";
+import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
+        // ── shadcn-style semantic tokens, mapped to StrixMind's own
+        // CSS variables (globals.css) instead of generic gray — keeps
+        // imported components (ui/aurora-background, ui/display-cards,
+        // ui/expandable-tabs, ui/scroll-reel-testimonials) on-brand.
+        background: "var(--surface)",
+        foreground: "var(--text)",
+        card: "var(--surface)",
+        "card-foreground": "var(--text)",
+        muted: "var(--surface-alt)",
+        "muted-foreground": "var(--text-muted)",
+        border: "var(--border)",
+        ring: "var(--accent)",
+        primary: "var(--accent)",
+        "primary-foreground": "#ffffff",
+        secondary: "var(--surface-alt)",
+        "secondary-foreground": "var(--text)",
         // ── Unified StrixMind palette (Light Premium Glass) ──
         // Single source of truth — used by every page incl. /work and /admin.
         ink:        "#1a1333",
@@ -52,9 +69,28 @@ const config: Config = {
         "accent-gradient": "linear-gradient(135deg, #6c63ff 0%, #a78bfa 100%)",
         "grid-faint": "linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px)",
       },
+      animation: {
+        aurora: "aurora 60s linear infinite",
+      },
+      keyframes: {
+        aurora: {
+          from: { backgroundPosition: "50% 50%, 50% 50%" },
+          to: { backgroundPosition: "350% 50%, 350% 50%" },
+        },
+      },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography"), addVariablesForColors],
 };
+
+// Exposes every Tailwind color as a CSS var (e.g. var(--blue-500)) —
+// required by ui/aurora-background's gradient-band animation.
+function addVariablesForColors({ addBase, theme }: any) {
+  const allColors = flattenColorPalette(theme("colors"));
+  const newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+  addBase({ ":root": newVars });
+}
 
 export default config;
