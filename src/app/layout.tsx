@@ -1,18 +1,11 @@
 /**
  * src/app/layout.tsx
- * ─────────────────────────────────────────────────────────────
  * Root layout — wraps EVERY page on the site.
- * Loads Inter + JetBrains Mono fonts, injects the shared
- * Navbar and Footer, adds a reading progress bar, and boots
- * GSAP scroll animations via AnimationBoot.
- *
- * AFFECTS:   All routes (/, /about, /services, /contact, /work/*, /admin/*)
- * CMS DATA:  global.nav + global.footer (fetched server-side on every request)
- * ─────────────────────────────────────────────────────────────
+ * Uses new SiteHeader with dropdown navigation menu.
  */
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import NavbarCommonSharedComponent from "@/components/pages/commonSharedComponents/NavbarCommonSharedComponent";
+import SiteHeader from "@/components/ui/site-header";
 import FooterCommonSharedComponent from "@/components/pages/commonSharedComponents/FooterCommonSharedComponent";
 import GsapScripts from "@/components/ui/GsapScripts";
 import AnimationBoot from "@/components/ui/AnimationBoot";
@@ -59,20 +52,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const content = await getContentMany(["global.nav", "global.footer"]);
+  const nav = content["global.nav"] as any;
 
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <GsapScripts />
       </head>
-      {/*
-        suppressHydrationWarning on <body> silences the mismatch caused by
-        browser extensions (dark-mode, reader-mode, password managers, etc.)
-        that inject style/class attributes onto <body> before React hydrates.
-        This is the officially recommended fix — it only suppresses the one
-        attribute-level diff on <body> itself, not any of its children.
-        https://nextjs.org/docs/messages/react-hydration-error
-      */}
       <body suppressHydrationWarning>
         {/* Reading progress bar */}
         <div
@@ -91,7 +77,15 @@ export default async function RootLayout({
           }}
         />
         <AnimationBoot />
-        <NavbarCommonSharedComponent {...(content["global.nav"] as any)} />
+
+        {/* New header with dropdown navigation */}
+        <SiteHeader
+          links={nav?.links}
+          signInLabel={nav?.signInLabel}
+          ctaLabel={nav?.ctaLabel}
+          ctaHref={nav?.ctaHref}
+        />
+
         <main>{children}</main>
         <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
       </body>
