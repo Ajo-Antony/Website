@@ -25,7 +25,6 @@ import {
 	Shield,
 	RotateCcw,
 	Handshake,
-	Leaf,
 	HelpCircle,
 	BarChart,
 	PlugIcon,
@@ -34,6 +33,8 @@ import {
 	Workflow,
 	Zap,
 	Brain,
+	Image as ImageIcon,
+	Newspaper,
 } from 'lucide-react';
 import { StrixmindIcon } from '@/components/ui/StrixmindLogo';
 import { CONTENT_DEFAULTS } from '@/lib/cms/registry';
@@ -153,14 +154,20 @@ export function SiteHeader({
 									</div>
 								</NavigationMenuContent>
 							</NavigationMenuItem>
-							<NavigationMenuLink className="px-4" asChild>
-								<Link
-									href="/#pricing"
-									className="text-sm font-medium text-[#5b5478] hover:text-[#1a1333] hover:bg-[rgba(108,99,255,0.06)] rounded-md px-3 py-2 transition-colors no-underline"
-								>
-									Pricing
-								</Link>
-							</NavigationMenuLink>
+							<NavigationMenuItem>
+								<NavigationMenuTrigger className="bg-transparent text-[#5b5478] hover:text-[#1a1333] text-sm font-medium">
+									Work
+								</NavigationMenuTrigger>
+								<NavigationMenuContent className="bg-white p-1 pr-1.5">
+									<ul className="bg-white grid w-[320px] gap-2 rounded-xl border border-[rgba(108,99,255,0.12)] p-2 shadow-lg">
+										{workLinks.map((item, i) => (
+											<li key={i}>
+												<ListItem {...item} />
+											</li>
+										))}
+									</ul>
+								</NavigationMenuContent>
+							</NavigationMenuItem>
 						</NavigationMenuList>
 					</NavigationMenu>
 				</div>
@@ -200,6 +207,10 @@ export function SiteHeader({
 					<div className="flex w-full flex-col gap-y-2">
 						<span className="text-xs font-bold uppercase tracking-widest text-[#9b92c0] px-2 pt-2">Product</span>
 						{productLinks.map((link) => (
+							<ListItem key={link.title} {...link} />
+						))}
+						<span className="text-xs font-bold uppercase tracking-widest text-[#9b92c0] px-2 pt-2">Work</span>
+						{workLinks.map((link) => (
 							<ListItem key={link.title} {...link} />
 						))}
 						<span className="text-xs font-bold uppercase tracking-widest text-[#9b92c0] px-2 pt-2">Company</span>
@@ -326,6 +337,27 @@ const productLinks: LinkItem[] = [
 	},
 ];
 
+const workLinks: LinkItem[] = [
+	{
+		title: 'Projects',
+		href: '/work/projects',
+		description: 'Client case studies — the problem, the build, the outcome',
+		icon: LayersIcon,
+	},
+	{
+		title: 'Blog',
+		href: '/work/blog',
+		description: 'Notes on building, shipping, and growing StrixMind',
+		icon: Newspaper,
+	},
+	{
+		title: 'Gallery',
+		href: '/work/gallery',
+		description: 'Snapshots from behind the scenes and finished work',
+		icon: ImageIcon,
+	},
+];
+
 const companyLinks: LinkItem[] = [
 	{
 		title: 'About Us',
@@ -362,11 +394,6 @@ const companyLinks2: LinkItem[] = [
 		title: 'Refund Policy',
 		href: '#',
 		icon: RotateCcw,
-	},
-	{
-		title: 'Blog',
-		href: '#',
-		icon: Leaf,
 	},
 	{
 		title: 'Help Center',

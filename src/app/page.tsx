@@ -9,16 +9,16 @@
  *  5. Workflow          (4-step how-it-works)
  *  6. About / Mission   (company story + timeline)
  *  7. Testimonials      (social proof)
- *  8. Pricing           (3-tier plans)
- *  9. FAQ               (accordion)
- * 10. CTA Banner        (aurora gradient call-to-action)
- * 11. Contact           (form + info)
- * 12. Capabilities      (static display-cards showcase)
+ *  8. FAQ               (accordion)
+ *  9. CTA Banner        (aurora gradient call-to-action)
+ * 10. Contact           (form + info)
+ * 11. Capabilities      (static display-cards showcase)
  *
  * REMOVED:
  *  - BrandIdentitySection     (internal brand doc, not user-facing)
  *  - BarbersTeamHomePageSection (wrong industry framing)
  *  - FeatureServicesHomePageSection (replaced by FeatureCarousel)
+ *  - Pricing             (removed per request)
  */
 import HeroHomePageSection from "@/components/pages/homePage/HeroHomePageSection";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
@@ -27,7 +27,6 @@ import FeatureCarouselSection from "@/components/pages/homePage/FeatureCarouselS
 import WorkflowHomePageSection from "@/components/pages/homePage/WorkflowHomePageSection";
 import AboutHomePageSection from "@/components/pages/homePage/AboutHomePageSection";
 import TestimonialsHomePageSection from "@/components/pages/homePage/TestimonialsHomePageSection";
-import PricingHomePageSection from "@/components/pages/homePage/PricingHomePageSection";
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
 import CtaBannerHomePageSection from "@/components/pages/homePage/CtaBannerHomePageSection";
 import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
@@ -42,7 +41,7 @@ export const revalidate = 0;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
-  "home.workflow", "home.mission", "home.testimonials", "home.pricing",
+  "home.workflow", "home.mission", "home.testimonials",
   "home.faq", "home.cta", "home.contact",
 ];
 
@@ -110,35 +109,28 @@ export default async function HomePage() {
         </SectionWrapper>
       )}
 
-      {/* 8. Pricing */}
-      {isVisible("home.pricing") && (
-        <SectionWrapper sectionKey="home.pricing" design={designOf("home.pricing")} isVisible>
-          <PricingHomePageSection {...(c["home.pricing"] as any)} />
-        </SectionWrapper>
-      )}
-
-      {/* 9. FAQ */}
+      {/* 8. FAQ */}
       {isVisible("home.faq") && (
         <SectionWrapper sectionKey="home.faq" design={designOf("home.faq")} isVisible>
           <FaqHomePageSection {...(c["home.faq"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 10. CTA Banner */}
+      {/* 9. CTA Banner */}
       {isVisible("home.cta") && (
         <SectionWrapper sectionKey="home.cta" design={designOf("home.cta")} isVisible>
           <CtaBannerHomePageSection {...(c["home.cta"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 11. Contact */}
+      {/* 10. Contact */}
       {isVisible("home.contact") && (
         <SectionWrapper sectionKey="home.contact" design={designOf("home.contact")} isVisible>
           <ContactHomePageSection {...(c["home.contact"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 12. Capabilities showcase — static, always shown */}
+      {/* 11. Capabilities showcase — static, always shown */}
       <CapabilitiesShowcaseSection />
     </>
   );
