@@ -1,9 +1,11 @@
 "use client";
+import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
+
 export default function GlobalLoading() {
   return (
     <div style={{ position:"fixed", inset:0, zIndex:200, display:"flex", flexDirection:"column" as const, alignItems:"center", justifyContent:"center", background:"rgba(238,240,251,0.92)", backdropFilter:"blur(20px)" }}>
-      <div style={{ fontSize:"1.5rem", fontWeight:800, color:"#1a1333", letterSpacing:"-0.03em", marginBottom:"1.5rem" }}>
-        strix<span style={{ color:"#6c63ff" }}>mind</span>
+      <div style={{ marginBottom:"1.5rem" }}>
+        <StrixmindWordmark theme="light" height={28} />
       </div>
       <div style={{ position:"relative", width:40, height:40 }}>
         <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"2px solid rgba(108,99,255,0.15)" }} />

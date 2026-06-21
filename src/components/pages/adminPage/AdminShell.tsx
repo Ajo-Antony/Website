@@ -4,6 +4,7 @@
  */
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth";
+import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 import {
   IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock,
 } from "@/components/ui/SvgIcons";
@@ -30,9 +31,7 @@ export default function AdminShell({ active, children }: { active: string; child
     <div className="min-h-screen flex" style={{ background: "linear-gradient(180deg,#f7f6fd,#eef0fb)" }}>
       <aside className="w-64 shrink-0 text-white flex flex-col" style={{ background: "linear-gradient(165deg,#241c4d,#1a1333)" }}>
         <div className="px-6 py-6 border-b border-white/10">
-          <span className="font-extrabold text-lg tracking-tight">
-            strix<span className="text-accent-2">mind</span>
-          </span>
+          <StrixmindWordmark theme="dark" height={20} />
           <div className="text-xs text-white/40 mt-1">Content dashboard</div>
         </div>
         <nav className="flex-1 px-3 py-4 flex flex-col gap-1">

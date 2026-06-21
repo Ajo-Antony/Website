@@ -1,27 +1,23 @@
 "use client";
-import { StrixmindIcon } from "@/components/ui/StrixmindLogo";
+import { StrixmindIcon, StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 function LogoIconDark({ size = 80 }: { size?: number }) {
   return (
-    <div style={{ width: size, height: size, borderRadius: size * 0.2, background: "linear-gradient(135deg,#6c63ff,#a78bfa)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(108,99,255,0.4)" }}>
-      <StrixmindIcon size={size * 0.65} theme="dark" />
+    <div style={{ width: size, height: size, borderRadius: size * 0.2, background: "linear-gradient(135deg,#003E8F,#0063E5)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(0,99,229,0.4)" }}>
+      <StrixmindIcon size={size * 0.65} />
     </div>
   );
 }
 function LogoIconLight({ size = 80 }: { size?: number }) {
   return (
-    <div style={{ width: size, height: size, borderRadius: size * 0.2, background: "#f3f1ff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(108,99,255,0.12)" }}>
-      <StrixmindIcon size={size * 0.65} theme="light" />
+    <div style={{ width: size, height: size, borderRadius: size * 0.2, background: "#eaf2ff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 8px 32px rgba(0,99,229,0.12)" }}>
+      <StrixmindIcon size={size * 0.65} />
     </div>
   );
 }
 function Wordmark({ theme = "dark", size = 48 }: { theme?: "dark" | "light"; size?: number }) {
-  return (
-    <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: size, letterSpacing: "-0.05em", color: theme === "dark" ? "#fff" : "#1a1333", lineHeight: 1 }}>
-      strix<span style={{ color: theme === "dark" ? "#d9d4ff" : "#6c63ff" }}>mind</span>
-    </span>
-  );
+  return <StrixmindWordmark theme={theme} height={size} />;
 }
 
 interface ColorSwatch { hex: string; name: string; role: string }

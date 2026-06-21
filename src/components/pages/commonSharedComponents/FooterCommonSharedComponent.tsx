@@ -15,7 +15,7 @@
  */
 "use client";
 import Link from "next/link";
-import { StrixmindIcon } from "@/components/ui/StrixmindLogo";
+import StrixmindLogo from "@/components/ui/StrixmindLogo";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 type LinkItem = { label: string; href: string };
@@ -50,13 +50,8 @@ export default function FooterCommonSharedComponent({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(4,1fr)] gap-10 lg:gap-12 pb-16 border-b border-line">
           {/* Brand column */}
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 no-underline mb-5">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-accent-2 flex items-center justify-center shadow-[0_4px_16px_rgba(108,99,255,0.35)]">
-                <StrixmindIcon size={24} theme="dark" />
-              </div>
-              <span className="font-extrabold text-ink tracking-tight text-[1.1rem]">
-                strix<span className="text-accent">mind</span>
-              </span>
+            <Link href="/" className="inline-flex items-center no-underline mb-5">
+              <StrixmindLogo size={30} variant="full" theme="light" />
             </Link>
 
             <p className="text-sm text-ink-soft leading-[1.85] mb-6 max-w-[240px]">{tagline}</p>

@@ -36,7 +36,7 @@ import {
 	Image as ImageIcon,
 	Newspaper,
 } from 'lucide-react';
-import { StrixmindIcon } from '@/components/ui/StrixmindLogo';
+import StrixmindLogo from '@/components/ui/StrixmindLogo';
 import { CONTENT_DEFAULTS } from '@/lib/cms/registry';
 
 type NavLink = { label: string; href: string };
@@ -91,14 +91,10 @@ export function SiteHeader({
 			<nav className="mx-auto flex h-[72px] w-full max-w-[1280px] items-center justify-between px-6 sm:px-8">
 				<div className="flex items-center gap-6">
 					{/* Logo */}
-					<Link href="/" className="flex items-center gap-2.5 no-underline shrink-0">
-						<div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-[#6c63ff] to-[#a78bfa] flex items-center justify-center shadow-[0_4px_14px_rgba(108,99,255,0.35)]">
-							<StrixmindIcon size={24} theme="dark" />
-						</div>
-						<span className="font-extrabold text-[#1a1333] tracking-tight text-[1.05rem] whitespace-nowrap">
-							strix<span className="text-[#6c63ff]">mind</span>
-						</span>
+					<Link href="/" className="flex items-center no-underline shrink-0">
+						<StrixmindLogo size={30} variant="full" theme="light" />
 					</Link>
+
 
 					{/* Desktop nav */}
 					<NavigationMenu className="hidden md:flex">

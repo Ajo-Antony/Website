@@ -1,4 +1,5 @@
 import { login } from "@/lib/actions/auth";
+import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 
 export default async function AdminLoginPage({
   searchParams,
@@ -10,8 +11,8 @@ export default async function AdminLoginPage({
   return (
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "linear-gradient(165deg,#241c4d,#1a1333)" }}>
       <form action={login} className="w-full max-w-sm bg-white rounded-2xl p-8 shadow-2xl">
-        <div className="font-extrabold text-xl tracking-tight mb-1 text-ink">
-          strix<span className="text-accent">mind</span>
+        <div className="mb-1">
+          <StrixmindWordmark theme="light" height={22} />
         </div>
         <p className="text-sm text-ink-soft mb-6">Sign in to the content dashboard.</p>
 

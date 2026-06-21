@@ -1,94 +1,140 @@
 "use client";
-import React from "react";
+import React, { useId } from "react";
 
 interface StrixmindLogoProps {
+  /** Pixel height of the icon mark (square). */
   size?: number;
   variant?: "icon" | "full" | "wordmark";
+  /** "dark" = white wordmark for dark backgrounds. "light" = ink wordmark for light backgrounds. */
   theme?: "dark" | "light";
   className?: string;
 }
 
-// The abstract logo: central blue node with surrounding connected nodes
-// Based on the branding PDF: Connected Intelligence — central node = AI intelligence,
-// surrounding nodes = data, ML, agents, digital systems
-export function StrixmindIcon({ size = 36, theme = "dark" }: { size?: number; theme?: "dark" | "light" }) {
-  const accent = "#6c63ff";
-  const center = "#6c63ff";
-  const nodeLight = theme === "dark" ? "#FFFFFF" : "#FFFFFF";
-  const nodeDark = theme === "dark" ? "#212121" : "#212121";
-  const lineColor = theme === "dark" ? "rgba(255,255,255,0.35)" : "rgba(0,62,143,0.4)";
+/**
+ * StrixmindIcon — the real brand mark (six connected nodes around a
+ * gradient core), sourced from /public/brand/strixmind-mark.svg.
+ * Renders identically on light or dark backgrounds — the mark itself
+ * doesn't change with theme, only its surrounding chrome does.
+ */
+export function StrixmindIcon({
+  size = 36,
+  className,
+}: {
+  size?: number;
+  theme?: "dark" | "light";
+  className?: string;
+}) {
+  const uid = useId().replace(/:/g, "");
+  const gradId = `strixmind-mark-grad-${uid}`;
 
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Connection lines first (behind nodes) */}
-      <line x1="24" y1="24" x2="24" y2="8" stroke={lineColor} strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="38" y2="16" stroke={lineColor} strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="38" y2="32" stroke={lineColor} strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="24" y2="40" stroke={lineColor} strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="10" y2="32" stroke={lineColor} strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="10" y2="16" stroke={lineColor} strokeWidth="1.5" />
-
-      {/* Outer satellite nodes */}
-      {/* Top */}
-      <circle cx="24" cy="8" r="4" fill={nodeLight} stroke={lineColor} strokeWidth="1" />
-      {/* Top-right */}
-      <circle cx="38" cy="16" r="3.5" fill={nodeDark} stroke={lineColor} strokeWidth="1" />
-      {/* Bottom-right */}
-      <circle cx="38" cy="32" r="4" fill={nodeLight} stroke={lineColor} strokeWidth="1" />
-      {/* Bottom */}
-      <circle cx="24" cy="40" r="3.5" fill={nodeDark} stroke={lineColor} strokeWidth="1" />
-      {/* Bottom-left */}
-      <circle cx="10" cy="32" r="4" fill={nodeLight} stroke={lineColor} strokeWidth="1" />
-      {/* Top-left */}
-      <circle cx="10" cy="16" r="3.5" fill={nodeDark} stroke={lineColor} strokeWidth="1" />
-
-      {/* Central node — the AI intelligence core */}
-      <circle cx="24" cy="24" r="8" fill={center} />
-      <circle cx="24" cy="24" r="5" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-      <circle cx="24" cy="24" r="2" fill="white" />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 189 175"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="StrixMind"
+      role="img"
+    >
+      <circle cx="147" cy="33" r="16" fill="#727272" />
+      <line x1="42.25" y1="44" x2="42.25" y2="133" stroke="#212121" strokeWidth="4.5" />
+      <line x1="48.857" y1="142.062" x2="87.857" y2="119.062" stroke="#212121" strokeWidth="4.5" />
+      <path d="M103 113L138 111" stroke="#212121" strokeWidth="4.5" />
+      <line x1="96.25" y1="64" x2="96.25" y2="105" stroke="#212121" strokeWidth="4.5" />
+      <line x1="103.646" y1="63.4661" x2="144.646" y2="107.466" stroke="#212121" strokeWidth="4.5" />
+      <line x1="101.994" y1="55.9875" x2="135.994" y2="38.9875" stroke="#212121" strokeWidth="4.5" />
+      <line x1="51.0479" y1="35.0089" x2="89.0479" y2="55.0089" stroke="#212121" strokeWidth="4.5" />
+      <circle cx="42" cy="32" r="16" fill="#212121" />
+      <circle cx="42" cy="86" r="14" fill="#212121" />
+      <circle cx="43" cy="144" r="16" fill="#212121" />
+      <circle cx="97" cy="114" r="14" fill="#212121" />
+      <circle cx="148" cy="112" r="16" fill="#212121" />
+      <circle cx="96" cy="59" r="14" fill={`url(#${gradId})`} />
+      <circle cx="147" cy="33" r="16" fill="#212121" />
+      <defs>
+        <linearGradient id={gradId} x1="96" y1="45" x2="96" y2="73" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#003E8F" />
+          <stop offset="1" stopColor="#0063E5" />
+        </linearGradient>
+      </defs>
     </svg>
   );
 }
 
-// The wordmark SVG — "strixmind" lowercase with custom letterforms
-export function StrixmindWordmark({ height = 22, theme = "dark" }: { height?: number; theme?: "dark" | "light" }) {
+/**
+ * StrixmindWordmark — the real "strixmind" lettermark, sourced from
+ * /public/brand/strixmind-wordmark.svg. Letterforms use currentColor
+ * (set via the `theme` prop) so the same artwork works on light or
+ * dark surfaces; the dot accents stay brand-blue gradient always.
+ */
+export function StrixmindWordmark({
+  height = 22,
+  theme = "dark",
+  className,
+}: {
+  height?: number;
+  theme?: "dark" | "light";
+  className?: string;
+}) {
+  const uid = useId().replace(/:/g, "");
+  const grad0 = `strixmind-wm-grad0-${uid}`;
+  const grad1 = `strixmind-wm-grad1-${uid}`;
+  const clipId = `strixmind-wm-clip-${uid}`;
   const color = theme === "dark" ? "#FFFFFF" : "#1a1333";
-  const accent = "#6c63ff";
+  const width = (524 / 115) * height;
+
   return (
-    <span style={{
-      fontFamily: "'Inter', sans-serif",
-      fontWeight: 800,
-      fontSize: height,
-      letterSpacing: "-0.04em",
-      color: color,
-      display: "inline-flex",
-      alignItems: "center",
-    }}>
-      strix<span style={{ color: accent }}>mind</span>
-    </span>
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 524 115"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      style={{ color }}
+      aria-label="StrixMind"
+      role="img"
+    >
+      <g clipPath={`url(#${clipId})`}>
+        <path d="M218.443 59.6953C222.806 54.4646 227.114 49.638 230.998 44.4904C233.532 41.134 236.388 39.4776 240.613 40.1315C242.307 40.389 244.072 40.1315 245.802 40.2186C247.019 40.2741 248.578 39.7035 249.189 41.348C249.705 42.6953 248.61 43.5473 247.872 44.435C242.48 50.9127 237.077 57.3851 231.664 63.8522C230.212 65.5879 228.768 67.3315 227.039 69.4C232.148 74.9874 236.416 81.2326 241.87 86.4793C244.274 88.7816 247.424 88.8252 250.447 88.1039C253.041 87.4858 253.457 85.2389 253.473 82.9802C253.516 76.7138 253.525 70.4501 253.501 64.189C253.451 61.3776 253.771 58.5717 254.453 55.8436C257.404 44.6489 268.099 37.948 280.824 39.2002C287.532 39.862 293.446 42.0455 297.758 47.8706C303.708 40.7695 311.297 38.4513 319.94 39.4023C332.543 40.7893 339.703 47.7795 340.401 60.476C341.051 72.3245 340.647 84.2284 340.734 96.1047C340.734 98.086 339.786 98.7636 337.918 98.7201C335.212 98.6566 332.503 98.6131 329.802 98.7478C327.318 98.8706 326.628 97.7135 326.664 95.431C326.743 85.7105 326.704 75.99 326.719 66.2695C326.719 63.662 326.541 61.0902 325.652 58.6135C324.066 54.1357 320.496 51.5797 315.835 51.548C310.511 51.5163 306.58 54.0802 304.954 58.6531C304.105 61.0308 304.018 63.5193 304.018 66.0079C304.018 75.6214 303.926 85.235 304.077 94.8445C304.125 97.7928 303.256 99.0212 300.206 98.7438C297.829 98.5752 295.443 98.5752 293.065 98.7438C290.626 98.8706 289.872 97.7809 289.892 95.4627C289.956 85.6312 289.892 75.8037 289.892 65.9762C289.916 64.0315 289.718 62.0904 289.301 60.1907C288.079 54.8569 284.35 51.758 278.987 51.6273C273.41 51.4886 269.562 54.4012 268.13 59.8974C267.52 62.2235 267.583 64.6051 267.563 66.9788C267.516 73.0259 267.726 79.0888 267.337 85.1121C266.794 93.5329 262.621 97.8403 254.247 98.9816C250.056 99.5449 245.81 99.5556 241.617 99.0133C236.313 98.3396 232.096 95.6648 228.76 91.5515C225.492 87.5333 222.199 83.531 218.843 79.4217C217.213 80.234 216.444 81.7002 215.448 82.9009C211.715 87.3867 207.998 91.8883 204.373 96.4613C203.135 98.0186 201.798 98.8904 199.72 98.7874C196.697 98.6329 193.662 98.7319 190.632 98.6725C189.704 98.6527 188.581 98.9221 188.018 97.8483C187.403 96.6793 188.141 95.8273 188.851 94.9674C194.999 87.5703 201.137 80.1733 207.265 72.7762C208.09 71.7816 208.907 70.7949 209.97 69.4951C205.051 63.6897 200.628 57.5436 195.106 52.396C192.084 49.527 188.002 50.0224 184.281 50.8149C182.095 51.2944 182.111 53.4541 182.115 55.3641C182.139 68.1082 182.115 80.8562 182.115 93.6002C182.115 98.6883 182.139 98.6923 176.891 98.7201C174.943 98.7201 172.992 98.6368 171.048 98.7201C168.791 98.8152 167.97 97.7373 167.974 95.5974C167.998 80.8007 167.851 66 168.037 51.2152C168.125 44.1814 171.584 40.8646 178.625 40.1592C184.237 39.6005 189.846 39.4142 195.467 40.1156C200.057 40.6902 203.96 42.5329 207.023 46.0319C208.942 48.2273 210.836 50.4477 212.703 52.6932C214.512 54.8529 216.281 57.0403 218.443 59.6953Z" fill="currentColor" />
+        <path d="M101.281 40.1751C106.247 40.1751 110.769 40.2464 115.287 40.1473C117.505 40.0958 118.536 40.92 118.389 43.159C118.334 44.0228 118.389 44.8867 118.389 45.7506C118.504 52.3841 119.337 52.3762 111.67 52.2019C108.334 52.1226 104.998 52.2019 101.888 52.2019C101.003 53.2044 101.273 54.1079 101.273 54.9401C101.273 62.7149 101.11 70.4977 101.36 78.2646C101.566 84.7674 104.383 87.1529 110.833 86.8953C112.45 86.8015 114.059 86.5963 115.648 86.2811C117.548 85.9364 118.607 86.6021 118.683 88.5557C119.103 99.4928 120.761 98.5655 110.019 99.3343C107.644 99.4996 105.257 99.3986 102.903 99.0331C93.1885 97.5233 87.6152 91.2781 87.3534 81.3158C87.1114 72.1422 87.2305 62.9566 87.1908 53.7751C87.1908 52.721 87.1908 51.6629 87.1908 49.9748C81.9626 53.248 76.9486 55.6217 71.3991 56.6322C70.4431 56.8065 69.4752 56.9571 68.5431 57.2186C65.096 58.1895 62.4541 58.6333 60.2486 54.314C57.7495 49.4161 46.5871 48.5839 42.303 52.2296C39.2724 54.8054 40.034 59.1009 43.9293 60.8683C47.4082 62.4534 51.2242 62.8021 54.9292 63.5193C58.5389 64.2168 62.1764 64.8429 65.6077 66.1823C71.895 68.6392 76.2425 72.7247 76.7146 79.913C77.1866 87.2322 74.4139 93.0415 67.7497 96.1205C55.8256 101.625 43.854 101.423 32.3424 94.7138C28.6573 92.566 26.3923 89.1303 25.2023 85.021C24.635 83.0634 25.2023 81.8865 27.2928 81.5259C28.8949 81.278 30.4836 80.95 32.0529 80.5431C35.5159 79.5723 38.5663 79.1403 39.8594 83.741C40.2879 85.2667 41.8904 86.2574 43.4018 86.9112C48.1946 89.0668 53.6392 89.2743 58.5825 87.4897C61.0102 86.6417 62.581 84.9813 62.6207 82.2114C62.6604 79.4415 61.0618 77.8524 58.6539 76.9172C54.3857 75.245 49.8279 74.8567 45.3891 73.9571C41.7675 73.224 38.2172 72.3166 34.9327 70.6086C32.6373 69.4422 30.668 67.7243 29.2019 65.6093C27.7357 63.4943 26.8186 61.0485 26.5331 58.4917C26.2475 55.9349 26.6024 53.3473 27.5659 50.9615C28.5294 48.5757 30.0713 46.4664 32.0529 44.8233C41.9063 36.4422 62.3708 37.3417 71.3 46.6303C72.49 47.8786 73.3904 47.7993 74.64 47.2406C81.5263 44.1536 86.0127 39.1249 87.1868 31.5245C87.5141 29.2807 87.7048 27.0191 87.758 24.7522C87.9127 19.9058 87.8691 19.9058 92.8791 19.9177C101.134 19.9375 101.154 19.9375 101.261 28.0135C101.32 31.889 101.281 35.7566 101.281 40.1751Z" fill="currentColor" />
+        <path d="M483.87 93.0415C470.229 102.39 455.088 101.676 445.353 91.4326C434.845 80.3767 434.135 61.7995 443.766 49.4002C452.66 37.9084 467.511 36.2876 483.934 45.3226C483.934 41.5303 483.934 38.0233 483.934 34.5123C483.934 29.3291 484.009 24.142 483.882 18.9587C483.815 16.1452 485.132 15.0159 487.762 15.0159C490.035 15.0159 492.308 15.0872 494.577 15.0159C497.072 14.9287 498.075 16.0145 498.02 18.507C497.921 22.9333 498.02 27.3636 498.02 31.79C498.02 52.5281 498.02 73.2663 498.02 94.0044C498.02 98.6289 497.925 98.7081 493.303 98.7042H489.733C484.259 98.7161 484.259 98.7161 483.87 93.0415ZM468.003 51.7184C458.261 51.6907 451.276 58.9503 451.168 69.2138C451.061 79.4772 458.09 87.2361 467.488 87.3511C476.885 87.466 484.049 79.7585 484.053 69.5189C484.061 59.1564 477.385 51.7501 468.007 51.7184H468.003Z" fill="currentColor" />
+        <path d="M429.419 79.2869C429.419 84.6841 429.351 90.0814 429.446 95.4746C429.486 97.8126 428.653 98.8389 426.229 98.7161C423.745 98.5833 421.255 98.5913 418.772 98.7399C416.154 98.9023 415.368 97.6699 415.384 95.2685C415.432 86.4198 415.384 77.5711 415.384 68.7184C415.384 67.3156 415.384 65.9128 415.313 64.514C414.873 56.4816 410.045 51.6709 402.445 51.659C394.844 51.6471 389.493 56.6876 389.311 64.6844C389.089 74.5 389.231 84.3235 389.22 94.1471C389.22 98.6606 389.22 98.6685 384.725 98.7002C382.563 98.7002 380.401 98.6725 378.24 98.7517C376.232 98.827 375.201 98.0424 375.217 95.9501C375.3 84.7277 374.912 73.4816 375.538 62.2949C376.248 49.6974 383.174 42.3625 395.499 39.8541C401.747 38.586 407.978 38.7207 414.048 40.8804C423.667 44.3002 429.026 52.2375 429.375 63.7571C429.53 68.9324 429.399 74.1196 429.399 79.2988L429.419 79.2869Z" fill="currentColor" />
+        <path d="M126.267 78.8986C126.267 73.8263 126.172 68.7501 126.267 63.6779C126.573 49.951 134.427 41.3005 148.084 39.5925C151.097 39.1712 154.147 39.0941 157.176 39.3627C157.716 39.3894 158.254 39.4463 158.787 39.5331C161.084 40.0483 161.936 44.2527 161.056 49.9709C160.679 52.4277 159.176 52.396 157.26 52.1662C155.65 51.9786 154.024 51.9693 152.412 52.1385C144.399 52.9627 140.512 56.9333 140.365 64.9697C140.179 74.3573 140.322 83.7529 140.329 93.1445C140.329 98.6725 140.329 98.6725 134.863 98.724C126.291 98.8033 126.291 98.8033 126.291 90.2319V78.8986H126.267Z" fill="currentColor" />
+        <path d="M365.094 69.6893C365.094 78.1061 365.018 86.5268 365.133 94.9436C365.173 97.7175 364.293 98.9538 361.405 98.728C359.139 98.5576 356.864 98.5576 354.598 98.728C351.75 98.938 350.821 97.7809 350.841 94.9753C350.936 79.5406 350.841 64.1058 350.913 48.6711C350.96 38.8198 349.572 40.2622 359.564 40.179C365.078 40.1315 365.078 40.179 365.078 45.7268V69.6893H365.094Z" fill="currentColor" />
+        <path d="M366.546 24.0112C366.546 28.7308 362.976 32.2536 358.1 32.3329C353.225 32.4121 349.528 28.9368 349.453 24.2529C349.374 19.3114 352.956 15.6142 357.866 15.5746C362.777 15.535 366.538 19.1727 366.546 24.0112Z" fill={`url(#${grad0})`} />
+        <path d="M175.217 32.3685C170.203 32.3012 166.49 28.6 166.605 23.7972C166.612 22.1123 167.117 20.4669 168.057 19.0682C168.997 17.6694 170.331 16.5798 171.89 15.9365C173.449 15.2931 175.163 15.1249 176.817 15.4529C178.472 15.7808 179.992 16.5904 181.187 17.7796C182.382 18.9688 183.198 20.4845 183.532 22.136C183.867 23.7875 183.705 25.5009 183.066 27.0605C182.428 28.6201 181.342 29.9563 179.946 30.9008C178.549 31.8453 176.904 32.356 175.217 32.3685Z" fill={`url(#${grad1})`} />
+      </g>
+      <defs>
+        <linearGradient id={grad0} x1="357.999" y1="15.5743" x2="357.999" y2="32.3342" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#003E8F" />
+          <stop offset="1" stopColor="#0063E5" />
+        </linearGradient>
+        <linearGradient id={grad1} x1="175.152" y1="15.2895" x2="175.152" y2="32.3685" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#003E8F" />
+          <stop offset="1" stopColor="#0063E5" />
+        </linearGradient>
+        <clipPath id={clipId}>
+          <rect width="473" height="85" fill="white" transform="translate(25 15)" />
+        </clipPath>
+      </defs>
+    </svg>
   );
 }
 
-// Combined icon + wordmark lockup
-export default function StrixmindLogo({ size = 36, variant = "full", theme = "dark" }: StrixmindLogoProps) {
-  if (variant === "icon") return <StrixmindIcon size={size} theme={theme} />;
-  if (variant === "wordmark") return <StrixmindWordmark height={size * 0.55} theme={theme} />;
+/**
+ * StrixmindLogo — combined lockup (icon + wordmark). This is the real
+ * brand identity, replacing the old placeholder node-graph + CSS text.
+ */
+export default function StrixmindLogo({ size = 36, variant = "full", theme = "dark", className }: StrixmindLogoProps) {
+  if (variant === "icon") return <StrixmindIcon size={size} className={className} />;
+  if (variant === "wordmark") return <StrixmindWordmark height={size * 0.55} theme={theme} className={className} />;
 
   return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: "0.6rem" }}>
-      <div style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.22,
-        background: "linear-gradient(135deg,#6c63ff,#a78bfa)",
-        border: "none",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-      }}>
-        <StrixmindIcon size={size * 0.72} theme="dark" />
-      </div>
+    <div className={className} style={{ display: "inline-flex", alignItems: "center", gap: size * 0.16 }}>
+      <StrixmindIcon size={size} />
       <StrixmindWordmark height={size * 0.5} theme={theme} />
     </div>
   );
