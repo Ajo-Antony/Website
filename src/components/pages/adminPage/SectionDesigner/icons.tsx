@@ -466,7 +466,6 @@ export const SECTION_ICON_MAP: Record<string, (p: IconProps) => React.ReactEleme
   "home.trustedBy":    IconLogoGrid,
   "home.services":     IconGear,
   "home.whyUs":        IconSparkle,
-  "home.underTheHood": IconLayoutGrid,
   "home.mission":      IconCompassTarget,
   "home.testimonials": IconQuote,
   "home.pricing":      IconTag,

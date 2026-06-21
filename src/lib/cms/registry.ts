@@ -130,18 +130,6 @@ export const CONTENT_SECTIONS: SectionSchema[] = [
     ],
   },
   {
-    key: "home.underTheHood", label: "Under the Hood", group: "Home",
-    fields: [
-      f("eyebrow", "Eyebrow label"),
-      f("heading", "Heading", "textarea", { rows: 2 }),
-      f("subheading", "Subheading", "textarea", { rows: 2 }),
-      f("engines", "Engines", "array", {
-        itemLabel: "Engine",
-        itemFields: [f("title", "Title"), f("tagline", "Tagline"), f("desc", "Description", "textarea", { rows: 2 })],
-      }),
-    ],
-  },
-  {
     key: "home.mission", label: "Mission Teaser", group: "Home",
     fields: [
       f("eyebrow", "Eyebrow label"),
@@ -528,16 +516,6 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
       { label: "Lead qualification", pct: 91 },
     ],
     statusLine: "All systems operational · AI agents active",
-  },
-  "home.underTheHood": {
-    eyebrow: "Under the Hood",
-    heading: "One platform, three engines.",
-    subheading: "Every lead, conversation, and workflow runs through three connected systems working in sync — not three separate tools bolted together.",
-    engines: [
-      { title: "CRM Engine", tagline: "Every lead, one pipeline", desc: "Leads, deals, and customer history live in a single record. Stage tracking and lead scoring update automatically as conversations happen — no manual data entry." },
-      { title: "Automation Engine", tagline: "Agents that do the work", desc: "Multi-agent workflows qualify leads, route conversations, and trigger follow-ups, built visually with no code. Every interaction trains the agents to get sharper." },
-      { title: "Communication Engine", tagline: "Every channel, one inbox", desc: "WhatsApp, email, and SMS feed into the same customer timeline, so context never gets lost between channels or handed off between team members." },
-    ],
   },
   "home.mission": {
     eyebrow: "Our mission",

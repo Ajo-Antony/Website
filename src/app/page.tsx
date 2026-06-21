@@ -6,25 +6,25 @@
  *  2. TrustedBy         (logo marquee)
  *  3. Services          (six service cards)
  *  4. FeatureCarousel   (NEW — interactive animated feature showcase)
- *  5. Under the Hood   (one platform, three engines)
- *  6. About / Mission   (company story + timeline)
- *  7. Testimonials      (social proof)
- *  8. FAQ               (accordion)
- *  9. CTA Banner        (aurora gradient call-to-action)
- * 10. Contact           (form + info)
- * 11. Capabilities      (static display-cards showcase)
+ *  5. About / Mission   (company story + timeline)
+ *  6. Testimonials      (social proof)
+ *  7. FAQ               (accordion)
+ *  8. CTA Banner        (aurora gradient call-to-action)
+ *  9. Contact           (form + info)
+ * 10. Capabilities      (static display-cards showcase)
  *
  * REMOVED:
  *  - BrandIdentitySection     (internal brand doc, not user-facing)
  *  - BarbersTeamHomePageSection (wrong industry framing)
  *  - FeatureServicesHomePageSection (replaced by FeatureCarousel)
  *  - Pricing             (removed per request)
+ *  - Workflow / "How It Works" (removed per request)
+ *  - Under the Hood      (removed per request)
  */
 import { PremiumHero } from "@/components/ui/hero";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
 import ServicesHomePageSection from "@/components/pages/homePage/ServicesHomePageSection";
 import FeatureCarouselSection from "@/components/pages/homePage/FeatureCarouselSection";
-import UnderTheHoodHomePageSection from "@/components/pages/homePage/UnderTheHoodHomePageSection";
 import AboutHomePageSection from "@/components/pages/homePage/AboutHomePageSection";
 import TestimonialsHomePageSection from "@/components/pages/homePage/TestimonialsHomePageSection";
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
@@ -41,7 +41,7 @@ export const revalidate = 0;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
-  "home.underTheHood", "home.mission", "home.testimonials",
+  "home.mission", "home.testimonials",
   "home.faq", "home.cta", "home.contact",
 ];
 
@@ -88,49 +88,42 @@ export default async function HomePage() {
       {/* 4. Feature Carousel — NEW interactive Why StrixMind section */}
       <FeatureCarouselSection />
 
-      {/* 5. Under the Hood */}
-      {isVisible("home.underTheHood") && (
-        <SectionWrapper sectionKey="home.underTheHood" design={designOf("home.underTheHood")} isVisible>
-          <UnderTheHoodHomePageSection {...(c["home.underTheHood"] as any)} />
-        </SectionWrapper>
-      )}
-
-      {/* 6. About / Mission */}
+      {/* 5. About / Mission */}
       {isVisible("home.mission") && (
         <SectionWrapper sectionKey="home.mission" design={designOf("home.mission")} isVisible>
           <AboutHomePageSection {...(c["home.mission"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 7. Testimonials */}
+      {/* 6. Testimonials */}
       {isVisible("home.testimonials") && (
         <SectionWrapper sectionKey="home.testimonials" design={designOf("home.testimonials")} isVisible>
           <TestimonialsHomePageSection {...(c["home.testimonials"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 8. FAQ */}
+      {/* 7. FAQ */}
       {isVisible("home.faq") && (
         <SectionWrapper sectionKey="home.faq" design={designOf("home.faq")} isVisible>
           <FaqHomePageSection {...(c["home.faq"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 9. CTA Banner */}
+      {/* 8. CTA Banner */}
       {isVisible("home.cta") && (
         <SectionWrapper sectionKey="home.cta" design={designOf("home.cta")} isVisible>
           <CtaBannerHomePageSection {...(c["home.cta"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 10. Contact */}
+      {/* 9. Contact */}
       {isVisible("home.contact") && (
         <SectionWrapper sectionKey="home.contact" design={designOf("home.contact")} isVisible>
           <ContactHomePageSection {...(c["home.contact"] as any)} />
         </SectionWrapper>
       )}
 
-      {/* 11. Capabilities showcase — static, always shown */}
+      {/* 10. Capabilities showcase — static, always shown */}
       <CapabilitiesShowcaseSection />
     </>
   );
