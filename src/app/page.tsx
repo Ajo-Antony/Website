@@ -20,7 +20,7 @@
  *  - FeatureServicesHomePageSection (replaced by FeatureCarousel)
  *  - Pricing             (removed per request)
  */
-import HeroHomePageSection from "@/components/pages/homePage/HeroHomePageSection";
+import { PremiumHero } from "@/components/ui/hero";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
 import ServicesHomePageSection from "@/components/pages/homePage/ServicesHomePageSection";
 import FeatureCarouselSection from "@/components/pages/homePage/FeatureCarouselSection";
@@ -67,7 +67,7 @@ export default async function HomePage() {
       {/* 1. Hero */}
       {isVisible("home.hero") && (
         <SectionWrapper sectionKey="home.hero" design={designOf("home.hero")} isVisible>
-          <HeroHomePageSection {...(c["home.hero"] as any)} />
+          <PremiumHero />
         </SectionWrapper>
       )}
 
