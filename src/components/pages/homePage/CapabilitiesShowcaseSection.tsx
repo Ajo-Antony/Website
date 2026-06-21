@@ -31,14 +31,14 @@ const CARDS = [
   {
     icon: <Bot className="size-4 text-accent-2" />,
     title: "Multi-Agent AI",
-    description: "priority task queue",
+    description: "Six specialised agents, priority task queue",
     date: "Core platform",
     className: `[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 ${STACK_BASE}`,
   },
   {
     icon: <MessageSquareText className="size-4 text-accent-2" />,
     title: "WhatsApp CRM",
-    description: "Session-aware messaging",
+    description: "Session-aware messaging, pipelines, forecasting",
     date: "Core platform",
     className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
   },

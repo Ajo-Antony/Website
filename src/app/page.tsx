@@ -6,7 +6,7 @@
  *  2. TrustedBy         (logo marquee)
  *  3. Services          (six service cards)
  *  4. FeatureCarousel   (NEW — interactive animated feature showcase)
- *  5. Workflow          (4-step how-it-works)
+ *  5. Under the Hood   (one platform, three engines)
  *  6. About / Mission   (company story + timeline)
  *  7. Testimonials      (social proof)
  *  8. FAQ               (accordion)
@@ -24,7 +24,7 @@ import { PremiumHero } from "@/components/ui/hero";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
 import ServicesHomePageSection from "@/components/pages/homePage/ServicesHomePageSection";
 import FeatureCarouselSection from "@/components/pages/homePage/FeatureCarouselSection";
-import WorkflowHomePageSection from "@/components/pages/homePage/WorkflowHomePageSection";
+import UnderTheHoodHomePageSection from "@/components/pages/homePage/UnderTheHoodHomePageSection";
 import AboutHomePageSection from "@/components/pages/homePage/AboutHomePageSection";
 import TestimonialsHomePageSection from "@/components/pages/homePage/TestimonialsHomePageSection";
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
@@ -41,7 +41,7 @@ export const revalidate = 0;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
-  "home.workflow", "home.mission", "home.testimonials",
+  "home.underTheHood", "home.mission", "home.testimonials",
   "home.faq", "home.cta", "home.contact",
 ];
 
@@ -88,10 +88,10 @@ export default async function HomePage() {
       {/* 4. Feature Carousel — NEW interactive Why StrixMind section */}
       <FeatureCarouselSection />
 
-      {/* 5. Workflow / How it works */}
-      {isVisible("home.workflow") && (
-        <SectionWrapper sectionKey="home.workflow" design={designOf("home.workflow")} isVisible>
-          <WorkflowHomePageSection {...(c["home.workflow"] as any)} />
+      {/* 5. Under the Hood */}
+      {isVisible("home.underTheHood") && (
+        <SectionWrapper sectionKey="home.underTheHood" design={designOf("home.underTheHood")} isVisible>
+          <UnderTheHoodHomePageSection {...(c["home.underTheHood"] as any)} />
         </SectionWrapper>
       )}
 

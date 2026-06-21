@@ -35,7 +35,7 @@ VALUES
   ('home.trustedBy',    'home', 'Trusted By Strip',   2,  true, '{}'),
   ('home.services',     'home', 'Services',           3,  true, '{}'),
   ('home.whyUs',        'home', 'Feature Services',   4,  true, '{}'),
-  ('home.workflow',     'home', 'Workflow',           5,  true, '{}'),
+  ('home.underTheHood', 'home', 'Under the Hood',     5,  true, '{}'),
   ('home.mission',      'home', 'About / Mission',    6,  true, '{}'),
   ('home.testimonials', 'home', 'Testimonials',       7,  true, '{}'),
   ('home.pricing',      'home', 'Pricing',            8,  true, '{}'),
