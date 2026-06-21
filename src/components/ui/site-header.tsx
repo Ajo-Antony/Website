@@ -37,7 +37,6 @@ import {
 	Newspaper,
 } from 'lucide-react';
 import StrixmindLogo from '@/components/ui/StrixmindLogo';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { CONTENT_DEFAULTS } from '@/lib/cms/registry';
 
 type NavLink = { label: string; href: string };
@@ -171,7 +170,6 @@ export function SiteHeader({
 
 				{/* Desktop CTAs */}
 				<div className="hidden items-center gap-3 md:flex">
-					<ThemeToggle />
 					<Button variant="outline" asChild>
 						<Link href="/#contact" className="no-underline">{signInLabel}</Link>
 					</Button>
@@ -221,10 +219,6 @@ export function SiteHeader({
 					</div>
 				</NavigationMenu>
 				<div className="flex flex-col gap-2">
-					<div className="flex items-center justify-between px-1 pb-1">
-						<span className="text-sm font-medium text-[#5b5478]">Theme</span>
-						<ThemeToggle />
-					</div>
 					<Button variant="outline" className="w-full bg-transparent" asChild>
 						<Link href="/#contact" className="no-underline">{signInLabel}</Link>
 					</Button>

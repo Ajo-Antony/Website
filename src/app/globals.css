@@ -63,36 +63,6 @@
   --radius-xl: 32px;
 }
 
-/* ── Dark theme overrides ──
-   Activated by adding class="dark" to <html> (see ThemeProvider).
-   Mirrors every light token above with a dark-surface equivalent —
-   accent colours stay the same so brand identity doesn't shift. */
-.dark {
-  --bg-from:      #15101f;
-  --bg-to:        #0e0a17;
-  --surface:      #1a1333;
-  --surface-alt:  #241c4d;
-  --glass-bg:        rgba(26,19,51,0.55);
-  --glass-bg-strong: rgba(26,19,51,0.78);
-  --glass-border:    rgba(255,255,255,0.08);
-
-  --text:        #f5f3ff;
-  --text-muted:  #b8b2d6;
-  --text-dim:    #8b84ad;
-
-  --accent:       #8b7fff;
-  --accent-2:     #a78bfa;
-  --accent-deep:  #6c63ff;
-  --accent-teal:  #38bdf8;
-  --accent-rose:  #f472b6;
-  --accent-amber: #fbbf24;
-
-  --border:        rgba(255,255,255,0.12);
-  --divider:        rgba(167,139,250,0.16);
-  --shadow:         rgba(0,0,0,0.35);
-  --shadow-strong:  rgba(0,0,0,0.55);
-}
-
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 

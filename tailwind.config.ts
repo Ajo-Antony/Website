@@ -2,7 +2,6 @@ import type { Config } from "tailwindcss";
 import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 
 const config: Config = {
-  darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
@@ -23,8 +22,6 @@ const config: Config = {
         "primary-foreground": "#ffffff",
         secondary: "var(--surface-alt)",
         "secondary-foreground": "var(--text)",
-        "accent-foreground": "#ffffff",
-        input: "var(--border)",
         // ── Unified StrixMind palette (Light Premium Glass) ──
         // Single source of truth — used by every page incl. /work and /admin.
         ink:        "#1a1333",
