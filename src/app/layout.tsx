@@ -1,8 +1,17 @@
 /**
  * src/app/layout.tsx
  * Root layout — wraps EVERY page on the site.
- * Uses new SiteHeader with dropdown navigation menu.
+ *
+ * PERF FIXES:
+ * 1. Added `export const revalidate = 60` — layout Supabase calls
+ *    (global.nav, global.footer) are now cached at the edge for 60s
+ *    instead of running on every single request.
+ * 2. Trimmed Inter font weights from 7 → 4 weights. Each weight is a
+ *    separate woff2 download (~20-30KB). Dropped 300, 800, 900 which
+ *    are rarely used in the UI.
  */
+export const revalidate = 60;
+
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import SiteHeader from "@/components/ui/site-header";
@@ -12,9 +21,11 @@ import AnimationBoot from "@/components/ui/AnimationBoot";
 import { getContentMany } from "@/lib/actions/content";
 import "./globals.css";
 
+// PERF FIX: 7 weights → 4 weights. Saves ~3 font file round-trips (~80KB).
+// If you need 300 (light) or 800/900 (heavy) somewhere, add them back.
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
@@ -87,7 +98,6 @@ export default async function RootLayout({
         />
         <AnimationBoot />
 
-        {/* New header with dropdown navigation */}
         <SiteHeader
           links={nav?.links}
           signInLabel={nav?.signInLabel}

@@ -5,22 +5,29 @@
  *  1. Hero              (full-screen intro, no embedded nav)
  *  2. TrustedBy         (logo marquee)
  *  3. Services          (six service cards)
- *  4. FeatureCarousel   (NEW — interactive animated feature showcase)
+ *  4. FeatureCarousel   (interactive animated feature showcase)
  *  5. About / Mission   (company story + timeline)
  *  6. Testimonials      (social proof)
  *  7. FAQ               (accordion)
  *  8. CTA Banner        (aurora gradient call-to-action)
  *  9. Contact           (form + info)
  * 10. Capabilities      (static display-cards showcase)
- *
- * REMOVED:
- *  - BrandIdentitySection     (internal brand doc, not user-facing)
- *  - BarbersTeamHomePageSection (wrong industry framing)
- *  - FeatureServicesHomePageSection (replaced by FeatureCarousel)
- *  - Pricing             (removed per request)
- *  - Workflow / "How It Works" (removed per request)
- *  - Under the Hood      (removed per request)
  */
+
+/**
+ * PERF FIX: Removed `export const dynamic = "force-dynamic"` and
+ * `export const revalidate = 0`.
+ *
+ * Those two lines disabled ALL caching — every visitor hit Supabase
+ * cold on every request. Now we use ISR: the page is cached and
+ * served instantly from Vercel's edge, regenerated in the background
+ * every 60 seconds. Content changes appear within ~1 minute.
+ *
+ * If you need faster content updates, lower to 30. If content rarely
+ * changes, raise to 3600 (1 hour) for maximum speed.
+ */
+export const revalidate = 60;
+
 import { PremiumHero } from "@/components/ui/hero";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
 import ServicesHomePageSection from "@/components/pages/homePage/ServicesHomePageSection";
@@ -35,9 +42,6 @@ import SectionWrapper from "@/components/pages/homePage/SectionWrapper";
 import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
@@ -85,7 +89,7 @@ export default async function HomePage() {
         </SectionWrapper>
       )}
 
-      {/* 4. Feature Carousel — NEW interactive Why StrixMind section */}
+      {/* 4. Feature Carousel */}
       <FeatureCarouselSection />
 
       {/* 5. About / Mission */}
