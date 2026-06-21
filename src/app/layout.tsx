@@ -38,7 +38,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StrixMind — AI-Powered Business Operating System",
+  title: "StrixMind",
   description:
     "AI-powered CRM, WhatsApp automation, lead management, multi-agent workflows, and revenue intelligence — all in one platform built for Indian businesses.",
   keywords: [
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     "workflow automation",
   ],
   openGraph: {
-    title: "StrixMind — AI-Powered Business Operating System",
+    title: "StrixMind",
     description: "Automate Workflows. Scale Operations. Grow Without Limits.",
     siteName: "StrixMind",
     type: "website",

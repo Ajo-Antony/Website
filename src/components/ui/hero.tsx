@@ -222,7 +222,7 @@ export const PremiumHero = ({
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#6c63ff]/30 bg-[#6c63ff]/10 text-[#a78bfa] text-sm font-medium mb-8 backdrop-blur-sm"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-[#6c63ff] animate-pulse" />
-            AI-Powered Business Operating System
+          
           </motion.div>
         </div>
 
@@ -272,22 +272,7 @@ export const PremiumHero = ({
         </div>
 
         {/* Stats */}
-        <div
-          className="mt-16 flex flex-wrap items-center justify-center gap-8 text-center"
-          data-strix-hero-stats
-        >
-          {[
-            { value: "10x", label: "Faster Operations" },
-            { value: "98%", label: "Uptime SLA" },
-            { value: "500+", label: "Businesses Automated" },
-          ].map((stat) => (
-            <div key={stat.label} className="flex flex-col">
-              <span className="text-3xl font-bold text-white">{stat.value}</span>
-              <span className="text-sm text-white/40 mt-1">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+     
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
