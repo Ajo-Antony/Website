@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/shadcn-button";
 import { MoveRight, PhoneCall } from "lucide-react";
 
@@ -213,19 +212,6 @@ export const PremiumHero = ({
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Badge */}
-        <div data-strix-hero-badge>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#6c63ff]/30 bg-[#6c63ff]/10 text-[#a78bfa] text-sm font-medium mb-8 backdrop-blur-sm"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#6c63ff] animate-pulse" />
-          
-          </motion.div>
-        </div>
-
         {/* Headline */}
         <h1
           className="text-5xl md:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-6"
@@ -271,8 +257,7 @@ export const PremiumHero = ({
           </Link>
         </div>
 
-        {/* Stats */}
-     
+      </div>
 
       {/* Bottom fade */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
