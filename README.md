@@ -1,39 +1,33 @@
-# Section Designer — Editor Redesign
+# StrixMind — Sign In / Sign Up Update
 
-Drop-in replacement files. Copy these into your project at the matching paths
-(overwriting the originals), commit, and redeploy.
+Drop this folder's contents into your project root (it mirrors your repo's
+folder structure, so paths line up automatically) and commit.
 
-## Files in this package
+## Files in this update
+- `src/lib/utils/site-url.ts` — new
+- `src/lib/actions/customerAuth.ts` — new (public sign-up/sign-in/OAuth/sign-out)
+- `src/app/login/page.tsx` — new
+- `src/app/signup/page.tsx` — new
+- `src/app/account/page.tsx` — new (protected landing page after sign-in)
+- `src/app/auth/callback/route.ts` — new (OAuth + email-confirmation handler)
+- `src/app/auth/auth-code-error/page.tsx` — new
+- `src/components/auth/OAuthButtons.tsx` — new (Google + Microsoft buttons)
+- `src/components/ui/site-header.tsx` — changed (Sign in → `/login`)
+- `middleware.ts` — changed (now also guards `/account`, `/login`, `/signup`)
+- `sql/003_customer_profiles.sql` — new (run in Supabase SQL Editor)
 
-- `src/components/pages/adminPage/SectionDesigner/icons.tsx` — NEW
-  Dedicated stroke-based SVG icon set for the editor (section categories,
-  panel tabs, and UI actions). Nothing here is an emoji.
+## One manual step: add an env var
+In your project's `.env.local` (and in Vercel → Settings → Environment
+Variables for Production), add:
 
-- `src/components/pages/adminPage/SectionDesigner/SectionDesignerClient.tsx` — MODIFIED
-  - Page switcher (Home/About/Services) is now a real segmented control with
-    icons instead of emoji-labelled buttons.
-  - Each section row gets a tinted icon badge matched to its category
-    (hero, services, FAQ, etc.) instead of a raw emoji glyph.
-  - "Styled" / "Hidden" badges, the Design button, the visibility toggle,
-    and the toast notifications all use SVG icons now.
-  - Legend at the bottom is a single tidy status bar.
+```
+NEXT_PUBLIC_SITE_URL=https://strixmind.ai
+```
 
-- `src/components/pages/adminPage/SectionDesigner/DesignPanel.tsx` — MODIFIED
-  - The six section tabs (Background, Typography, Layout, Marquee, Slider,
-    Images) are now a compact icon rail, Figma/Canva-style, with the active
-    tab's name shown as a heading above the panel content.
-  - Alignment controls, marquee direction, upload buttons, close/save/reset
-    buttons — all emoji replaced with icons, including a proper spinner for
-    loading states.
+(For local dev, `.env.local` can use `http://localhost:3000` instead.)
 
-- `src/components/pages/adminPage/AdminShell.tsx` — MODIFIED
-  Sidebar nav: the Section Designer item used a 🎨 emoji while every other
-  item used an SVG icon — that's fixed, plus "↗ View site" now uses a real
-  external-link icon.
-
-- `src/components/ui/SvgIcons.tsx` — MODIFIED (additive only)
-  Added `IconPalette` and `IconExternalLink` so AdminShell can be fully
-  emoji-free. Nothing existing was changed or removed.
-
-No logic, data shapes, or server actions were touched — this is a visual-only
-pass. Verified with `tsc --noEmit` (zero errors).
+## Then follow AUTH_SETUP.md
+That file walks through the three external dashboards you need to touch —
+Supabase Auth settings, Google Cloud Console, and Azure App registration —
+to make Google and Microsoft sign-in actually work. The code is already
+build-tested and ready; those are the only steps left.
