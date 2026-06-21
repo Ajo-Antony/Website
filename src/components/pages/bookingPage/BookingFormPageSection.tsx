@@ -12,6 +12,7 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
   const [slot, setSlot] = useState("");
   const [form, setForm] = useState({ name:"",email:"",company:"",size:"",goal:"" });
   const [booked, setBooked] = useState(false);
+  const [emailSent, setEmailSent] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const inputStyle: React.CSSProperties = { width:"100%", padding:"0.875rem 1.125rem", borderRadius:14, border:"1.5px solid #E5E0FA", background:"#F8F7FF", fontSize:"0.9rem", color:"#1a1333", fontFamily:"Inter,sans-serif", outline:"none", marginBottom:"1rem" };
@@ -33,6 +34,7 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
       setError(result.error || "Something went wrong. Please try again.");
       return;
     }
+    setEmailSent(result.emailSent !== false);
     setBooked(true);
   }
 
@@ -45,7 +47,11 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
             <div style={{ textAlign:"center", padding:"3rem 0" }}>
               <div style={{ marginBottom:"1rem", display:"flex", justifyContent:"center" }}><IconCheckCircle size={44} color="#22c55e" strokeWidth={1.5} /></div>
               <div style={{ fontSize:"1.25rem", fontWeight:800, color:"#1a1333", marginBottom:"0.75rem" }}>You're booked!</div>
-              <p style={{ color:"#5b5478" }}>Confirmation sent to <strong>{form.email}</strong>. See you at <strong>{slot}</strong>.</p>
+              {emailSent ? (
+                <p style={{ color:"#5b5478" }}>Confirmation sent to <strong>{form.email}</strong>. See you at <strong>{slot}</strong>.</p>
+              ) : (
+                <p style={{ color:"#5b5478" }}>You&apos;re all set for <strong>{slot}</strong>. We couldn&apos;t send a confirmation email right now, but your spot is saved — we&apos;ll reach out at <strong>{form.email}</strong>.</p>
+              )}
             </div>
           ) : step === 1 ? (
             <>

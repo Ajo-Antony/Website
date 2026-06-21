@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email";
 
 export interface CreateBookingInput {
   slot: string;
@@ -15,6 +16,7 @@ export interface CreateBookingInput {
 export interface CreateBookingResult {
   ok: boolean;
   error?: string;
+  emailSent?: boolean;
 }
 
 /**
@@ -36,20 +38,30 @@ export async function createBooking(input: CreateBookingInput): Promise<CreateBo
 
   const supabase = await createClient();
 
+  const company = input.company?.trim() || null;
+  const size = input.size?.trim() || null;
+  const goal = input.goal?.trim() || null;
+
   const { error } = await supabase.from("bookings").insert({
     slot,
     name,
     email,
-    company: input.company?.trim() || null,
-    size: input.size?.trim() || null,
-    goal: input.goal?.trim() || null,
+    company,
+    size,
+    goal,
   });
 
   if (error) {
     return { ok: false, error: error.message };
   }
 
-  return { ok: true };
+  // Email sending is best-effort: the booking is already saved at this
+  // point, so we don't fail the whole request if Resend isn't configured
+  // or the send fails — we just let the caller know via emailSent.
+  const emailResult = await sendBookingConfirmationEmail({ name, email, slot, company, size, goal });
+  void sendBookingNotificationEmail({ name, email, slot, company, size, goal });
+
+  return { ok: true, emailSent: emailResult.ok };
 }
 
 /**
