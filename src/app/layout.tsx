@@ -9,6 +9,7 @@ import SiteHeader from "@/components/ui/site-header";
 import FooterCommonSharedComponent from "@/components/pages/commonSharedComponents/FooterCommonSharedComponent";
 import GsapScripts from "@/components/ui/GsapScripts";
 import AnimationBoot from "@/components/ui/AnimationBoot";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { getContentMany } from "@/lib/actions/content";
 import "./globals.css";
 
@@ -67,36 +68,46 @@ export default async function RootLayout({
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
         <GsapScripts />
-      </head>
-      <body suppressHydrationWarning>
-        {/* Reading progress bar */}
-        <div
-          id="strix-progress-bar"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 2,
-            zIndex: 9999,
-            background: "linear-gradient(90deg, #6c63ff, #a78bfa)",
-            transformOrigin: "left center",
-            transform: "scaleX(0)",
-            pointerEvents: "none",
+        {/* Applies the persisted/system theme before paint to avoid a
+            light→dark flash on load. Must run synchronously, hence
+            a plain inline script rather than an effect. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('strixmind-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.classList.add('dark');}}catch(e){}})();`,
           }}
         />
-        <AnimationBoot />
+      </head>
+      <body suppressHydrationWarning>
+        <ThemeProvider>
+          {/* Reading progress bar */}
+          <div
+            id="strix-progress-bar"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 2,
+              zIndex: 9999,
+              background: "linear-gradient(90deg, #6c63ff, #a78bfa)",
+              transformOrigin: "left center",
+              transform: "scaleX(0)",
+              pointerEvents: "none",
+            }}
+          />
+          <AnimationBoot />
 
-        {/* New header with dropdown navigation */}
-        <SiteHeader
-          links={nav?.links}
-          signInLabel={nav?.signInLabel}
-          ctaLabel={nav?.ctaLabel}
-          ctaHref={nav?.ctaHref}
-        />
+          {/* New header with dropdown navigation */}
+          <SiteHeader
+            links={nav?.links}
+            signInLabel={nav?.signInLabel}
+            ctaLabel={nav?.ctaLabel}
+            ctaHref={nav?.ctaHref}
+          />
 
-        <main>{children}</main>
-        <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
+          <main>{children}</main>
+          <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
+        </ThemeProvider>
       </body>
     </html>
   );
