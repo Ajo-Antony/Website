@@ -25,7 +25,7 @@ export default function CtaBannerHomePageSection({
   secondaryCtaHref = D.secondaryCtaHref,
 }: CtaProps) {
   return (
-    <section style={{ background: "linear-gradient(135deg,#6c63ff 0%,#8b7cf6 50%,#a78bfa 100%)", padding: "6rem 0", position: "relative", overflow: "hidden" }}>
+    <section style={{ background: "linear-gradient(135deg,#6c63ff 0%,#8b7cf6 50%,#a78bfa 100%)", position: "relative", overflow: "hidden" }} className="py-16 sm:py-24">
       {/* Animated aurora glow — replaces the old static radial+grid overlay */}
       <AuroraBackground className="absolute inset-0 pointer-events-none" showRadialGradient={false} />
       <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />

@@ -47,8 +47,8 @@ export default function ContactHomePageSection({
   };
 
   return (
-    <section id="contact" style={{ background: "#F4F2FE", padding: "7rem 0", borderTop: "1px solid var(--divider)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
+    <section id="contact" style={{ background: "#F4F2FE", borderTop: "1px solid var(--divider)" }} className="py-20 sm:py-28">
+      <div style={{ maxWidth: 1280, margin: "0 auto" }} className="px-5 sm:px-8">
 
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#4c46c4", background: "rgba(108,99,255,0.08)", border: "1px solid rgba(108,99,255,0.16)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
@@ -59,7 +59,7 @@ export default function ContactHomePageSection({
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "start" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-10 lg:gap-20">
 
           <div>
             <h3 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#1a1333", letterSpacing: "-0.025em", marginBottom: "0.875rem" }}>
@@ -82,7 +82,7 @@ export default function ContactHomePageSection({
             })}
           </div>
 
-          <div style={{ background: "#fff", borderRadius: 28, padding: "2.75rem", border: "1.5px solid #E5E0FA", boxShadow: "0 16px 56px rgba(108,99,255,0.10)", position: "relative", overflow: "hidden" }}>
+          <div className="p-6 sm:p-11" style={{ background: "#fff", borderRadius: 28, border: "1.5px solid #E5E0FA", boxShadow: "0 16px 56px rgba(108,99,255,0.10)", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, #6c63ff, #a78bfa)" }} />
 
             {sent ? (
@@ -95,7 +95,7 @@ export default function ContactHomePageSection({
               <>
                 <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#1a1333", marginBottom: "1.75rem", letterSpacing: "-0.025em" }}>Send us a message</h3>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 1rem" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                   <input style={inputBase} type="text" placeholder="Full name *" value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
                     onFocus={handleFocus} onBlur={handleBlur} />
@@ -104,7 +104,7 @@ export default function ContactHomePageSection({
                     onFocus={handleFocus} onBlur={handleBlur} />
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 1rem" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
                   <input style={inputBase} type="text" placeholder="Company name" value={form.company}
                     onChange={e => setForm({ ...form, company: e.target.value })}
                     onFocus={handleFocus} onBlur={handleBlur} />

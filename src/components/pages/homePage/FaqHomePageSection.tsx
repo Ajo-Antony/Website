@@ -13,11 +13,11 @@ export default function FaqHomePageSection({
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" style={{ background: "#fff", padding: "7rem 0", borderTop: "1px solid var(--divider)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: "6rem", alignItems: "start" }}>
+    <section id="faq" style={{ background: "#fff", borderTop: "1px solid var(--divider)" }} className="py-20 sm:py-28">
+      <div style={{ maxWidth: 1280, margin: "0 auto" }} className="px-5 sm:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] items-start gap-8 lg:gap-24">
 
-          <div style={{ position: "sticky", top: "2rem" }}>
+          <div className="lg:sticky lg:top-8">
             <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#4c46c4", background: "rgba(108,99,255,0.08)", border: "1px solid rgba(108,99,255,0.16)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
               {eyebrow}
             </div>

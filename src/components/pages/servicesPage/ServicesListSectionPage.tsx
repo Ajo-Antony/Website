@@ -13,12 +13,17 @@ const ICONS: ElementType<{ size?: number; color?: string }>[] = [
 
 export default function ServicesListSectionPage({ items = D.items }: ServicesListProps) {
   return (
-    <section style={{ padding: "6rem 0", background: "#fff", borderTop: "1px solid #E5E0FA" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem", display: "flex", flexDirection: "column" as const, gap: "4rem" }}>
+    <section style={{ background: "#fff", borderTop: "1px solid #E5E0FA" }} className="py-16 sm:py-24">
+      <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", flexDirection: "column" as const, gap: "3rem" }} className="px-5 sm:px-8 sm:gap-16">
         {items.map((s, i) => {
           const Icon = ICONS[i % ICONS.length];
+          const reversed = i % 2 !== 0;
           return (
-          <div key={s.title} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center", direction: (i % 2 !== 0 ? "rtl" : "ltr") as React.CSSProperties["direction"] }}>
+          <div
+            key={s.title}
+            className="grid grid-cols-1 sm:grid-cols-2 items-center gap-6 sm:gap-12"
+            style={reversed ? { direction: "rtl" as React.CSSProperties["direction"] } : undefined}
+          >
             <div style={{ direction: "ltr" as const }}>
               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "rgba(108,99,255,0.45)", marginBottom: "1rem" }}>{String(i + 1).padStart(2, "0")}</div>
               <h3 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#1a1333", marginBottom: "1rem", letterSpacing: "-0.03em", display: "flex", alignItems: "center", gap: "0.75rem" }}>

@@ -33,21 +33,21 @@ const CARDS = [
     title: "Multi-Agent AI",
     description: "Six specialised agents, priority task queue",
     date: "Core platform",
-    className: `[grid-area:stack] translate-x-16 translate-y-10 hover:-translate-y-1 ${STACK_BASE}`,
+    className: `[grid-area:stack] translate-x-8 translate-y-6 sm:translate-x-16 sm:translate-y-10 hover:-translate-y-1 ${STACK_BASE}`,
   },
   {
     icon: <MessageSquareText className="size-4 text-accent-2" />,
     title: "WhatsApp CRM",
     description: "Session-aware messaging, pipelines, forecasting",
     date: "Core platform",
-    className: "[grid-area:stack] translate-x-32 translate-y-20 hover:translate-y-10",
+    className: "[grid-area:stack] translate-x-16 translate-y-12 sm:translate-x-32 sm:translate-y-20 hover:translate-y-10",
   },
 ];
 
 export default function CapabilitiesShowcaseSection() {
   return (
-    <section style={{ padding: "7rem 0 9rem", background: "#fbfaff", borderTop: "1px solid #f1effe" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem", textAlign: "center" }}>
+    <section style={{ background: "#fbfaff", borderTop: "1px solid #f1effe", overflowX: "hidden" }} className="py-20 sm:py-28 md:pb-36">
+      <div style={{ maxWidth: 1280, margin: "0 auto", textAlign: "center" }} className="px-5 sm:px-8">
         <div
           style={{
             display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em",
@@ -60,13 +60,13 @@ export default function CapabilitiesShowcaseSection() {
         <h2
           style={{
             fontSize: "clamp(1.9rem,3.5vw,2.9rem)", fontWeight: 800, letterSpacing: "-0.03em",
-            color: "#1a1333", lineHeight: 1.15, marginBottom: "4rem",
+            color: "#1a1333", lineHeight: 1.15, marginBottom: "3.5rem",
           }}
         >
           One platform, three engines
         </h2>
 
-        <div style={{ display: "flex", justifyContent: "center", paddingBottom: "2rem" }}>
+        <div style={{ display: "flex", justifyContent: "center", paddingBottom: "1.5rem" }}>
           <DisplayCards cards={CARDS} />
         </div>
       </div>

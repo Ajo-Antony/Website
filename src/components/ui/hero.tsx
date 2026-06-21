@@ -39,7 +39,6 @@ function createBeam(width: number, height: number, layer: number): Beam {
 }
 
 interface PremiumHeroProps {
-  badge?: string;
   headline?: string;
   highlight?: string;
   subheadline?: string;
@@ -50,7 +49,6 @@ interface PremiumHeroProps {
 }
 
 export const PremiumHero = ({
-  badge = "AI-Powered Business Operating System",
   headline = "Your Business, Running on",
   highlight = "AI",
   subheadline = "Automate repetitive work, manage customer relationships, and grow faster with intelligent business automation.",
@@ -170,23 +168,13 @@ export const PremiumHero = ({
       <canvas ref={noiseRef} className="absolute inset-0 z-0 pointer-events-none" />
       <canvas ref={canvasRef} className="absolute inset-0 z-10" />
 
-      <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-6 py-20 text-center">
-        <div className="container mx-auto flex flex-col items-center gap-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full border border-[rgba(167,139,250,0.25)] bg-[rgba(108,99,255,0.08)] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#c4bbff]"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#a78bfa] animate-pulse" />
-            {badge}
-          </motion.div>
-
+      <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-4 sm:px-6 py-16 sm:py-20 text-center">
+        <div className="container mx-auto flex max-w-3xl flex-col items-center gap-6 sm:gap-8 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-7xl max-w-3xl tracking-tighter font-extrabold leading-[1.05]"
+            className="max-w-3xl text-[2.5rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl sm:leading-[1.08] sm:tracking-tighter md:text-7xl md:leading-[1.05]"
           >
             <span className="text-white">{headline} </span>
             <span className="bg-gradient-to-r from-[#a78bfa] via-[#8b7ffc] to-[#6c63ff] bg-clip-text text-transparent">
@@ -198,7 +186,7 @@ export const PremiumHero = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl leading-relaxed tracking-tight text-white/55 max-w-2xl text-center"
+            className="max-w-2xl text-base leading-relaxed tracking-tight text-white/55 sm:text-lg md:text-xl text-center"
           >
             {subheadline}
           </motion.p>
@@ -207,12 +195,12 @@ export const PremiumHero = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-row gap-3 flex-wrap justify-center pt-2"
+            className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center"
           >
             <Button
               asChild
               size="lg"
-              className="gap-2 bg-gradient-to-br from-[#6c63ff] to-[#a78bfa] text-white shadow-[0_12px_36px_rgba(108,99,255,0.38)] hover:opacity-90"
+              className="w-full gap-2 bg-gradient-to-br from-[#6c63ff] to-[#a78bfa] text-white shadow-[0_12px_36px_rgba(108,99,255,0.38)] hover:opacity-90 sm:w-auto"
             >
               <Link href={primaryCtaHref}>
                 {primaryCtaLabel} <MoveRight className="w-4 h-4" />
@@ -222,7 +210,7 @@ export const PremiumHero = ({
               asChild
               size="lg"
               variant="outline"
-              className="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10"
+              className="w-full gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 sm:w-auto"
             >
               <Link href={secondaryCtaHref}>
                 {secondaryCtaLabel} <PhoneCall className="w-4 h-4" />

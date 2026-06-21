@@ -18,8 +18,8 @@ export default function ContactContentPageSection({ items = D.items }: ContactCo
   const [sent, setSent] = useState(false);
   const inputStyle: React.CSSProperties = { width:"100%", padding:"0.875rem 1.125rem", borderRadius:14, border:"1.5px solid #E5E0FA", background:"#F8F7FF", fontSize:"0.9rem", color:"#1a1333", fontFamily:"Inter,sans-serif", outline:"none", marginBottom:"1rem", transition:"border-color 0.2s" };
   return (
-    <section style={{ padding:"4rem 0 8rem", background:"#fff", borderTop:"1px solid #E5E0FA" }}>
-      <div style={{ maxWidth:1280, margin:"0 auto", padding:"0 2rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"4rem", alignItems:"start" }}>
+    <section style={{ background:"#fff", borderTop:"1px solid #E5E0FA" }} className="py-16 sm:py-20 md:pb-32">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-10 lg:gap-16 px-5 sm:px-8" style={{ maxWidth:1280, margin:"0 auto" }}>
         <div style={{ display:"flex", flexDirection:"column" as const, gap:"1.25rem" }}>
           {items.map((item, i) => {
             const Icon = INFO_ICONS[i % INFO_ICONS.length];
@@ -33,7 +33,7 @@ export default function ContactContentPageSection({ items = D.items }: ContactCo
             );
           })}
         </div>
-        <div style={{ background:"#fff", borderRadius:28, padding:"2.5rem", border:"1px solid #E5E0FA", boxShadow:"0 12px 48px rgba(108,99,255,0.10)", position:"relative", overflow:"hidden" }}>
+        <div className="p-6 sm:p-10" style={{ background:"#fff", borderRadius:28, border:"1px solid #E5E0FA", boxShadow:"0 12px 48px rgba(108,99,255,0.10)", position:"relative", overflow:"hidden" }}>
           <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,#6c63ff,#a78bfa)" }} />
           {sent ? (
             <div style={{ textAlign:"center", padding:"3rem 0" }}>

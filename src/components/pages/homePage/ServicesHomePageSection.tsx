@@ -43,7 +43,7 @@ export default function ServicesHomePageSection({
   items = D.items,
 }: ServicesProps) {
   return (
-    <section id="services" style={{ padding: "8rem 0", borderTop: "1px solid rgba(108,99,255,0.08)" }}>
+    <section id="services" style={{ borderTop: "1px solid rgba(108,99,255,0.08)" }} className="py-20 md:py-32">
       <style>{`
         .strix-service-card { transition: transform 0.25s, box-shadow 0.25s; }
         .strix-service-card:hover { transform: translateY(-5px); box-shadow: 0 20px 56px rgba(99,88,210,0.18) !important; }
@@ -52,9 +52,9 @@ export default function ServicesHomePageSection({
         .strix-svc-icon svg { transition: stroke 0.3s; }
         .strix-service-card:hover .strix-svc-icon svg { stroke: #6c63ff; }
       `}</style>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }} className="px-5 sm:px-6">
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "end", marginBottom: "3.5rem" }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-6 md:gap-16 mb-12 md:mb-14">
           <div>
             <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#6c63ff", background: "rgba(108,99,255,0.07)", border: "1px solid rgba(108,99,255,0.18)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
               {eyebrow}

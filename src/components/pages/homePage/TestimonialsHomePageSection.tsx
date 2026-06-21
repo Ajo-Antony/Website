@@ -9,8 +9,8 @@ const AVATAR_COLORS = ["#6c63ff", "#0ea5e9", "#f59e0b", "#f472b6"];
 
 export default function TestimonialsHomePageSection({ eyebrow = D.eyebrow, heading = D.heading, items = D.items }: TestimonialsProps) {
   return (
-    <section id="testimonials" style={{ background: "#fff", padding: "7rem 0", borderTop: "1px solid var(--divider)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
+    <section id="testimonials" style={{ background: "#fff", borderTop: "1px solid var(--divider)" }} className="py-16 sm:py-28">
+      <div style={{ maxWidth: 1280, margin: "0 auto" }} className="px-5 sm:px-8">
 
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "#4c46c4", background: "rgba(108,99,255,0.08)", border: "1px solid rgba(108,99,255,0.16)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
