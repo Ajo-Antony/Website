@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth";
 import {
-  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink,
+  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock,
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
@@ -19,6 +19,7 @@ const NAV: NavItem[] = [
   { href: "/admin",                  label: "Overview",          Icon: IconOverview  },
   { href: "/admin/content",          label: "Site Content",      Icon: IconContent   },
   { href: "/admin/section-designer", label: "Section Designer",  Icon: IconPalette   },
+  { href: "/admin/bookings",         label: "Bookings",          Icon: IconClock     },
   { href: "/admin/gallery",          label: "Gallery",           Icon: IconGallery   },
   { href: "/admin/blog",             label: "Blog",              Icon: IconEdit      },
   { href: "/admin/projects",         label: "Projects",          Icon: IconBriefcase },

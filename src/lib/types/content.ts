@@ -9,6 +9,20 @@ export interface GalleryImage {
   created_at: string;
 }
 
+export type BookingStatus = "new" | "contacted" | "scheduled" | "closed";
+
+export interface Booking {
+  id: string;
+  slot: string;
+  name: string;
+  email: string;
+  company: string | null;
+  size: string | null;
+  goal: string | null;
+  status: BookingStatus;
+  created_at: string;
+}
+
 export interface BlogPost {
   id: string;
   slug: string;

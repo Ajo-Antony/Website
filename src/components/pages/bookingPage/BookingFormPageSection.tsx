@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import { IconCheckCircle } from "@/components/ui/SvgIcons";
+import { createBooking } from "@/lib/actions/bookings";
 
 interface SlotsProps { slots?: string[] }
 const D = CONTENT_DEFAULTS["booking.slots"] as Required<SlotsProps>;
@@ -11,7 +12,29 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
   const [slot, setSlot] = useState("");
   const [form, setForm] = useState({ name:"",email:"",company:"",size:"",goal:"" });
   const [booked, setBooked] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const inputStyle: React.CSSProperties = { width:"100%", padding:"0.875rem 1.125rem", borderRadius:14, border:"1.5px solid #E5E0FA", background:"#F8F7FF", fontSize:"0.9rem", color:"#1a1333", fontFamily:"Inter,sans-serif", outline:"none", marginBottom:"1rem" };
+
+  async function handleConfirm() {
+    if (!form.name || !form.email || submitting) return;
+    setSubmitting(true);
+    setError("");
+    const result = await createBooking({
+      slot,
+      name: form.name,
+      email: form.email,
+      company: form.company,
+      size: form.size,
+      goal: form.goal,
+    });
+    setSubmitting(false);
+    if (!result.ok) {
+      setError(result.error || "Something went wrong. Please try again.");
+      return;
+    }
+    setBooked(true);
+  }
 
   return (
     <section style={{ padding:"4rem 0 8rem", background:"#fff", borderTop:"1px solid #E5E0FA" }}>
@@ -36,7 +59,7 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
             </>
           ) : (
             <>
-              <button onClick={()=>setStep(1)} style={{ fontSize:"0.8rem", color:"#6c63ff", background:"none", border:"none", cursor:"pointer", marginBottom:"1.25rem", fontWeight:600 }}>← Change time</button>
+              <button onClick={()=>{setStep(1);setError("");}} style={{ fontSize:"0.8rem", color:"#6c63ff", background:"none", border:"none", cursor:"pointer", marginBottom:"1.25rem", fontWeight:600 }}>← Change time</button>
               <h3 style={{ fontSize:"1.1rem", fontWeight:800, color:"#1a1333", marginBottom:"1.5rem" }}>Step 2 — About your business</h3>
               <input style={inputStyle} placeholder="Full name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} />
               <input style={inputStyle} type="email" placeholder="Work email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} />
@@ -45,7 +68,24 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
                 <option value="">Company size</option><option>1–10</option><option>11–50</option><option>51–200</option><option>200+</option>
               </select>
               <textarea style={{ ...inputStyle, minHeight:100, resize:"vertical" }} placeholder="What's your main goal?" value={form.goal} onChange={e=>setForm({...form,goal:e.target.value})} />
-              <button onClick={()=>form.name&&form.email&&setBooked(true)} style={{ width:"100%", padding:"1rem", background:"linear-gradient(135deg,#6c63ff,#a78bfa)", color:"#fff", border:"none", borderRadius:100, fontSize:"0.95rem", fontWeight:700, cursor:"pointer", fontFamily:"Inter,sans-serif", boxShadow:"0 8px 24px rgba(108,99,255,0.32)" }}>Confirm booking →</button>
+              {error && (
+                <div style={{ marginBottom:"1rem", padding:"0.75rem 1rem", borderRadius:10, background:"#FEF2F2", border:"1px solid #FCA5A5", color:"#B91C1C", fontSize:"0.85rem", fontWeight:600 }}>{error}</div>
+              )}
+              <button
+                onClick={handleConfirm}
+                disabled={!form.name || !form.email || submitting}
+                style={{
+                  width:"100%", padding:"1rem",
+                  background: (form.name && form.email && !submitting) ? "linear-gradient(135deg,#6c63ff,#a78bfa)" : "rgba(108,99,255,0.18)",
+                  color: (form.name && form.email && !submitting) ? "#fff" : "#a39ecf",
+                  border:"none", borderRadius:100, fontSize:"0.95rem", fontWeight:700,
+                  cursor: (form.name && form.email && !submitting) ? "pointer" : "not-allowed",
+                  fontFamily:"Inter,sans-serif",
+                  boxShadow:(form.name && form.email && !submitting) ? "0 8px 24px rgba(108,99,255,0.32)" : "none",
+                }}
+              >
+                {submitting ? "Booking…" : "Confirm booking →"}
+              </button>
             </>
           )}
         </div>

@@ -90,3 +90,28 @@ on conflict (id) do nothing;
 create policy "public_read_media"  on storage.objects for select using (bucket_id = 'media');
 create policy "admin_upload_media" on storage.objects for insert with check (bucket_id = 'media' and auth.role() = 'authenticated');
 create policy "admin_delete_media" on storage.objects for delete using (bucket_id = 'media' and auth.role() = 'authenticated');
+
+-- ---------- BOOKINGS (demo booking form on /booking) ----------
+create table if not exists bookings (
+  id          uuid primary key default gen_random_uuid(),
+  slot        text not null,             -- e.g. "Mon 9:00 AM"
+  name        text not null,
+  email       text not null,
+  company     text,
+  size        text,                      -- "1–10" | "11–50" | "51–200" | "200+"
+  goal        text,
+  status      text not null default 'new', -- new | contacted | scheduled | closed
+  created_at  timestamptz not null default now()
+);
+
+alter table bookings enable row level security;
+
+-- Anyone (anon, from the public booking form) can create a booking.
+create policy "public_insert_bookings" on bookings for insert with check (true);
+
+-- Only authenticated admins can read/update/delete bookings.
+create policy "admin_read_bookings"   on bookings for select using (auth.role() = 'authenticated');
+create policy "admin_update_bookings" on bookings for update using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "admin_delete_bookings" on bookings for delete using (auth.role() = 'authenticated');
+
+create index if not exists bookings_created_at_idx on bookings (created_at desc);
