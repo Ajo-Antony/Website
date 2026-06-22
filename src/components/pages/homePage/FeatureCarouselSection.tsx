@@ -43,7 +43,7 @@ const FEATURES = [
     id: "analytics",
     label: "Real-time Analytics",
     icon: BarChart,
-    image: "https://images.unsplash.com/photo-1551288049-bbda38a10ad5?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
     description: "Revenue intelligence and conversion insights updated live as your business moves.",
   },
   {
