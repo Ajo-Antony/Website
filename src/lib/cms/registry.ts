@@ -495,8 +495,8 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     ],
   },
   "home.whyUs": {
-    eyebrow: "Advantages",
-    heading: "Built different,\nby design.",
+    eyebrow: "Why StrixMind",
+    heading: "Everything your business needs,\nin one intelligent platform.",
     items: [
       { icon: "shuffle", title: "Provider-agnostic AI routing", desc: "Route tasks to GPT-4o, Gemini, or Claude based on cost and latency. No vendor lock-in, ever." },
       { icon: "bolt", title: "Sub-second response latency", desc: "Edge-deployed agents, smart caching, and optimised token management keep every interaction instant." },
@@ -518,15 +518,15 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     statusLine: "All systems operational · AI agents active",
   },
   "home.mission": {
-    eyebrow: "Our mission",
+    eyebrow: "Our story",
     heading: "We make AI\naccessible to every business.",
     paragraph1: "StrixMind was built because we saw brilliant businesses losing deals to slower competitors who simply had better automation. We decided to change that.",
     paragraph2: "Our platform gives any team — from solo founders to enterprise ops — the same AI leverage previously reserved for tech giants.",
     timeline: [
-      { year: "2022", text: "StrixMind founded in Kerala, India" },
-      { year: "2023", text: "First 100 business customers" },
-      { year: "2024", text: "Multi-agent workflow builder launched" },
-      { year: "2025", text: "500+ businesses across 12 industries" },
+      { year: "2025", text: "StrixMind founded in Kerala, India" },
+      { year: "2025", text: "Platform launched — first business customers onboarded" },
+      { year: "2025", text: "Multi-agent workflow builder goes live" },
+      { year: "Now", text: "Actively growing — come build with us" },
     ],
   },
   "home.testimonials": {
@@ -629,10 +629,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     paragraph1: "StrixMind was born when our founders watched brilliant businesses lose deals simply because they couldn't respond fast enough. The tools existed — they were scattered, expensive, and required engineers to operate.",
     paragraph2: "We built StrixMind to change that — one platform where AI does the heavy lifting from day one, accessible to any team regardless of technical expertise.",
     timeline: [
-      { year: "2022", text: "Founded in Kochi, Kerala" },
-      { year: "2023", text: "First 100 business customers" },
-      { year: "2024", text: "Multi-agent workflow builder launched" },
-      { year: "2025", text: "500+ businesses across 12 industries" },
+      { year: "2025", text: "Founded in Kerala, India" },
+      { year: "2025", text: "Platform launched — first customers onboarded" },
+      { year: "2025", text: "Multi-agent workflow builder goes live" },
+      { year: "Now", text: "Actively growing across industries" },
     ],
   },
   "about.values": {

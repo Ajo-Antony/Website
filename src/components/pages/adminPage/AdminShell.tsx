@@ -6,7 +6,7 @@ import Link from "next/link";
 import { logout } from "@/lib/actions/auth";
 import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 import {
-  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock,
+  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock, IconInbox,
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { href: "/admin/content",          label: "Site Content",      Icon: IconContent   },
   { href: "/admin/section-designer", label: "Section Designer",  Icon: IconPalette   },
   { href: "/admin/bookings",         label: "Bookings",          Icon: IconClock     },
+  { href: "/admin/reviews",          label: "Reviews",           Icon: IconInbox     },
   { href: "/admin/gallery",          label: "Gallery",           Icon: IconGallery   },
   { href: "/admin/blog",             label: "Blog",              Icon: IconEdit      },
   { href: "/admin/projects",         label: "Projects",          Icon: IconBriefcase },

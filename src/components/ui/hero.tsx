@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/shadcn-button";
 import { MoveRight, PhoneCall } from "lucide-react";
 
@@ -62,12 +63,7 @@ export const PremiumHero = ({
   const animationFrameRef = useRef<number>(0);
 
   const LAYERS = 3;
-  /**
-   * PERF FIX: Reduced beams per layer from 8 → 5.
-   * 8×3 = 24 beams were being animated every frame. 5×3 = 15 beams
-   * reduces GPU fill-rate pressure by ~37% — visually identical.
-   */
-  const BEAMS_PER_LAYER = 5;
+  const BEAMS_PER_LAYER = 8;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -78,14 +74,7 @@ export const PremiumHero = ({
     if (!ctx || !nCtx) return;
 
     const resizeCanvas = () => {
-      /**
-       * PERF FIX: Cap devicePixelRatio at 2.
-       * On high-DPI screens (DPR 3+, common on Android), the canvas
-       * was drawing at 3× resolution — 9× the pixel count of a 1× screen.
-       * Capping at 2 is visually indistinguishable and roughly halves
-       * the canvas workload on those devices.
-       */
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
@@ -109,158 +98,129 @@ export const PremiumHero = ({
     };
 
     resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
-    // Generate static noise texture once (not every frame)
     const generateNoise = () => {
-      const imageData = nCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const value = Math.random() * 255;
-        data[i] = value;
-        data[i + 1] = value;
-        data[i + 2] = value;
-        data[i + 3] = 15; // very subtle
+      const imgData = nCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
+      for (let i = 0; i < imgData.data.length; i += 4) {
+        const v = Math.random() * 255;
+        imgData.data[i] = v;
+        imgData.data[i + 1] = v;
+        imgData.data[i + 2] = v;
+        imgData.data[i + 3] = 12;
       }
-      nCtx.putImageData(imageData, 0, 0);
+      nCtx.putImageData(imgData, 0, 0);
     };
-    generateNoise();
 
+    // StrixMind brand accent (#6c63ff) instead of the generic cyan default,
+    // so the hero reads as part of the same product, not a stock template.
     const drawBeam = (beam: Beam) => {
       ctx.save();
       ctx.translate(beam.x, beam.y);
       ctx.rotate((beam.angle * Math.PI) / 180);
 
-      const pulseOpacity = beam.opacity * (0.8 + Math.sin(beam.pulse) * 0.2);
+      const pulsingOpacity = Math.min(1, beam.opacity * (0.8 + Math.sin(beam.pulse) * 0.4));
       const gradient = ctx.createLinearGradient(0, 0, 0, beam.length);
-      gradient.addColorStop(0, `rgba(108, 99, 255, 0)`);
-      gradient.addColorStop(0.1, `rgba(108, 99, 255, ${pulseOpacity})`);
-      gradient.addColorStop(0.9, `rgba(108, 99, 255, ${pulseOpacity * 0.6})`);
-      gradient.addColorStop(1, `rgba(108, 99, 255, 0)`);
+      gradient.addColorStop(0, `rgba(108,99,255,0)`);
+      gradient.addColorStop(0.2, `rgba(108,99,255,${pulsingOpacity * 0.5})`);
+      gradient.addColorStop(0.5, `rgba(167,139,250,${pulsingOpacity})`);
+      gradient.addColorStop(0.8, `rgba(108,99,255,${pulsingOpacity * 0.5})`);
+      gradient.addColorStop(1, `rgba(108,99,255,0)`);
 
       ctx.fillStyle = gradient;
+      ctx.filter = `blur(${2 + beam.layer * 2}px)`;
       ctx.fillRect(-beam.width / 2, 0, beam.width, beam.length);
       ctx.restore();
     };
 
-    /**
-     * PERF FIX: Throttle canvas to 30 fps instead of 60 fps.
-     * The beam animation is slow and subtle — 30fps is imperceptible
-     * from 60fps here, but halves the CPU/GPU time spent on canvas.
-     */
-    let lastTime = 0;
-    const TARGET_FPS = 30;
-    const FRAME_INTERVAL = 1000 / TARGET_FPS;
+    const animate = () => {
+      if (!canvas || !ctx) return;
 
-    const animate = (timestamp: number) => {
-      animationFrameRef.current = requestAnimationFrame(animate);
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, "#0a0816");
+      gradient.addColorStop(1, "#13102b");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const elapsed = timestamp - lastTime;
-      if (elapsed < FRAME_INTERVAL) return; // skip frame
-      lastTime = timestamp - (elapsed % FRAME_INTERVAL);
-
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-      // Dark background
-      ctx.fillStyle = "rgba(10, 10, 15, 1)";
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-
-      // Draw noise overlay
-      ctx.drawImage(noiseCanvas, 0, 0, window.innerWidth, window.innerHeight);
-
-      // Draw and update beams
       beamsRef.current.forEach((beam) => {
-        drawBeam(beam);
-        beam.y -= beam.speed;
+        beam.y -= beam.speed * (beam.layer / LAYERS + 0.5);
         beam.pulse += beam.pulseSpeed;
         if (beam.y + beam.length < -50) {
           beam.y = window.innerHeight + 50;
           beam.x = Math.random() * window.innerWidth;
         }
+        drawBeam(beam);
       });
+
+      generateNoise();
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
-
-    animationFrameRef.current = requestAnimationFrame(animate);
-
-    const handleResize = () => resizeCanvas();
-    window.addEventListener("resize", handleResize);
+    animate();
 
     return () => {
+      window.removeEventListener("resize", resizeCanvas);
       cancelAnimationFrame(animationFrameRef.current);
-      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Canvas background */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+    <div className="relative w-full min-h-[calc(100vh-72px)] overflow-hidden">
+      <canvas ref={noiseRef} className="absolute inset-0 z-0 pointer-events-none" />
+      <canvas ref={canvasRef} className="absolute inset-0 z-10" />
 
-      {/* Noise overlay canvas */}
-      <canvas
-        ref={noiseRef}
-        className="absolute inset-0 w-full h-full pointer-events-none opacity-30 mix-blend-overlay"
-      />
+      <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-4 sm:px-6 py-16 sm:py-20 text-center">
+        <div className="container mx-auto flex max-w-3xl flex-col items-center gap-6 sm:gap-8 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="max-w-3xl text-[2.5rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl sm:leading-[1.08] sm:tracking-tighter md:text-7xl md:leading-[1.05]"
+          >
+            <span className="text-white">{headline} </span>
+            <span className="bg-gradient-to-r from-[#a78bfa] via-[#8b7ffc] to-[#6c63ff] bg-clip-text text-transparent">
+              {highlight}
+            </span>
+          </motion.h1>
 
-      {/* Purple radial glow */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(108,99,255,0.12) 0%, transparent 70%)",
-        }}
-      />
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="max-w-2xl text-base leading-relaxed tracking-tight text-white/55 sm:text-lg md:text-xl text-center"
+          >
+            {subheadline}
+          </motion.p>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Headline */}
-        <h1
-          className="text-5xl md:text-7xl font-bold text-white leading-[1.08] tracking-tight mb-6"
-          data-strix-hero-headline
-        >
-          {headline}{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6c63ff] via-[#a78bfa] to-[#6c63ff]">
-            {highlight}
-          </span>
-        </h1>
-
-        {/* Sub */}
-        <p
-          className="text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
-          data-strix-hero-sub
-        >
-          {subheadline}
-        </p>
-
-        {/* CTAs */}
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          data-strix-hero-ctas
-        >
-          <Link href={primaryCtaHref}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center"
+          >
             <Button
+              asChild
               size="lg"
-              className="bg-[#6c63ff] hover:bg-[#5b52ee] text-white px-8 py-3 rounded-xl font-semibold text-base transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-[#6c63ff]/30"
+              className="w-full gap-2 bg-gradient-to-br from-[#6c63ff] to-[#a78bfa] text-white shadow-[0_12px_36px_rgba(108,99,255,0.38)] hover:opacity-90 sm:w-auto"
             >
-              {primaryCtaLabel}
-              <MoveRight className="ml-2 w-4 h-4" />
+              <Link href={primaryCtaHref}>
+                {primaryCtaLabel} <MoveRight className="w-4 h-4" />
+              </Link>
             </Button>
-          </Link>
-          <Link href={secondaryCtaHref}>
             <Button
+              asChild
               size="lg"
               variant="outline"
-              className="border-white/20 text-white hover:bg-white/10 px-8 py-3 rounded-xl font-semibold text-base backdrop-blur-sm transition-all duration-200"
+              className="w-full gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 sm:w-auto"
             >
-              <PhoneCall className="mr-2 w-4 h-4" />
-              {secondaryCtaLabel}
+              <Link href={secondaryCtaHref}>
+                {secondaryCtaLabel} <PhoneCall className="w-4 h-4" />
+              </Link>
             </Button>
-          </Link>
+          </motion.div>
         </div>
-
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0f] to-transparent pointer-events-none" />
-    </section>
+    </div>
   );
 };
+
+export default PremiumHero;

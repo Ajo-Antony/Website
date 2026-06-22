@@ -6,26 +6,18 @@ import {
   Workflow,
   Brain,
   MessageSquareText,
+  BarChart,
+  PlugIcon,
+  Shield,
+  Zap,
+  Globe,
   Users,
   Smartphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// StrixMind product features
 const FEATURES = [
-  {
-    id: "team",
-    label: "Team Collaboration",
-    icon: Users,
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200",
-    description: "Shared inboxes, conversation routing and team performance dashboards in one place.",
-  },
-  {
-    id: "mobile",
-    label: "Mobile First",
-    icon: Smartphone,
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200",
-    description: "Full-featured mobile experience — manage leads, reply to chats, view analytics on the go.",
-  },
   {
     id: "workflow",
     label: "Workflow Automation",
@@ -46,6 +38,55 @@ const FEATURES = [
     icon: MessageSquareText,
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200",
     description: "Session-aware messaging, lead pipelines and revenue forecasting — all in WhatsApp.",
+  },
+  {
+    id: "analytics",
+    label: "Real-time Analytics",
+    icon: BarChart,
+    image: "https://images.unsplash.com/photo-1551288049-bbda38a10ad5?q=80&w=1200",
+    description: "Revenue intelligence and conversion insights updated live as your business moves.",
+  },
+  {
+    id: "integrations",
+    label: "Integrations",
+    icon: PlugIcon,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200",
+    description: "Connect your existing tools — CRMs, ERPs, calendars — with zero-code connectors.",
+  },
+  {
+    id: "security",
+    label: "Enterprise Security",
+    icon: Shield,
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
+    description: "Bank-grade encryption and role-based access controls protect every data point.",
+  },
+  {
+    id: "speed",
+    label: "Lightning Fast",
+    icon: Zap,
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200",
+    description: "Sub-second response times across all agents, even during high-volume campaigns.",
+  },
+  {
+    id: "global",
+    label: "Global Ready",
+    icon: Globe,
+    image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1200",
+    description: "Multi-language support and localisation built for Indian and global markets alike.",
+  },
+  {
+    id: "team",
+    label: "Team Collaboration",
+    icon: Users,
+    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200",
+    description: "Shared inboxes, conversation routing and team performance dashboards in one place.",
+  },
+  {
+    id: "mobile",
+    label: "Mobile First",
+    icon: Smartphone,
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200",
+    description: "Full-featured mobile experience — manage leads, reply to chats, view analytics on the go.",
   },
 ];
 
@@ -188,7 +229,6 @@ export function FeatureCarousel() {
                       transition={{ type: "spring", stiffness: 260, damping: 25, mass: 0.8 }}
                       className="absolute inset-0 rounded-[2rem] md:rounded-[2.8rem] overflow-hidden border-4 md:border-8 border-white bg-white origin-center shadow-[0_20px_60px_rgba(108,99,255,0.15)]"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={feature.image}
                         alt={feature.label}
