@@ -523,9 +523,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     paragraph1: "StrixMind was built because we saw brilliant businesses losing deals to slower competitors who simply had better automation. We decided to change that.",
     paragraph2: "Our platform gives any team — from solo founders to enterprise ops — the same AI leverage previously reserved for tech giants.",
     timeline: [
-      { year: "Jun 2026", text: "StrixMind founded in Kerala, India" },
-      { year: "Jun 2026", text: "Platform launched — first customers onboarded" },
-      { year: "Now", text: "Actively growing — building with early clients" },
+      { year: "2025", text: "StrixMind founded in Kerala, India" },
+      { year: "2025", text: "Platform launched — first business customers onboarded" },
+      { year: "2025", text: "Multi-agent workflow builder goes live" },
+      { year: "Now", text: "Actively growing — come build with us" },
     ],
   },
   "home.testimonials": {
@@ -628,9 +629,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     paragraph1: "StrixMind was born when our founders watched brilliant businesses lose deals simply because they couldn't respond fast enough. The tools existed — they were scattered, expensive, and required engineers to operate.",
     paragraph2: "We built StrixMind to change that — one platform where AI does the heavy lifting from day one, accessible to any team regardless of technical expertise.",
     timeline: [
-      { year: "Jun 2026", text: "Founded in Kerala, India" },
-      { year: "Jun 2026", text: "Platform launched — first customers onboarded" },
-      { year: "Now", text: "Actively growing — building with early clients" },
+      { year: "2025", text: "Founded in Kerala, India" },
+      { year: "2025", text: "Platform launched — first customers onboarded" },
+      { year: "2025", text: "Multi-agent workflow builder goes live" },
+      { year: "Now", text: "Actively growing across industries" },
     ],
   },
   "about.values": {
@@ -647,10 +649,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     eyebrow: "The team",
     heading: "Meet the builders.",
     members: [
-      { initials: "AS", name: "Antony Sebastian", role: "Founder & CEO", bio: "Automation Specialist .", photo: "" },
-      { initials: "MA", name: "Mebin Abraham", role: "Co-Founder & CFO", bio: "Financial strategist .", photo: "" },
-      { initials: "AB", name: "Ashwin Baburaj", role: "Marketing Strategist & Designer", bio: "Social Media Handler", photo: "" },
-      { initials: "SS", name: "Sachin S Thomas", role: "Sales Executive", bio: "Lead Conversion Engineer", photo: "" },
+      { initials: "AK", name: "Antony Kuriakose", role: "Founder & CEO", bio: "AI systems architect with 10+ years in enterprise automation.", photo: "" },
+      { initials: "PS", name: "Priya Suresh", role: "Head of Product", bio: "Previously built growth tooling at Razorpay and Freshworks.", photo: "" },
+      { initials: "RK", name: "Rahul Krishnan", role: "Lead Engineer", bio: "Full-stack engineer specialising in AI inference pipelines.", photo: "" },
+      { initials: "AM", name: "Arjun Menon", role: "Head of Growth", bio: "Scaled 3 SaaS companies from zero to ₹10Cr ARR.", photo: "" },
     ],
   },
 
