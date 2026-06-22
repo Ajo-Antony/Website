@@ -523,10 +523,9 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     paragraph1: "StrixMind was built because we saw brilliant businesses losing deals to slower competitors who simply had better automation. We decided to change that.",
     paragraph2: "Our platform gives any team — from solo founders to enterprise ops — the same AI leverage previously reserved for tech giants.",
     timeline: [
-      { year: "2025", text: "StrixMind founded in Kerala, India" },
-      { year: "2025", text: "Platform launched — first business customers onboarded" },
-      { year: "2025", text: "Multi-agent workflow builder goes live" },
-      { year: "Now", text: "Actively growing — come build with us" },
+      { year: "Jun 2026", text: "StrixMind founded in Kerala, India" },
+      { year: "Jun 2026", text: "Platform launched — first customers onboarded" },
+      { year: "Now", text: "Actively growing — building with early clients" },
     ],
   },
   "home.testimonials": {
@@ -629,10 +628,9 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     paragraph1: "StrixMind was born when our founders watched brilliant businesses lose deals simply because they couldn't respond fast enough. The tools existed — they were scattered, expensive, and required engineers to operate.",
     paragraph2: "We built StrixMind to change that — one platform where AI does the heavy lifting from day one, accessible to any team regardless of technical expertise.",
     timeline: [
-      { year: "2025", text: "Founded in Kerala, India" },
-      { year: "2025", text: "Platform launched — first customers onboarded" },
-      { year: "2025", text: "Multi-agent workflow builder goes live" },
-      { year: "Now", text: "Actively growing across industries" },
+      { year: "Jun 2026", text: "Founded in Kerala, India" },
+      { year: "Jun 2026", text: "Platform launched — first customers onboarded" },
+      { year: "Now", text: "Actively growing — building with early clients" },
     ],
   },
   "about.values": {
