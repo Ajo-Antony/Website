@@ -1,9 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Project } from "@/lib/types/content";
 import ProjectsCategoryFilter from "@/components/pages/workPage/ProjectsCategoryFilter";
 
-export const revalidate = 0;
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "StrixMind client case studies — the problem, the build, and the outcome for every project we've delivered.",
+  alternates: { canonical: "https://strixmind.in/work/projects" },
+  openGraph: {
+    title: "Projects — StrixMind",
+    description: "Client case studies — the problem, the build, and the outcome.",
+    url: "https://strixmind.in/work/projects",
+    type: "website",
+  },
+};
 
 export default async function WorkProjectsListPage() {
   const supabase = await createClient();

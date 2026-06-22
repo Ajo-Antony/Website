@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { signInWithPassword } from "@/lib/actions/customerAuth";
 import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 
-export const metadata = { title: "Sign in — StrixMind" };
+export const metadata: Metadata = {
+  title: "Sign In",
+  robots: { index: false, follow: false },
+};
 
 export default async function LoginPage({
   searchParams,
@@ -45,8 +49,11 @@ export default async function LoginPage({
         <form action={signInWithPassword}>
           <input type="hidden" name="next" value={next ?? "/account"} />
 
-          <label className="block text-sm font-medium text-ink-soft mb-1">Email</label>
+          <label htmlFor="login-email" className="block text-sm font-medium text-ink-soft mb-1">
+            Email
+          </label>
           <input
+            id="login-email"
             name="email"
             type="email"
             required
@@ -55,9 +62,12 @@ export default async function LoginPage({
           />
 
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-sm font-medium text-ink-soft">Password</label>
+            <label htmlFor="login-password" className="block text-sm font-medium text-ink-soft">
+              Password
+            </label>
           </div>
           <input
+            id="login-password"
             name="password"
             type="password"
             required

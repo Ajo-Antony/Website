@@ -1,11 +1,12 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { renderMarkdown } from "@/lib/markdown";
 import type { Project } from "@/lib/types/content";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 const STATUS_LABEL: Record<string, string> = {
   completed: "Completed",
@@ -23,7 +24,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const project = await getProject(slug);
   if (!project) return {};
-  return { title: `${project.title} — StrixMind`, description: project.summary ?? undefined };
+  return {
+    title: project.title,
+    description: project.summary ?? undefined,
+    alternates: { canonical: `https://strixmind.in/work/projects/${slug}` },
+    openGraph: {
+      title: project.title,
+      description: project.summary ?? undefined,
+      url: `https://strixmind.in/work/projects/${slug}`,
+      type: "website",
+      images: project.cover_image ? [{ url: project.cover_image, width: 1200, height: 630 }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.summary ?? undefined,
+      images: project.cover_image ? [project.cover_image] : undefined,
+    },
+  };
 }
 
 export default async function WorkProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,8 +51,23 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
 
   const html = project.description ? renderMarkdown(project.description) : "";
 
+  const creativeWorkJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.summary ?? undefined,
+    url: `https://strixmind.in/work/projects/${slug}`,
+    image: project.cover_image ?? undefined,
+    creator: { "@type": "Organization", name: "StrixMind" },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkJsonLd) }}
+      />
+
       <section className="px-6 py-20 pt-32" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
         <div className="max-w-4xl mx-auto">
           <Link href="/work/projects" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← All projects</Link>
@@ -52,8 +85,16 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
 
       {project.cover_image && (
         <div className="max-w-5xl mx-auto px-6 -mt-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={project.cover_image} alt={project.title} className="w-full aspect-[16/9] object-cover rounded-3xl shadow-xl" />
+          <div className="relative w-full aspect-[16/9] rounded-3xl overflow-hidden shadow-xl">
+            <Image
+              src={project.cover_image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1024px"
+              className="object-cover"
+              priority
+            />
+          </div>
         </div>
       )}
 

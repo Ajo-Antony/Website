@@ -12,14 +12,6 @@
  *  8. CTA Banner        (aurora gradient call-to-action)
  *  9. Contact           (form + info)
  * 10. Capabilities      (static display-cards showcase)
- *
- * REMOVED:
- *  - BrandIdentitySection     (internal brand doc, not user-facing)
- *  - BarbersTeamHomePageSection (wrong industry framing)
- *  - FeatureServicesHomePageSection (replaced by FeatureCarousel)
- *  - Pricing             (removed per request)
- *  - Workflow / "How It Works" (removed per request)
- *  - Under the Hood      (removed per request)
  */
 import { PremiumHero } from "@/components/ui/hero";
 import TrustedByHomePageSection from "@/components/pages/homePage/TrustedByHomePageSection";
@@ -36,14 +28,26 @@ import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
   "home.mission", "home.testimonials",
   "home.faq", "home.cta", "home.contact",
 ];
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "StrixMind",
+  url: "https://strixmind.in",
+  description: "AI-powered CRM, WhatsApp automation, lead management, multi-agent workflows, and revenue intelligence for Indian businesses.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://strixmind.in/work/blog?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
+};
 
 export default async function HomePage() {
   const [c, rawSections] = await Promise.all([
@@ -64,6 +68,11 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+
       {/* 1. Hero */}
       {isVisible("home.hero") && (
         <SectionWrapper sectionKey="home.hero" design={designOf("home.hero")} isVisible>
@@ -85,7 +94,7 @@ export default async function HomePage() {
         </SectionWrapper>
       )}
 
-      {/* 4. Feature Carousel — NEW interactive Why StrixMind section */}
+      {/* 4. Feature Carousel — interactive Why StrixMind section */}
       <FeatureCarouselSection />
 
       {/* 5. About / Mission */}

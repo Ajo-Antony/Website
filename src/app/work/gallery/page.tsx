@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { GalleryImage } from "@/lib/types/content";
 
-export const revalidate = 0;
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Gallery",
+  description: "A visual snapshot of StrixMind's work — behind the scenes and finished projects.",
+  alternates: { canonical: "https://strixmind.in/work/gallery" },
+  openGraph: {
+    title: "Gallery — StrixMind",
+    description: "Snapshots from behind the scenes and finished work.",
+    url: "https://strixmind.in/work/gallery",
+    type: "website",
+  },
+};
 
 export default async function WorkGalleryPage() {
   const supabase = await createClient();
@@ -27,8 +41,14 @@ export default async function WorkGalleryPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {images.map((img) => (
                 <a key={img.id} href={img.url} target="_blank" rel="noopener noreferrer" className="group relative block overflow-hidden rounded-2xl aspect-square">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.url} alt={img.alt ?? ""} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <Image
+                    src={img.url}
+                    alt={img.alt ?? ""}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
                   {img.caption && (
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 to-transparent text-white text-sm font-medium px-4 py-3 opacity-0 group-hover:opacity-100 transition-opacity">
                       {img.caption}

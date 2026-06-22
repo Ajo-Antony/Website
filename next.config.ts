@@ -1,17 +1,50 @@
 import type { NextConfig } from "next";
 
-/**
- * PERF FIXES:
- * 1. compress: true   — enables gzip on all responses (was missing)
- * 2. poweredByHeader: false — removes X-Powered-By header (tiny but clean)
- * 3. images.formats  — adds avif + webp. Next.js <Image> will serve avif
- *    to browsers that support it (typically 40-60% smaller than jpeg).
- * 4. Removed duplicate wildcard `*.supabase.co` pattern — keep only the
- *    specific project hostname to avoid unnecessary pattern matching.
- */
+const securityHeaders = [
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net",
+      "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
+      "font-src 'self' fonts.gstatic.com",
+      "img-src 'self' data: blob: kdmyhhgzmepodszlxvfy.supabase.co *.supabase.co images.unsplash.com",
+      "connect-src 'self' *.supabase.co",
+    ].join("; "),
+  },
+];
+
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
+
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: securityHeaders,
+      },
+      {
+        // Long-term cache for immutable icon/brand assets
+        source: "/icons/(.*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/brand/(.*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
+  },
+
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -20,16 +53,11 @@ const nextConfig: NextConfig = {
         hostname: "kdmyhhgzmepodszlxvfy.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
-      // Keep wildcard only if you use multiple Supabase projects.
-      // Remove if you only have one project (reduces attack surface).
       {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
-      // PERF: Allow Unsplash images used in FeatureCarouselSection
-      // so Next.js <Image> can optimise them automatically.
-      // If you switch to local/Supabase images later, remove this.
       {
         protocol: "https",
         hostname: "images.unsplash.com",

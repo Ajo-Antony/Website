@@ -1,11 +1,15 @@
 {
   "name": "StrixMind — AI-Powered Business Operating System",
   "short_name": "StrixMind",
+  "description": "AI-powered CRM, WhatsApp automation, lead management, and workflow intelligence for Indian businesses.",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "theme_color": "#0063E5",
+  "theme_color": "#6c63ff",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "start_url": "/",
+  "categories": ["business", "productivity"],
+  "lang": "en"
 }

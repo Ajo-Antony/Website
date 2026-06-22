@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { signUpWithPassword } from "@/lib/actions/customerAuth";
 import { OAuthButtons } from "@/components/auth/OAuthButtons";
 import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 
-export const metadata = { title: "Create account — StrixMind" };
+export const metadata: Metadata = {
+  title: "Create Account",
+  robots: { index: false, follow: false },
+};
 
 export default async function SignupPage({
   searchParams,
@@ -38,16 +42,22 @@ export default async function SignupPage({
         </div>
 
         <form action={signUpWithPassword}>
-          <label className="block text-sm font-medium text-ink-soft mb-1">Full name</label>
+          <label htmlFor="signup-name" className="block text-sm font-medium text-ink-soft mb-1">
+            Full name
+          </label>
           <input
+            id="signup-name"
             name="name"
             type="text"
             autoComplete="name"
             className="w-full mb-4 px-4 py-2.5 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
           />
 
-          <label className="block text-sm font-medium text-ink-soft mb-1">Email</label>
+          <label htmlFor="signup-email" className="block text-sm font-medium text-ink-soft mb-1">
+            Email
+          </label>
           <input
+            id="signup-email"
             name="email"
             type="email"
             required
@@ -55,8 +65,11 @@ export default async function SignupPage({
             className="w-full mb-4 px-4 py-2.5 border border-line rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
           />
 
-          <label className="block text-sm font-medium text-ink-soft mb-1">Password</label>
+          <label htmlFor="signup-password" className="block text-sm font-medium text-ink-soft mb-1">
+            Password
+          </label>
           <input
+            id="signup-password"
             name="password"
             type="password"
             required

@@ -1,8 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { BlogPost } from "@/lib/types/content";
 
-export const revalidate = 0;
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Notes on building, shipping, and growing StrixMind — AI automation, product decisions, and lessons from the field.",
+  alternates: { canonical: "https://strixmind.in/work/blog" },
+  openGraph: {
+    title: "Blog — StrixMind",
+    description: "Notes on building, shipping, and growing StrixMind.",
+    url: "https://strixmind.in/work/blog",
+    type: "website",
+  },
+};
 
 function formatDate(iso: string | null): string {
   if (!iso) return "";
@@ -37,9 +51,15 @@ export default async function WorkBlogListPage() {
                   className="flex flex-col sm:flex-row gap-6 bg-surface-alt rounded-3xl p-6 border border-line hover:border-accent/40 hover:shadow-[0_8px_32px_rgba(108,99,255,0.08)] transition-all"
                 >
                   {post.cover_image && (
-                    <div className="sm:w-56 shrink-0 aspect-[4/3] rounded-2xl overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+                    <div className="sm:w-56 shrink-0 aspect-[4/3] rounded-2xl overflow-hidden relative">
+                      <Image
+                        src={post.cover_image}
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 224px"
+                        className="object-cover"
+                        loading="lazy"
+                      />
                     </div>
                   )}
                   <div>

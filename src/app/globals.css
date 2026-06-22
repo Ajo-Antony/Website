@@ -12,14 +12,14 @@
  *                                          by GSAP fallbacks and hero badge
  *
  * LOADED BY:  src/app/layout.tsx  (import "./globals.css")
+ * NOTE: Font loading is handled by next/font/google in layout.tsx
+ *       (self-hosted, preloaded, display:swap). No @import needed here.
  * ─────────────────────────────────────────────────────────────
  */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400;1,14..32,500&display=swap');
 
 /* ── StrixMind Design Tokens — Light Premium Glass ──
    Single source of truth for every page (Home, About, Services,

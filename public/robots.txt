@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /account
+Disallow: /account/
+Disallow: /login
+Disallow: /signup
+Disallow: /booking
+Disallow: /auth/
+
+Sitemap: https://strixmind.in/sitemap.xml

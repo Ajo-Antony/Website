@@ -1,39 +1,41 @@
 /**
  * src/app/work/page.tsx
- * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   Public "Work Hub" page — the central landing for StrixMind's
- *   public-facing portfolio content.
- *
- * ROUTE:      /work
- * LAYOUT:     src/app/work/layout.tsx  (adds work-scoped CSS vars)
- *
- * SECTIONS:
- *   1. Hero           — headline, badge, two CTAs
- *   2. Three hubs     — Projects / Blog / Gallery navigation cards
- *   3. Featured projects — up to 3 featured, from Supabase
- *   4. Latest blog    — up to 3 recent published posts
- *   5. Gallery preview— up to 6 recent gallery images
- *   6. CTA banner     — gradient call-to-action
- *
- * DATA:
- *   Supabase real-time fetch (revalidate: 0) + CMS via getContent("work.hub")
- *   Types: src/lib/types/content.ts  (Project, BlogPost, GalleryImage)
- *
- * ICONS (replaces emoji in the three-hub section):
- *   💼 Projects → IconBriefcase
- *   📝 Blog     → IconEdit
- *   🖼️ Gallery  → IconGallery
- * ─────────────────────────────────────────────────────────────
+ * Public "Work Hub" page — the central landing for StrixMind's
+ * public-facing portfolio content.
  */
+import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Project, BlogPost, GalleryImage } from "@/lib/types/content";
 import { getContent } from "@/lib/actions/content";
 import { IconBriefcase, IconEdit, IconGallery } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
-export const revalidate = 0;
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Work",
+  description:
+    "Explore StrixMind's portfolio — client case studies, behind-the-scenes blog posts, and a gallery of finished work.",
+  alternates: { canonical: "https://strixmind.in/work" },
+  openGraph: {
+    title: "Work — StrixMind",
+    description:
+      "Explore StrixMind's portfolio — client case studies, behind-the-scenes blog posts, and a gallery of finished work.",
+    url: "https://strixmind.in/work",
+    type: "website",
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://strixmind.in" },
+    { "@type": "ListItem", position: 2, name: "Work", item: "https://strixmind.in/work" },
+  ],
+};
 
 interface HubItem {
   href: string;
@@ -64,6 +66,11 @@ export default async function WorkHubPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Hero */}
       <section className="px-6 pt-32 pb-20 sm:pt-40 sm:pb-28" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
         <div className="max-w-5xl mx-auto text-center">
@@ -88,7 +95,7 @@ export default async function WorkHubPage() {
         </div>
       </section>
 
-      {/* Three hubs — SVG icons replace emojis */}
+      {/* Three hubs */}
       <section className="px-6 py-20 bg-work-gray">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
           {HUB_ITEMS.map((item) => (
@@ -97,7 +104,6 @@ export default async function WorkHubPage() {
               href={item.href}
               className="bg-white rounded-3xl p-8 border border-work-line hover:border-accent/40 hover:-translate-y-1 transition-all duration-200 group"
             >
-              {/* Icon container — subtle hover fill animation */}
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                 style={{ background: "rgba(108,99,255,0.07)", transition: "background 0.3s, transform 0.3s" }}
@@ -129,8 +135,13 @@ export default async function WorkHubPage() {
                 <Link key={p.id} href={`/work/projects/${p.slug}`} className="group">
                   <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-accent to-accent-2 mb-4 overflow-hidden relative">
                     {p.cover_image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.cover_image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image
+                        src={p.cover_image}
+                        alt={p.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white text-4xl font-bold">
                         {p.title.charAt(0)}
@@ -180,8 +191,16 @@ export default async function WorkHubPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               {galleryPreview.map((img) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={img.id} src={img.url} alt={img.alt ?? ""} className="aspect-square w-full object-cover rounded-xl" />
+                <div key={img.id} className="aspect-square relative overflow-hidden rounded-xl">
+                  <Image
+                    src={img.url}
+                    alt={img.alt ?? ""}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
               ))}
             </div>
           </div>
