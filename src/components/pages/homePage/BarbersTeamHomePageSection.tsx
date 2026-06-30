@@ -23,7 +23,7 @@ export default function BarbersTeamHomePageSection({ eyebrow = D.eyebrow, headin
             <div key={member.name} style={{ padding: "2rem", borderRadius: 22, background: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.85)", backdropFilter: "blur(20px)", boxShadow: "0 8px 32px rgba(99,88,210,0.10)", textAlign: "center", transition: "transform 0.25s" }}>
               {member.photo && member.photo.trim() ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={member.photo} alt={member.name} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", margin: "0 auto 1.25rem", display: "block" }} />
+                <img src={member.photo} alt={member.name} loading="lazy" decoding="async" style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", margin: "0 auto 1.25rem", display: "block" }} />
               ) : (
                 <div style={{ width: 72, height: 72, borderRadius: "50%", background: GRADS[i % GRADS.length], display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem", fontFamily: "var(--font-mono, monospace)", fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>{member.initials}</div>
               )}

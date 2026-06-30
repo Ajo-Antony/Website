@@ -232,6 +232,8 @@ export function FeatureCarousel() {
                       <img
                         src={feature.image}
                         alt={feature.label}
+                        loading={isActive ? "eager" : "lazy"}
+                        decoding="async"
                         className={cn(
                           "w-full h-full object-cover transition-all duration-700",
                           isActive ? "grayscale-0 blur-0" : "grayscale blur-[2px] brightness-75"

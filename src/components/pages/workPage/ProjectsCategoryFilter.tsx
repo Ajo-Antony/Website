@@ -56,7 +56,7 @@ export default function ProjectsCategoryFilter({ projects }: { projects: Project
             <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-accent to-accent-2 mb-4 overflow-hidden relative">
               {p.cover_image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.cover_image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <img src={p.cover_image} alt={p.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-white text-5xl font-bold">
                   {p.title.charAt(0)}

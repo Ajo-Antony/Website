@@ -58,36 +58,29 @@ export const PremiumHero = ({
   secondaryCtaHref = "/#why",
 }: PremiumHeroProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const noiseRef = useRef<HTMLCanvasElement>(null);
   const beamsRef = useRef<Beam[]>([]);
   const animationFrameRef = useRef<number>(0);
 
   const LAYERS = 3;
-  const BEAMS_PER_LAYER = 8;
+  const BEAMS_PER_LAYER = 4; // was 8 — halved, same visual density at typical hero size
+  const TARGET_FPS = 30;
+  const FRAME_INTERVAL = 1000 / TARGET_FPS;
+  const MAX_DPR = 1.5; // was uncapped devicePixelRatio (up to 3 on some phones)
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const noiseCanvas = noiseRef.current;
-    if (!canvas || !noiseCanvas) return;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const nCtx = noiseCanvas.getContext("2d");
-    if (!ctx || !nCtx) return;
+    if (!ctx) return;
 
     const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-
-      noiseCanvas.width = window.innerWidth * dpr;
-      noiseCanvas.height = window.innerHeight * dpr;
-      noiseCanvas.style.width = `${window.innerWidth}px`;
-      noiseCanvas.style.height = `${window.innerHeight}px`;
-      nCtx.setTransform(1, 0, 0, 1, 0, 0);
-      nCtx.scale(dpr, dpr);
 
       beamsRef.current = [];
       for (let layer = 1; layer <= LAYERS; layer++) {
@@ -99,18 +92,6 @@ export const PremiumHero = ({
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-
-    const generateNoise = () => {
-      const imgData = nCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        const v = Math.random() * 255;
-        imgData.data[i] = v;
-        imgData.data[i + 1] = v;
-        imgData.data[i + 2] = v;
-        imgData.data[i + 3] = 12;
-      }
-      nCtx.putImageData(imgData, 0, 0);
-    };
 
     // StrixMind brand accent (#6c63ff) instead of the generic cyan default,
     // so the hero reads as part of the same product, not a stock template.
@@ -133,7 +114,9 @@ export const PremiumHero = ({
       ctx.restore();
     };
 
-    const animate = () => {
+    let lastFrameTime = 0;
+
+    const render = () => {
       if (!canvas || !ctx) return;
 
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
@@ -151,21 +134,52 @@ export const PremiumHero = ({
         }
         drawBeam(beam);
       });
-
-      generateNoise();
-      animationFrameRef.current = requestAnimationFrame(animate);
     };
-    animate();
+
+    const animate = (time: number) => {
+      animationFrameRef.current = requestAnimationFrame(animate);
+      // Throttle to TARGET_FPS instead of running flat-out every display refresh
+      if (time - lastFrameTime < FRAME_INTERVAL) return;
+      lastFrameTime = time;
+      render();
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameRef.current);
+      } else {
+        lastFrameTime = 0;
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    // Respect users who've asked the OS for reduced motion: draw one static frame.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      render();
+    } else {
+      animationFrameRef.current = requestAnimationFrame(animate);
+      document.addEventListener("visibilitychange", handleVisibility);
+    }
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(animationFrameRef.current);
     };
   }, []);
 
   return (
     <div className="relative w-full min-h-[calc(100vh-72px)] overflow-hidden">
-      <canvas ref={noiseRef} className="absolute inset-0 z-0 pointer-events-none" />
+      {/* Static grain texture — replaces the old per-frame JS-generated noise canvas.
+          Painted once by the browser, no JS, no per-frame CPU cost. */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.045]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
       <canvas ref={canvasRef} className="absolute inset-0 z-10" />
 
       <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-4 sm:px-6 py-16 sm:py-20 text-center">

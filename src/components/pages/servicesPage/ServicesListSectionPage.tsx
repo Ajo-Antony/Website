@@ -186,7 +186,7 @@ export default function ServicesListSectionPage({ items = D.items }: ServicesLis
             <div style={{ direction: "ltr" as const, height: 240, borderRadius: 20, overflow: "hidden", background: s.image ? undefined : "rgba(108,99,255,0.03)", border: "1px solid #E5E0FA", display: "flex", alignItems: "center", justifyContent: "center" }}>
               {s.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={s.image} alt={s.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={s.image} alt={s.title} loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <ServiceIllustration index={i} />
               )}
