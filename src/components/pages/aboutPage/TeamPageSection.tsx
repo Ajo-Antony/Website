@@ -29,6 +29,7 @@ export default function TeamPageSection({ eyebrow = D.eyebrow, heading = D.headi
                 </div>
                 <div className="team-card-panel">
                   <div className="team-card-name">{m.name}</div>
+                  <div className="team-card-role">{m.role}</div>
                   <p className="team-card-bio">{m.bio}</p>
                 </div>
               </div>
@@ -98,8 +99,16 @@ export default function TeamPageSection({ eyebrow = D.eyebrow, heading = D.headi
           font-size: 1rem;
           font-weight: 700;
           color: #ffffff;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.3rem;
           letter-spacing: -0.01em;
+        }
+        .team-card-role {
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #f6e94d;
+          margin-bottom: 0.6rem;
         }
         .team-card-bio {
           font-size: 0.82rem;
