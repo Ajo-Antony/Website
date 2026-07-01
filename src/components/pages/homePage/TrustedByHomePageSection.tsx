@@ -34,7 +34,7 @@ export default function TrustedByHomePageSection({ heading = D.heading, logos = 
           {track.map((l, i) => (
             <span
               key={`${l}-${i}`}
-              style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--shadow-strong)", letterSpacing: "-0.02em", whiteSpace: "nowrap", userSelect: "none" as const }}
+              style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--text)", letterSpacing: "-0.01em", whiteSpace: "nowrap", userSelect: "none" as const, background: "var(--glass-bg)", border: "1px solid var(--glass-border)", padding: "0.55rem 1.25rem", borderRadius: 100 }}
             >
               {l}
             </span>

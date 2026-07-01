@@ -94,7 +94,7 @@ export const CONTENT_SECTIONS: SectionSchema[] = [
     key: "home.trustedBy", label: "Trusted By Strip", group: "Home",
     fields: [
       f("heading", "Heading"),
-      f("logos", "Company names", "stringlist", { itemLabel: "Company" }),
+      f("logos", "Highlights", "stringlist", { itemLabel: "Highlight" }),
     ],
   },
   {
@@ -479,8 +479,8 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     secondaryCtaHref: "#why",
   },
   "home.trustedBy": {
-    heading: "Trusted by 500+ businesses across India",
-    logos: ["NovaBridge", "UrbanScale", "Tessera Labs", "ZenithCorp", "ArcVentures", "PeakFlow", "BrightStack", "NexaGrowth"],
+    heading: "We're just getting started — and looking for founding partners",
+    logos: ["🚀 Early access open now", "🤝 Founding partner pricing", "🇮🇳 Built & supported in India", "💬 Direct line to the founders", "🔒 No long-term lock-in"],
   },
   "home.services": {
     eyebrow: "What we do",

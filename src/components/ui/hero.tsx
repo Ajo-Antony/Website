@@ -255,22 +255,6 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
             transition={{ duration: 0.45, ease: "easeOut" }}
             className="flex flex-col items-start"
           >
-            {/* Badge */}
-            {slide.badge && (
-              <div
-                className="inline-flex items-center gap-2 rounded-full border text-sm font-medium mb-8 px-4 py-2"
-                style={{
-                  background: "rgba(20,20,20,0.55)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  backdropFilter: "blur(8px)",
-                  color: "rgba(255,255,255,0.92)",
-                }}
-              >
-                <span style={{ color: "#a78bfa" }}>✦</span>
-                {slide.badge.replace(/^✦\s*/, "")}
-              </div>
-            )}
-
             {/* Three-line headline */}
             <h1 className="flex flex-col mb-7" style={{ lineHeight: 0.94 }}>
               {/* Line 1 — teal / light weight */}
