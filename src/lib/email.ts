@@ -52,28 +52,29 @@ export async function sendBookingConfirmationEmail(details: BookingEmailDetails)
   }
 
   const { name, email, slot } = details;
+  const isEnquiry = slot === "General enquiry";
 
   try {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${GMAIL_USER}>`,
       to: email,
-      subject: `You're booked — StrixMind demo, ${slot}`,
+      subject: isEnquiry ? "We got your message — StrixMind" : `You're booked — StrixMind demo, ${slot}`,
       html: `
         <div style="font-family: Inter, Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #1a1333;">
           <div style="height: 4px; background: linear-gradient(90deg,#6c63ff,#a78bfa); border-radius: 4px; margin-bottom: 28px;"></div>
-          <h2 style="font-size: 20px; margin-bottom: 8px;">You're booked, ${escapeHtml(name)}! 🎉</h2>
+          <h2 style="font-size: 20px; margin-bottom: 8px;">${isEnquiry ? `Thanks for reaching out, ${escapeHtml(name)}! 👋` : `You're booked, ${escapeHtml(name)}! 🎉`}</h2>
           <p style="font-size: 14px; line-height: 1.6; color: #5b5478;">
-            Thanks for booking a StrixMind demo. Here are your details:
+            ${isEnquiry ? "We've received your message and our team in Kerala will get back to you within 2 business hours." : "Thanks for booking a StrixMind demo. Here are your details:"}
           </p>
+          ${isEnquiry ? "" : `
           <table style="width: 100%; font-size: 14px; margin: 20px 0; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #8a84a8;">Time slot</td>
               <td style="padding: 8px 0; font-weight: 600;">${escapeHtml(slot)}</td>
             </tr>
-          </table>
+          </table>`}
           <p style="font-size: 14px; line-height: 1.6; color: #5b5478;">
-            We'll be in touch shortly to confirm the meeting link. If you need to reschedule,
-            just reply to this email.
+            ${isEnquiry ? "If it's urgent, just reply to this email and we'll pick it up directly." : "We'll be in touch shortly to confirm the meeting link. If you need to reschedule, just reply to this email."}
           </p>
           <p style="font-size: 13px; color: #a39ecf; margin-top: 32px;">— The StrixMind team</p>
         </div>
@@ -94,20 +95,21 @@ export async function sendBookingNotificationEmail(details: BookingEmailDetails)
   if (!transporter || !NOTIFY_ADDRESS) return { ok: false };
 
   const { name, email, slot, company, size, goal } = details;
+  const isEnquiry = slot === "General enquiry";
 
   try {
     await transporter.sendMail({
       from: `"${FROM_NAME}" <${GMAIL_USER}>`,
       to: NOTIFY_ADDRESS,
-      subject: `New booking: ${name} — ${slot}`,
+      subject: isEnquiry ? `New enquiry: ${name}` : `New booking: ${name} — ${slot}`,
       html: `
         <div style="font-family: Inter, Arial, sans-serif; font-size: 14px; color: #1a1333;">
-          <p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) just booked a demo.</p>
+          <p><strong>${escapeHtml(name)}</strong> (${escapeHtml(email)}) ${isEnquiry ? "just sent an enquiry via the contact form." : "just booked a demo."}</p>
           <ul>
-            <li><strong>Slot:</strong> ${escapeHtml(slot)}</li>
+            ${isEnquiry ? "" : `<li><strong>Slot:</strong> ${escapeHtml(slot)}</li>`}
             <li><strong>Company:</strong> ${escapeHtml(company || "—")}</li>
             <li><strong>Size:</strong> ${escapeHtml(size || "—")}</li>
-            <li><strong>Goal:</strong> ${escapeHtml(goal || "—")}</li>
+            <li><strong>${isEnquiry ? "Message" : "Goal"}:</strong> ${escapeHtml(goal || "—")}</li>
           </ul>
         </div>
       `,

@@ -1,13 +1,17 @@
 /**
  * src/components/ui/hero.tsx
  * ─────────────────────────────────────────────────────────────
- * PremiumHero — Shader canvas hero.
+ * PremiumHero — Shader canvas hero, now a slide carousel.
  *
  * Design: organic blob gradient background (canvas 2D, no WebGL),
- * mouse-reactive, with a three-line mixed-weight headline:
+ * mouse-reactive, with a three-line mixed-weight headline per slide:
  *   line 1 → teal / light weight     (Inter 300)
  *   line 2 → bold white              (Inter 900)
  *   line 3 → italic serif / dimmed   (Instrument Serif italic)
+ *
+ * Clicking the left/right arrows (or a dot) crossfades to the next/
+ * previous slide — each slide has its own badge, headline, sub-copy,
+ * and CTAs. Dots at bottom-left show position and are clickable.
  *
  * Fonts: Inter (font-body) + Instrument Serif (font-accent) —
  * both already loaded by layout.tsx via next/font.
@@ -21,7 +25,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
 
 /* ── Blob config — matches the shader-hero reference exactly ── */
@@ -50,69 +54,77 @@ const LIGHT_BLOBS: Blob[] = [
   { color: "#f3f0e9", baseX: 0.05, baseY: 0.85, r: 0.50, sx: 0.05, sy: 0.05, speed: 0.3,  phase: 5.0 },
 ];
 
-/* ── Props ── */
-export interface PremiumHeroProps {
-  /** First headline line — displayed in teal, light weight */
-  lineAccent?: string;
-  /** Second headline line — bold white */
-  lineBold?: string;
-  /** Third headline line — italic Instrument Serif, dimmed */
-  lineSerif?: string;
-  /** Subheadline paragraph */
-  subheadline?: string;
-  /** Badge pill label */
+/* ── Slide content ── */
+export interface HeroSlide {
   badge?: string;
-  primaryCtaLabel?: string;
-  primaryCtaHref?: string;
-  secondaryCtaLabel?: string;
-  secondaryCtaHref?: string;
-  // Legacy single-string props kept for backward compatibility
-  headline?: string;
-  highlight?: string;
+  lineAccent: string;
+  lineBold: string;
+  lineSerif: string;
+  subheadline: string;
+  primaryCtaLabel: string;
+  primaryCtaHref: string;
+  secondaryCtaLabel: string;
+  secondaryCtaHref: string;
 }
 
-export const PremiumHero = ({
-  lineAccent    = "Your Business,",
-  lineBold      = "Running on",
-  lineSerif     = "AI.",
-  subheadline   = "Automate repetitive work, manage customer relationships, and grow faster with intelligent automation built for Indian businesses.",
-  badge         = "✦  AI-powered · WhatsApp · CRM",
-  primaryCtaLabel   = "Start Free Trial",
-  primaryCtaHref    = "/booking",
-  secondaryCtaLabel = "Book a Demo",
-  secondaryCtaHref  = "/#contact",
-}: PremiumHeroProps) => {
+const DEFAULT_SLIDES: HeroSlide[] = [
+  {
+    badge: "✦  AI automation for Indian businesses",
+    lineAccent: "Your Business,",
+    lineBold: "Running on",
+    lineSerif: "AI.",
+    subheadline: "Automate repetitive work, manage customer relationships, and grow faster with intelligent automation built for Indian businesses.",
+    primaryCtaLabel: "Start Free Trial",
+    primaryCtaHref: "/booking",
+    secondaryCtaLabel: "Book a Demo",
+    secondaryCtaHref: "/#contact",
+  },
+  {
+    badge: "✦  WhatsApp bots that never sleep",
+    lineAccent: "Every Chat,",
+    lineBold: "Answered on",
+    lineSerif: "WhatsApp.",
+    subheadline: "Deploy intelligent bots that handle bookings, FAQs, and follow-ups 24/7 — in any Indian language, without hiring a support team.",
+    primaryCtaLabel: "Start Free Trial",
+    primaryCtaHref: "/booking",
+    secondaryCtaLabel: "See it in action",
+    secondaryCtaHref: "/#services",
+  },
+  {
+    badge: "✦  One CRM that updates itself",
+    lineAccent: "Stop Chasing,",
+    lineBold: "Start Closing",
+    lineSerif: "Deals.",
+    subheadline: "AI enriches contacts, scores your pipeline, and surfaces the follow-ups that actually move revenue — every single day.",
+    primaryCtaLabel: "Start Free Trial",
+    primaryCtaHref: "/booking",
+    secondaryCtaLabel: "Book a Demo",
+    secondaryCtaHref: "/#contact",
+  },
+];
+
+export interface PremiumHeroProps {
+  /** Slides to cycle through with the arrow / dot navigation. */
+  slides?: HeroSlide[];
+}
+
+export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rafRef     = useRef<number>(0);
   const mouseRef   = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 });
 
-  /* ── Side-arrow section navigation ──
-   * Walks through the homepage's main sections in order. The arrows
-   * scroll to the next/previous section instead of doing nothing,
-   * and each button's title/aria-label names the destination so
-   * it's clear where the click will take you. */
-  const SECTIONS: { id: string; label: string }[] = [
-    { id: "services",     label: "Features & Services" },
-    { id: "why",          label: "How it works" },
-    { id: "testimonials", label: "Customer stories" },
-    { id: "faq",          label: "FAQ" },
-    { id: "contact",      label: "Get in touch" },
-  ];
-  const [sectionIndex, setSectionIndex] = useState(-1); // -1 = hero itself
+  /* ── Slide carousel state ── */
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const slide = slides[slideIndex];
 
-  const goToSection = (dir: 1 | -1) => {
-    const nextIndex = Math.min(Math.max(sectionIndex + dir, -1), SECTIONS.length - 1);
-    setSectionIndex(nextIndex);
-    if (nextIndex === -1) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-    document.getElementById(SECTIONS[nextIndex].id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const goTo = (index: number, dir: 1 | -1) => {
+    setDirection(dir);
+    setSlideIndex(((index % slides.length) + slides.length) % slides.length);
   };
-
-  const prevLabel = sectionIndex <= -1 ? "You're at the top" : sectionIndex === 0 ? "Back to top" : SECTIONS[sectionIndex - 1].label;
-  const nextLabel = sectionIndex >= SECTIONS.length - 1 ? "You're at the end" : SECTIONS[sectionIndex + 1].label;
+  const goPrev = () => goTo(slideIndex - 1, -1);
+  const goNext = () => goTo(slideIndex + 1, 1);
 
   useEffect(() => {
     const canvas  = canvasRef.current;
@@ -228,113 +240,152 @@ export const PremiumHero = ({
         }}
       />
 
-      {/* ── Content ── */}
+      {/* ── Content — crossfades between slides ── */}
       <div
         className="relative z-10 flex flex-col items-start justify-center h-full"
         style={{ minHeight: "calc(100vh - 72px)", padding: "clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)" }}
       >
-        {/* Three-line headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.08 }}
-          className="flex flex-col mb-7"
-          style={{ lineHeight: 0.94 }}
-        >
-          {/* Line 1 — teal / light weight */}
-          <span
-            style={{
-              fontFamily: "var(--font-body)",
-              fontWeight: 300,
-              fontSize: "clamp(2.4rem, 5.2vw, 4rem)",
-              color: "#5eead4",
-              letterSpacing: "-0.03em",
-              lineHeight: 1.05,
-            }}
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={slideIndex}
+            custom={direction}
+            initial={{ opacity: 0, x: direction === 1 ? 40 : -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction === 1 ? -40 : 40 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            className="flex flex-col items-start"
           >
-            {lineAccent}
-          </span>
+            {/* Badge */}
+            {slide.badge && (
+              <div
+                className="inline-flex items-center gap-2 rounded-full border text-sm font-medium mb-8 px-4 py-2"
+                style={{
+                  background: "rgba(20,20,20,0.55)",
+                  border: "1px solid rgba(255,255,255,0.18)",
+                  backdropFilter: "blur(8px)",
+                  color: "rgba(255,255,255,0.92)",
+                }}
+              >
+                <span style={{ color: "#a78bfa" }}>✦</span>
+                {slide.badge.replace(/^✦\s*/, "")}
+              </div>
+            )}
 
-          {/* Line 2 — bold white */}
-          <span
-            style={{
-              fontFamily: "var(--font-body)",
-              fontWeight: 900,
-              fontSize: "clamp(3.2rem, 7.5vw, 5.75rem)",
-              color: "#f5f5f5",
-              letterSpacing: "-0.045em",
-              lineHeight: 1.0,
-            }}
-          >
-            {lineBold}
-          </span>
+            {/* Three-line headline */}
+            <h1 className="flex flex-col mb-7" style={{ lineHeight: 0.94 }}>
+              {/* Line 1 — teal / light weight */}
+              <span
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontWeight: 300,
+                  fontSize: "clamp(2.4rem, 5.2vw, 4rem)",
+                  color: "#5eead4",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 1.05,
+                }}
+              >
+                {slide.lineAccent}
+              </span>
 
-          {/* Line 3 — italic Instrument Serif */}
-          <span
-            style={{
-              fontFamily: "var(--font-accent)",
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
-              color: "rgba(255,255,255,0.82)",
-              letterSpacing: "-0.025em",
-              lineHeight: 1.05,
-              marginTop: "0.05em",
-            }}
-          >
-            {lineSerif}
-          </span>
-        </motion.h1>
+              {/* Line 2 — bold white */}
+              <span
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontWeight: 900,
+                  fontSize: "clamp(3.2rem, 7.5vw, 5.75rem)",
+                  color: "#f5f5f5",
+                  letterSpacing: "-0.045em",
+                  lineHeight: 1.0,
+                }}
+              >
+                {slide.lineBold}
+              </span>
 
-        {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.18 }}
-          className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed"
-          style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }}
-        >
-          {subheadline}
-        </motion.p>
+              {/* Line 3 — italic Instrument Serif */}
+              <span
+                style={{
+                  fontFamily: "var(--font-accent)",
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
+                  color: "rgba(255,255,255,0.82)",
+                  letterSpacing: "-0.025em",
+                  lineHeight: 1.05,
+                  marginTop: "0.05em",
+                }}
+              >
+                {slide.lineSerif}
+              </span>
+            </h1>
 
-        {/* CTA row */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.26 }}
-          className="flex flex-wrap gap-4"
-        >
-          {/* Ghost */}
-          <Link
-            href={secondaryCtaHref}
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.35)",
-              color: "#fff",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
-            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
-          >
-            <Calendar className="w-4 h-4" />
-            {secondaryCtaLabel}
-          </Link>
+            {/* Subheadline */}
+            <p
+              className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }}
+            >
+              {slide.subheadline}
+            </p>
 
-          {/* Gradient */}
-          <Link
-            href={primaryCtaHref}
-            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-0.5"
-            style={{
-              background: "linear-gradient(90deg, #38bdf8, #f97316)",
-              boxShadow: "0 8px 24px -8px rgba(249,115,22,0.5)",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 12px 30px -8px rgba(249,115,22,0.65)")}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 8px 24px -8px rgba(249,115,22,0.5)")}
-          >
-            {primaryCtaLabel}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </motion.div>
+            {/* CTA row */}
+            <div className="flex flex-wrap gap-4">
+              {/* Ghost */}
+              <Link
+                href={slide.secondaryCtaHref}
+                className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.35)",
+                  color: "#fff",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+              >
+                <Calendar className="w-4 h-4" />
+                {slide.secondaryCtaLabel}
+              </Link>
+
+              {/* Gradient */}
+              <Link
+                href={slide.primaryCtaHref}
+                className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: "linear-gradient(90deg, #38bdf8, #f97316)",
+                  boxShadow: "0 8px 24px -8px rgba(249,115,22,0.5)",
+                }}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 12px 30px -8px rgba(249,115,22,0.65)")}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 8px 24px -8px rgba(249,115,22,0.5)")}
+              >
+                {slide.primaryCtaLabel}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Slide dot indicators */}
+        {slides.length > 1 && (
+          <div className="flex items-center gap-2 mt-10" role="tablist" aria-label="Hero slides">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-label={`Go to slide ${i + 1}`}
+                aria-selected={i === slideIndex}
+                onClick={() => goTo(i, i > slideIndex ? 1 : -1)}
+                className="rounded-full transition-all duration-200"
+                style={{
+                  width: i === slideIndex ? 22 : 8,
+                  height: 8,
+                  background: i === slideIndex ? "#fff" : "rgba(255,255,255,0.35)",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Spinning corner badge */}
         <div
@@ -374,45 +425,41 @@ export const PremiumHero = ({
         </div>
       </div>
 
-      {/* Side nav arrows — walk through the homepage sections */}
-      <button
-        type="button"
-        aria-label={`Previous: ${prevLabel}`}
-        title={prevLabel}
-        onClick={() => goToSection(-1)}
-        disabled={sectionIndex <= -1}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
-        style={{
-          background: "rgba(20,20,20,0.55)",
-          border: "1px solid rgba(255,255,255,0.18)",
-          backdropFilter: "blur(6px)",
-          color: "#fff",
-          fontSize: 20,
-          opacity: sectionIndex <= -1 ? 0.4 : 1,
-          cursor: sectionIndex <= -1 ? "default" : "pointer",
-        }}
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        aria-label={`Next: ${nextLabel}`}
-        title={nextLabel}
-        onClick={() => goToSection(1)}
-        disabled={sectionIndex >= SECTIONS.length - 1}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
-        style={{
-          background: "rgba(20,20,20,0.55)",
-          border: "1px solid rgba(255,255,255,0.18)",
-          backdropFilter: "blur(6px)",
-          color: "#fff",
-          fontSize: 20,
-          opacity: sectionIndex >= SECTIONS.length - 1 ? 0.4 : 1,
-          cursor: sectionIndex >= SECTIONS.length - 1 ? "default" : "pointer",
-        }}
-      >
-        ›
-      </button>
+      {/* Side nav arrows — move to the next/previous slide */}
+      {slides.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous slide"
+            onClick={goPrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
+            style={{
+              background: "rgba(20,20,20,0.55)",
+              border: "1px solid rgba(255,255,255,0.18)",
+              backdropFilter: "blur(6px)",
+              color: "#fff",
+              fontSize: 20,
+            }}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="Next slide"
+            onClick={goNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
+            style={{
+              background: "rgba(20,20,20,0.55)",
+              border: "1px solid rgba(255,255,255,0.18)",
+              backdropFilter: "blur(6px)",
+              color: "#fff",
+              fontSize: 20,
+            }}
+          >
+            ›
+          </button>
+        </>
+      )}
 
       {/* spin keyframe — injected once */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

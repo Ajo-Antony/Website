@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import { IconMail, IconMapPin, IconClock, IconCheckCircle } from "@/components/ui/SvgIcons";
+import { createBooking } from "@/lib/actions/bookings";
 import type { ElementType } from "react";
 
 interface InfoItem { icon: string; label: string; value: string }
@@ -20,6 +21,7 @@ export default function ContactHomePageSection({
   const [form, setForm] = useState({ name: "", email: "", company: "", size: "", message: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const inputBase: React.CSSProperties = {
     width: "100%", padding: "0.875rem 1.125rem", borderRadius: 14,
@@ -41,8 +43,27 @@ export default function ContactHomePageSection({
   const handleSubmit = async () => {
     if (!form.name || !form.email) return;
     setLoading(true);
-    await new Promise(r => setTimeout(r, 900));
+    setError(null);
+
+    // This form has no time-slot picker (it's a general enquiry, not a
+    // scheduled call), so we save it into the same `bookings` table the
+    // admin dashboard already reads from, using a fixed slot label —
+    // that's what makes it show up in /admin/bookings alongside the
+    // real time-slot bookings from the /booking page.
+    const result = await createBooking({
+      slot: "General enquiry",
+      name: form.name,
+      email: form.email,
+      company: form.company,
+      size: form.size,
+      goal: form.message,
+    });
+
     setLoading(false);
+    if (!result.ok) {
+      setError(result.error || "Something went wrong. Please try again.");
+      return;
+    }
     setSent(true);
   };
 
@@ -127,6 +148,12 @@ export default function ContactHomePageSection({
                   onChange={e => setForm({ ...form, message: e.target.value })}
                   onFocus={handleFocus} onBlur={handleBlur}
                 />
+
+                {error && (
+                  <div style={{ marginBottom: "1rem", padding: "0.75rem 1rem", borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", color: "#ef4444", fontSize: "0.85rem" }}>
+                    {error}
+                  </div>
+                )}
 
                 <button
                   onClick={handleSubmit}
