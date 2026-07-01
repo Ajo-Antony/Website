@@ -205,7 +205,7 @@ export function FeatureCarousel() {
             </div>
 
             {/* Right panel — image cards */}
-            <div className="flex-1 min-h-[500px] md:min-h-[600px] lg:h-full relative bg-[#f7f6fd] flex items-center justify-center py-16 md:py-24 lg:py-16 px-6 md:px-12 lg:px-10 overflow-hidden border-t lg:border-t-0 lg:border-l border-[var(--border)]">
+            <div className="flex-1 min-h-[500px] md:min-h-[600px] lg:h-full relative bg-[var(--hero-panel)] flex items-center justify-center py-16 md:py-24 lg:py-16 px-6 md:px-12 lg:px-10 overflow-hidden border-t lg:border-t-0 lg:border-l border-[var(--border)]">
               <div className="relative w-full max-w-[420px] aspect-[4/5] flex items-center justify-center">
                 {FEATURES.map((feature, index) => {
                   const status = getCardStatus(index);

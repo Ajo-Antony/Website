@@ -5,7 +5,7 @@ const D = CONTENT_DEFAULTS["about.hero"] as Required<HeroProps>;
 
 export default function AboutPageHeroSection({ eyebrow = D.eyebrow, heading = D.heading, headingAccent = D.headingAccent, paragraph = D.paragraph }: HeroProps) {
   return (
-    <section style={{ minHeight: "60vh", display: "flex", alignItems: "center", paddingTop: 72, background: "linear-gradient(160deg,#f7f6fd,#eef0fb)", position: "relative", overflow: "hidden" }}>
+    <section style={{ minHeight: "60vh", display: "flex", alignItems: "center", paddingTop: 72, background: "var(--hero-bg)", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", border: "1px solid var(--glass-bg)", top: -150, right: -100, animation: "rotate-slow 30s linear infinite", pointerEvents: "none" as const }} />
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "5rem 2rem" }}>
         <div style={{ display: "inline-flex", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "var(--glass-bg)", padding: "0.3rem 0.875rem", borderRadius: 100, marginBottom: "1.5rem" }}>{eyebrow}</div>

@@ -12,7 +12,7 @@ export default async function AuthCodeErrorPage({
       className="min-h-screen flex items-center justify-center px-4"
       style={{ background: "linear-gradient(165deg,#241c4d,#1a1333)" }}
     >
-      <div className="w-full max-w-sm bg-white rounded-2xl p-8 shadow-2xl text-center">
+      <div className="w-full max-w-sm bg-[var(--surface)] rounded-2xl p-8 shadow-2xl text-center">
         <h1 className="text-lg font-bold text-ink mb-2">Sign-in didn&rsquo;t go through</h1>
         <p className="text-sm text-ink-soft mb-6">
           {message || "That link is invalid or has expired. Please try signing in again."}

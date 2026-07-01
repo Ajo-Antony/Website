@@ -25,7 +25,7 @@ export default async function WorkProjectsListPage() {
 
   return (
     <>
-      <section className="px-6 py-20 pt-32" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
+      <section className="px-6 py-20 pt-32" style={{ background: "var(--hero-bg)" }}>
         <div className="max-w-5xl mx-auto text-center">
           <Link href="/work" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← Back to Work</Link>
           <h1 className="text-4xl sm:text-5xl font-bold mt-4 text-ink" style={{ letterSpacing: "-0.04em" }}>Projects</h1>
@@ -33,7 +33,7 @@ export default async function WorkProjectsListPage() {
         </div>
       </section>
 
-      <section className="px-6 py-16 bg-white border-t border-line">
+      <section className="px-6 py-16 bg-[var(--surface)] border-t border-line">
         <div className="max-w-6xl mx-auto">
           <ProjectsCategoryFilter projects={projects} />
         </div>

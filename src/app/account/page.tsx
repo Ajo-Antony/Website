@@ -26,7 +26,7 @@ export default async function AccountPage() {
 
   return (
     <div className="min-h-screen bg-surface-alt px-4 py-20">
-      <div className="max-w-md mx-auto bg-white rounded-2xl p-8 shadow-xl border border-line">
+      <div className="max-w-md mx-auto bg-[var(--surface)] rounded-2xl p-8 shadow-xl border border-line">
         <StrixmindWordmark theme="light" height={20} />
 
         <h1 className="text-xl font-bold text-ink mt-6 mb-1">Welcome, {name} 👋</h1>

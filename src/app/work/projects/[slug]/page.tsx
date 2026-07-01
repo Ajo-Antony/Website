@@ -68,7 +68,7 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
         dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkJsonLd) }}
       />
 
-      <section className="px-6 py-20 pt-32" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
+      <section className="px-6 py-20 pt-32" style={{ background: "var(--hero-bg)" }}>
         <div className="max-w-4xl mx-auto">
           <Link href="/work/projects" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← All projects</Link>
           <div className="flex flex-wrap items-center gap-3 mt-6 mb-3">
@@ -98,7 +98,7 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
         </div>
       )}
 
-      <section className="px-6 py-16 bg-white border-t border-line">
+      <section className="px-6 py-16 bg-[var(--surface)] border-t border-line">
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-[1fr_280px] gap-12">
           <article
             className="prose prose-lg prose-headings:font-bold prose-headings:text-ink prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl"

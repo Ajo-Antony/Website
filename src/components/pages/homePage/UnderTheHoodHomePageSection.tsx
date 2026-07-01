@@ -41,7 +41,7 @@ export default function UnderTheHoodHomePageSection({
               <div
                 key={engine.title}
                 data-strix-grid-item
-                style={{ position: "relative", padding: "2.25rem 2rem", borderRadius: "1.25rem", border: "1px solid var(--border)", background: "linear-gradient(180deg, #fbfaff 0%, #ffffff 60%)", transition: "all 0.35s ease" }}
+                style={{ position: "relative", padding: "2.25rem 2rem", borderRadius: "1.25rem", border: "1px solid var(--border)", background: "var(--surface-alt)", transition: "all 0.35s ease" }}
               >
                 <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" as const, color: "var(--text-dim)", marginBottom: "1.5rem" }}>
                   Engine {String(i + 1).padStart(2, "0")}

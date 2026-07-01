@@ -34,7 +34,7 @@ export default async function AdminProjectsListPage() {
       {projects.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">No projects yet — add your first one.</p>
       ) : (
-        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] divide-y divide-gray-100">
+        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] divide-y divide-[var(--border)]">
           {projects.map((p) => (
             <div key={p.id} className="flex items-center justify-between px-6 py-4">
               <div className="min-w-0">
@@ -46,7 +46,7 @@ export default async function AdminProjectsListPage() {
                     </span>
                   )}
                   {!p.published && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-[var(--text-muted)] px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-wide bg-[var(--surface-alt)] text-[var(--text-muted)] px-2 py-0.5 rounded-full">
                       Draft
                     </span>
                   )}
@@ -58,7 +58,7 @@ export default async function AdminProjectsListPage() {
               <div className="flex items-center gap-2 shrink-0">
                 <Link
                   href={`/admin/projects/${p.id}`}
-                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-gray-50"
+                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--surface-alt)]"
                 >
                   Edit
                 </Link>

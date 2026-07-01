@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
+import { IconRobot, IconBriefcase, IconSprout, IconRocket } from "@/components/ui/SvgIcons";
+import type { ElementType } from "react";
 
 interface HeroProps {
   badge?: string;
@@ -18,6 +20,15 @@ interface ContentDefaultsHero {
   primaryCtaLabel: string; primaryCtaHref: string; secondaryCtaLabel: string; secondaryCtaHref: string;
 }
 
+// Quick shortcuts shown in the hero's side rail — the pages people look
+// for right after landing, each with a one-line reason to click.
+const HERO_QUICK_LINKS: { href: string; label: string; desc: string; Icon: ElementType<{ size?: number; color?: string; strokeWidth?: number }> }[] = [
+  { href: "/services", label: "What we automate", desc: "WhatsApp CRM, workflows & multi-agent AI", Icon: IconRobot },
+  { href: "/work",     label: "See it in action",  desc: "Case studies & projects we've shipped",   Icon: IconBriefcase },
+  { href: "/about",    label: "Why StrixMind",     desc: "Our values and what drives the product",  Icon: IconSprout },
+  { href: "/booking",  label: "Book a demo",       desc: "Get a walkthrough tailored to your team", Icon: IconRocket },
+];
+
 export default function HeroHomePageSection({
   badge = HERO_DEFAULTS.badge,
   headline = HERO_DEFAULTS.headline,
@@ -31,7 +42,7 @@ export default function HeroHomePageSection({
   return (
     <section
       id="section-home"
-      style={{ position: "relative", minHeight: "calc(100vh - 72px)", display: "flex", flexDirection: "column", overflow: "hidden", background: "linear-gradient(160deg,#f7f6fd 0%,#eef0fb 55%,#e8e4fb 100%)" }}
+      style={{ position: "relative", minHeight: "calc(100vh - 72px)", display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--hero-bg)" }}
     >
       <canvas id="strix-hero-canvas" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0, opacity: 0.55, pointerEvents: "none" }} />
 
@@ -57,10 +68,45 @@ export default function HeroHomePageSection({
           <Link href={primaryCtaHref} style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", background: "linear-gradient(135deg,var(--accent),var(--accent-2))", padding: "1rem 2.5rem", borderRadius: 100, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 12px 36px rgba(108,99,255,0.38)", transition: "all 0.3s ease" }}>
             {primaryCtaLabel}
           </Link>
-          <Link href={secondaryCtaHref} style={{ fontSize: "1rem", fontWeight: 600, color: "var(--accent-deep)", background: "rgba(255,255,255,0.65)", border: "1px solid var(--glass-bg)", padding: "1rem 2.5rem", borderRadius: 100, textDecoration: "none", transition: "all 0.3s ease" }}>
+          <Link href={secondaryCtaHref} style={{ fontSize: "1rem", fontWeight: 600, color: "var(--accent-deep)", background: "var(--hero-glass)", border: "1px solid var(--glass-border)", padding: "1rem 2.5rem", borderRadius: 100, textDecoration: "none", transition: "all 0.3s ease" }}>
             {secondaryCtaLabel}
           </Link>
         </div>
+      </div>
+
+      {/* ── Side quick-links rail — shortcuts to the pages people usually
+          look for right after landing on the hero (desktop only; the
+          hero is already tight on vertical space on mobile). ── */}
+      <div
+        className="hidden xl:flex"
+        style={{
+          position: "absolute", right: "2.5rem", top: "50%", transform: "translateY(-50%)",
+          zIndex: 6, flexDirection: "column", gap: "0.65rem", width: 232,
+        }}
+      >
+        {HERO_QUICK_LINKS.map((item, i) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            data-strix-fade-up
+            data-strix-delay={0.15 + i * 0.08}
+            style={{
+              display: "flex", alignItems: "flex-start", gap: "0.7rem",
+              padding: "0.85rem 1rem", borderRadius: "var(--radius-md)",
+              background: "var(--glass-bg)", border: "1px solid var(--glass-border)",
+              backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+              textDecoration: "none", transition: "all 0.25s ease",
+            }}
+          >
+            <div style={{ width: 30, height: 30, minWidth: 30, borderRadius: "0.6rem", background: "linear-gradient(135deg,var(--accent),var(--accent-2))", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <item.Icon size={15} color="#fff" strokeWidth={1.8} />
+            </div>
+            <div>
+              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text)", marginBottom: "0.15rem" }}>{item.label}</div>
+              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", lineHeight: 1.4 }}>{item.desc}</div>
+            </div>
+          </Link>
+        ))}
       </div>
 
       <div data-strix-square-grid style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 2, display: "grid", gridTemplateColumns: "repeat(60, 1fr)", pointerEvents: "none", opacity: 0.16 }}>

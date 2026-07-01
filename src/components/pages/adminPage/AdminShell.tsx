@@ -29,8 +29,8 @@ const NAV: NavItem[] = [
 
 export default function AdminShell({ active, children }: { active: string; children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex" style={{ background: "linear-gradient(180deg,#f7f6fd,#eef0fb)" }}>
-      <aside className="w-64 shrink-0 text-white flex flex-col" style={{ background: "linear-gradient(165deg,#241c4d,var(--text))" }}>
+    <div className="min-h-screen flex" style={{ background: "var(--hero-bg)" }}>
+      <aside className="w-64 shrink-0 text-white flex flex-col" style={{ background: "linear-gradient(165deg,#241c4d,#100d24)" }}>
         <div className="px-6 py-6 border-b border-white/10">
           <StrixmindWordmark theme="dark" height={20} />
           <div className="text-xs text-white/40 mt-1">Content dashboard</div>

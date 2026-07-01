@@ -74,7 +74,7 @@ export default async function WorkBlogPostPage({ params }: { params: Promise<{ s
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
-      <section className="px-6 py-20 pt-32" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
+      <section className="px-6 py-20 pt-32" style={{ background: "var(--hero-bg)" }}>
         <div className="max-w-3xl mx-auto">
           <Link href="/work/blog" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← All posts</Link>
           <div className="text-xs font-semibold text-accent mt-6">{formatDate(post.published_at)}</div>
@@ -97,7 +97,7 @@ export default async function WorkBlogPostPage({ params }: { params: Promise<{ s
         </div>
       )}
 
-      <article className="px-6 py-16 bg-white border-t border-line">
+      <article className="px-6 py-16 bg-[var(--surface)] border-t border-line">
         <div
           className="max-w-3xl mx-auto prose prose-lg prose-headings:font-bold prose-headings:text-ink prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl"
           dangerouslySetInnerHTML={{ __html: html }}

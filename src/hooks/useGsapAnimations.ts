@@ -54,6 +54,35 @@ function splitLines(el: HTMLElement): HTMLElement[] {
   return words;
 }
 
+// ── Reveal-all safety net ─────────────────────────────────────────────────
+// Every entrance animation below starts elements at opacity:0 and only
+// brings them to opacity:1 once GSAP + ScrollTrigger fire. That's fine when
+// everything loads in time, but if the CDN scripts are slow/blocked, or a
+// ScrollTrigger start position gets miscalculated because content (fonts,
+// CMS images) shifts layout after `ScrollTrigger.refresh()` already ran,
+// affected headings/paragraphs can stay invisible forever — with no error,
+// because nothing "broke", the animation is just permanently paused at its
+// "from" state. That produced the washed-out/near-invisible text seen on
+// several pages. This selector list covers every attribute the animations
+// below can set to opacity:0, so it can be force-revealed as a fallback.
+const STRIX_ANIMATED_SELECTOR = [
+  "[data-strix-hero-badge]", "[data-strix-hero-sub]", "[data-strix-hero-ctas]", "[data-strix-hero-stats]",
+  "[data-strix-hero-headline]",
+  "[data-strix-slide-up]", "[data-strix-fade-up]",
+  "[data-strix-stagger-grid] [data-strix-grid-item]",
+  "[data-strix-tag-badge]", "[data-strix-panel-reveal]",
+  "[data-strix-square]",
+].join(", ");
+
+function revealAllStrixAnimatedElements() {
+  document.querySelectorAll<HTMLElement>(STRIX_ANIMATED_SELECTOR).forEach((el) => {
+    if (parseFloat(getComputedStyle(el).opacity) < 1) {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+    }
+  });
+}
+
 export function useGsapAnimations() {
   useEffect(() => {
     const ready = () => window.gsap && window.ScrollTrigger && window.Lenis;
@@ -340,6 +369,22 @@ export function useGsapAnimations() {
         });
       }
 
+      // ── 19. Late-layout safety refresh ──────────────────────────────────────
+      // If images/fonts/CMS content finish loading after this initial
+      // refresh, ScrollTrigger's cached start/end positions can drift,
+      // causing an already-passed trigger to never fire. Re-measure once
+      // everything has actually finished loading, and once more shortly
+      // after (covers webfont swap + late CMS images).
+      window.addEventListener("load", () => ScrollTrigger.refresh());
+      setTimeout(() => ScrollTrigger.refresh(), 1200);
+
+      // ── 20. Hard safety net ──────────────────────────────────────────────
+      // No matter what caused it — blocked CDN, a mistimed refresh, a
+      // ScrollTrigger start point that never gets crossed — no heading or
+      // paragraph should stay invisible forever. Force-reveal anything
+      // still sitting at opacity 0 a few seconds after mount.
+      setTimeout(revealAllStrixAnimatedElements, 3500);
+
       ScrollTrigger.refresh();
     };
 
@@ -348,7 +393,13 @@ export function useGsapAnimations() {
     const poll = setInterval(() => {
       attempts++;
       if (ready()) { clearInterval(poll); run(); }
-      if (attempts > 50) clearInterval(poll);
+      if (attempts > 50) {
+        // GSAP/ScrollTrigger/Lenis never loaded (CDN blocked, offline, slow
+        // network). Content must not stay hidden just because the
+        // decorative entrance animation couldn't run — reveal it plainly.
+        clearInterval(poll);
+        revealAllStrixAnimatedElements();
+      }
     }, 100);
 
     return () => clearInterval(poll);

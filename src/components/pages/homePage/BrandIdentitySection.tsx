@@ -38,7 +38,7 @@ export default function BrandIdentitySection({
   conclusionHeading = D.conclusionHeading, conclusionParagraph = D.conclusionParagraph,
 }: BrandProps) {
   return (
-    <section id="brand" style={{ background: "#fbfaff", borderTop: "1px solid #f1effe", padding: "7rem 0" }}>
+    <section id="brand" style={{ background: "var(--surface)", borderTop: "1px solid var(--divider)", padding: "7rem 0" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
 
         <div style={{ textAlign: "center", marginBottom: "5rem" }}>
@@ -55,7 +55,7 @@ export default function BrandIdentitySection({
 
         {/* Logo showcase */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2rem" }}>
-          <div style={{ background: "linear-gradient(165deg,#241c4d,var(--text))", borderRadius: 24, padding: "3.5rem 3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "2rem" }}>
+          <div style={{ background: "linear-gradient(165deg,#241c4d,#100d24)", borderRadius: 24, padding: "3.5rem 3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "2rem" }}>
             <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" as const, color: "rgba(255,255,255,0.35)", marginBottom: "-0.5rem" }}>Dark Background</div>
             <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
               <LogoIconDark size={88} />
@@ -70,7 +70,7 @@ export default function BrandIdentitySection({
             </div>
           </div>
 
-          <div style={{ background: "#ffffff", borderRadius: 24, padding: "3.5rem 3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "2rem", border: "1.5px solid #f1effe" }}>
+          <div style={{ background: "var(--surface-alt)", borderRadius: 24, padding: "3.5rem 3rem", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: "2rem", border: "1.5px solid var(--border)" }}>
             <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" as const, color: "var(--text-dim)", marginBottom: "-0.5rem" }}>Light Background</div>
             <div style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
               <LogoIconLight size={88} />
@@ -79,7 +79,7 @@ export default function BrandIdentitySection({
                 <Wordmark theme="light" size={24} />
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", background: "#f8f7ff", padding: "1rem 1.75rem", borderRadius: 14, border: "1px solid #f1effe" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", background: "var(--surface-alt)", padding: "1rem 1.75rem", borderRadius: 14, border: "1px solid var(--divider)" }}>
               <StrixmindIcon size={32} theme="light" />
               <Wordmark theme="light" size={26} />
             </div>
@@ -88,14 +88,14 @@ export default function BrandIdentitySection({
 
         {/* Symbolism + concept + palette */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: "2rem", marginBottom: "2rem" }}>
-          <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.75rem", border: "1.5px solid #f1effe" }}>
+          <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.75rem", border: "1.5px solid var(--divider)" }}>
             <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1rem" }}>Abstract Logo</div>
             <h3 data-strix-slide-up style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text)", marginBottom: "0.75rem", letterSpacing: "-0.025em" }}>Connected Intelligence</h3>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "2rem" }}>
               {conceptParagraph1}
             </p>
 
-            <div style={{ background: "linear-gradient(165deg,#241c4d,var(--text))", borderRadius: 18, padding: "2rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "3rem" }}>
+            <div style={{ background: "linear-gradient(165deg,#241c4d,#100d24)", borderRadius: 18, padding: "2rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "3rem" }}>
               <StrixmindIcon size={72} theme="dark" />
               <StrixmindIcon size={56} theme="dark" />
               <StrixmindIcon size={40} theme="dark" />
@@ -104,14 +104,14 @@ export default function BrandIdentitySection({
           </div>
 
           <div style={{ display: "flex", flexDirection: "column" as const, gap: "1.5rem" }}>
-            <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid #f1effe", flex: 1 }}>
+            <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid var(--divider)", flex: 1 }}>
               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1rem" }}>Design Concept</div>
               <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.85 }}>
                 {conceptParagraph2}
               </p>
             </div>
 
-            <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid #f1effe" }}>
+            <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid var(--divider)" }}>
               <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1.25rem" }}>Brand Colours</div>
               <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
                 {colors.map(c => (
@@ -128,7 +128,7 @@ export default function BrandIdentitySection({
         </div>
 
         {/* Attributes */}
-        <div style={{ background: "linear-gradient(165deg,#241c4d,var(--text))", borderRadius: 24, padding: "3rem", position: "relative", overflow: "hidden" }}>
+        <div style={{ background: "linear-gradient(165deg,#241c4d,#100d24)", borderRadius: 24, padding: "3rem", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, right: 0, width: "40%", height: "100%", background: "radial-gradient(ellipse at right center, rgba(108,99,255,0.22) 0%, transparent 70%)", pointerEvents: "none" }} />
 
           <div style={{ position: "relative", zIndex: 1 }}>

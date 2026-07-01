@@ -36,7 +36,7 @@ export default function FaqHomePageSection({
             {items.map((faq, i) => (
               <div
                 key={i}
-                style={{ background: open === i ? "#f8f7ff" : "#fff", borderRadius: 18, border: `1.5px solid ${open === i ? "var(--border)" : "var(--border)"}`, overflow: "hidden", transition: "all 0.3s ease", boxShadow: open === i ? "0 8px 32px var(--shadow)" : "none" }}
+                style={{ background: open === i ? "var(--surface-alt)" : "var(--surface)", borderRadius: 18, border: "1.5px solid var(--border)", overflow: "hidden", transition: "all 0.3s ease", boxShadow: open === i ? "0 8px 32px var(--shadow)" : "none" }}
               >
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
@@ -45,7 +45,7 @@ export default function FaqHomePageSection({
                   <span style={{ fontSize: "0.975rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>{faq.q}</span>
                   <span style={{
                     width: 30, height: 30, minWidth: 30, borderRadius: "50%",
-                    background: open === i ? "var(--accent)" : "#F1EFFE",
+                    background: open === i ? "var(--accent)" : "var(--glass-bg)",
                     border: "1px solid var(--border)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transform: open === i ? "rotate(180deg)" : "none",

@@ -64,6 +64,18 @@
   /* Navigation-menu dropdown bg in dark — must be lifted surface not near-black */
   --nav-dropdown-bg: #1c1c1c;
 
+  /* Hero / page-intro backgrounds — previously hardcoded light-lavender hex
+     values (#f7f6fd/#eef0fb) were baked directly into hero sections across
+     Home, About, Services, Contact, Booking, Work, and the Admin shell.
+     Because those sections still set text color from --text (which flips
+     to near-white in dark mode), the hardcoded light background never
+     switched, producing light-on-light / white-on-white unreadable text.
+     Every hero section now reads --hero-bg / --hero-panel instead. */
+  --hero-bg: linear-gradient(160deg, #101014 0%, #121218 55%, #17141f 100%);
+  --hero-panel: #131318;      /* solid surface variant (admin shell, cards) */
+  --hero-panel-2: #1a1826;    /* secondary stop for admin sidebar gradient */
+  --hero-glass: rgba(255,255,255,0.06);
+
   /* Lines & shadows */
   --border:        rgba(255,255,255,0.12);   /* was 0.1 — lifted for visibility */
   --divider:        rgba(255,255,255,0.10);
@@ -113,6 +125,14 @@
 
   /* Navigation-menu dropdown bg in light — white panel */
   --nav-dropdown-bg: #ffffff;
+
+  /* Hero / page-intro backgrounds — same light-lavender look the site
+     always used, now expressed as a variable so dark mode gets its own
+     value instead of inheriting this hardcoded one. */
+  --hero-bg: linear-gradient(160deg, #f7f6fd 0%, #eef0fb 55%, #e8e4fb 100%);
+  --hero-panel: #f7f6fd;
+  --hero-panel-2: #eef0fb;
+  --hero-glass: rgba(255,255,255,0.65);
 
   /* Lines & shadows */
   --border:        rgba(21,20,15,0.10);

@@ -665,7 +665,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
               title={t.label}
               className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all ${
                 active
-                  ? "bg-white text-accent shadow-sm border border-line"
+                  ? "bg-[var(--surface)] text-accent shadow-sm border border-line"
                   : "text-ink-dim hover:text-ink-soft border border-transparent"
               }`}
             >

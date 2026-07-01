@@ -72,7 +72,7 @@ export default async function WorkHubPage() {
       />
 
       {/* Hero */}
-      <section className="px-6 pt-32 pb-20 sm:pt-40 sm:pb-28" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
+      <section className="px-6 pt-32 pb-20 sm:pt-40 sm:pb-28" style={{ background: "var(--hero-bg)" }}>
         <div className="max-w-5xl mx-auto text-center">
           <span className="inline-block bg-accent text-white text-xs font-bold tracking-wide uppercase px-4 py-1.5 rounded-full mb-6">
             {hub.badge}
@@ -102,7 +102,7 @@ export default async function WorkHubPage() {
             <Link
               key={item.href}
               href={item.href}
-              className="bg-white rounded-3xl p-8 border border-work-line hover:border-accent/40 hover:-translate-y-1 transition-all duration-200 group"
+              className="bg-[var(--surface)] rounded-3xl p-8 border border-work-line hover:border-accent/40 hover:-translate-y-1 transition-all duration-200 group"
             >
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
@@ -122,7 +122,7 @@ export default async function WorkHubPage() {
 
       {/* Featured projects */}
       {featuredProjects.length > 0 && (
-        <section className="px-6 py-20 bg-white">
+        <section className="px-6 py-20 bg-[var(--surface)]">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-end justify-between mb-10">
               <h2 className="text-3xl font-bold text-work-dark">Featured projects</h2>
@@ -181,7 +181,7 @@ export default async function WorkHubPage() {
 
       {/* Gallery preview */}
       {galleryPreview.length > 0 && (
-        <section className="px-6 py-20 bg-white">
+        <section className="px-6 py-20 bg-[var(--surface)]">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-end justify-between mb-10">
               <h2 className="text-3xl font-bold text-work-dark">Gallery</h2>

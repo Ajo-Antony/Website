@@ -28,14 +28,14 @@ export default async function AdminBlogListPage() {
       {posts.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">No posts yet — create your first one.</p>
       ) : (
-        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] divide-y divide-gray-100">
+        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] divide-y divide-[var(--border)]">
           {posts.map((post) => (
             <div key={post.id} className="flex items-center justify-between px-6 py-4">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-ink truncate">{post.title}</span>
                   {!post.published && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-[var(--text-muted)] px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-wide bg-[var(--surface-alt)] text-[var(--text-muted)] px-2 py-0.5 rounded-full">
                       Draft
                     </span>
                   )}
@@ -45,7 +45,7 @@ export default async function AdminBlogListPage() {
               <div className="flex items-center gap-2 shrink-0">
                 <Link
                   href={`/admin/blog/${post.id}`}
-                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-gray-50"
+                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--surface-alt)]"
                 >
                   Edit
                 </Link>

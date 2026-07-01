@@ -46,7 +46,7 @@ const CARDS = [
 
 export default function CapabilitiesShowcaseSection() {
   return (
-    <section style={{ background: "#fbfaff", borderTop: "1px solid #f1effe", overflowX: "hidden" }} className="py-20 sm:py-28 md:pb-36">
+    <section style={{ background: "var(--surface)", borderTop: "1px solid var(--divider)", overflowX: "hidden" }} className="py-20 sm:py-28 md:pb-36">
       <div style={{ maxWidth: 1280, margin: "0 auto", textAlign: "center" }} className="px-5 sm:px-8">
         <div
           style={{

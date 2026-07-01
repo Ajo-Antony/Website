@@ -76,8 +76,8 @@ export default function GalleryManager({ images }: { images: GalleryImage[] }) {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {images.map((img) => (
-            <div key={img.id} className="bg-white rounded-xl border border-[var(--border)] overflow-hidden group">
-              <div className="relative aspect-[4/3] bg-gray-100">
+            <div key={img.id} className="bg-[var(--surface)] rounded-xl border border-[var(--border)] overflow-hidden group">
+              <div className="relative aspect-[4/3] bg-[var(--surface-alt)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img.url} alt={img.alt ?? ""} className="w-full h-full object-cover" />
                 {!img.published && (
@@ -92,7 +92,7 @@ export default function GalleryManager({ images }: { images: GalleryImage[] }) {
                   <button
                     onClick={() => handleToggle(img.id, img.published)}
                     disabled={busyId === img.id}
-                    className="flex-1 text-xs font-medium px-2 py-1.5 rounded-md border border-[var(--border)] hover:bg-gray-50 disabled:opacity-50"
+                    className="flex-1 text-xs font-medium px-2 py-1.5 rounded-md border border-[var(--border)] hover:bg-[var(--surface-alt)] disabled:opacity-50"
                   >
                     {img.published ? "Hide" : "Show"}
                   </button>

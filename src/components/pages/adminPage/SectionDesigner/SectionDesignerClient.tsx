@@ -176,8 +176,8 @@ export default function SectionDesignerClient({ initialSections }: Props) {
               onClick={() => setActivePage(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 active
-                  ? "bg-white text-[var(--text)] shadow-sm border border-line"
-                  : "text-ink-soft hover:text-ink hover:bg-white/60 border border-transparent"
+                  ? "bg-[var(--surface)] text-[var(--text)] shadow-sm border border-line"
+                  : "text-ink-soft hover:text-ink hover:bg-[var(--glass-bg)] border border-transparent"
               }`}
             >
               <tab.Icon size={16} className={active ? "text-accent" : "text-ink-dim"} />
@@ -275,7 +275,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
                         className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold transition-all border ${
                           isEditing
                             ? "bg-accent text-white border-accent shadow-sm"
-                            : "bg-white text-ink-soft border-line hover:border-accent/40 hover:text-accent"
+                            : "bg-[var(--surface)] text-ink-soft border-line hover:border-accent/40 hover:text-accent"
                         }`}
                       >
                         {isEditing ? <IconPencilEdit size={13} strokeWidth={2} /> : <IconPaletteSwatch size={13} strokeWidth={1.8} />}

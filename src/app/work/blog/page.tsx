@@ -30,7 +30,7 @@ export default async function WorkBlogListPage() {
 
   return (
     <>
-      <section className="px-6 py-20 pt-32" style={{ background: "linear-gradient(160deg,#f7f6fd,#eef0fb)" }}>
+      <section className="px-6 py-20 pt-32" style={{ background: "var(--hero-bg)" }}>
         <div className="max-w-5xl mx-auto text-center">
           <Link href="/work" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← Back to Work</Link>
           <h1 className="text-4xl sm:text-5xl font-bold mt-4 text-ink" style={{ letterSpacing: "-0.04em" }}>Blog</h1>
@@ -38,7 +38,7 @@ export default async function WorkBlogListPage() {
         </div>
       </section>
 
-      <section className="px-6 py-16 bg-white border-t border-line">
+      <section className="px-6 py-16 bg-[var(--surface)] border-t border-line">
         <div className="max-w-4xl mx-auto">
           {posts.length === 0 ? (
             <p className="text-center text-ink-dim py-20">No posts yet — check back soon.</p>
