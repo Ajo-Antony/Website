@@ -35,13 +35,13 @@ export default async function AccountPage() {
         <dl className="space-y-3 text-sm border-t border-line pt-4 mb-8">
           <div className="flex justify-between">
             <dt className="text-ink-dim">Signed in with</dt>
-            <dd className="text-ink font-medium capitalize">
+            <dd className="text-[var(--text)] font-medium capitalize">
               {provider === "azure" ? "Microsoft" : provider}
             </dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-ink-dim">Account created</dt>
-            <dd className="text-ink font-medium">
+            <dd className="text-[var(--text)] font-medium">
               {user!.created_at ? new Date(user!.created_at).toLocaleDateString() : "—"}
             </dd>
           </div>
@@ -50,7 +50,7 @@ export default async function AccountPage() {
         <form action={signOutCustomer}>
           <button
             type="submit"
-            className="w-full border border-line text-ink font-medium text-sm py-2.5 rounded-lg hover:bg-surface-alt transition-colors"
+            className="w-full border border-line text-[var(--text)] font-medium text-sm py-2.5 rounded-lg hover:bg-surface-alt transition-colors"
           >
             Sign out
           </button>

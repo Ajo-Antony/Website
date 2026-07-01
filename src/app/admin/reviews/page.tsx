@@ -27,7 +27,7 @@ export default async function AdminReviewsPage() {
   return (
     <AdminShell active="/admin/reviews">
       <h1 className="text-2xl font-extrabold text-ink mb-1">Review Approvals</h1>
-      <p className="text-sm text-gray-500 mb-8">
+      <p className="text-sm text-[var(--text-muted)] mb-8">
         Customer reviews submitted through the site. Approve to publish live.
       </p>
       <ReviewsManager reviews={reviews} />

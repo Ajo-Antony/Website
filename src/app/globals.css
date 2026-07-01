@@ -38,19 +38,19 @@
 
   /* Surfaces */
   --bg-from:      #0a0a0a;
-  --bg-to:        #000000;
-  --surface:      #0e0e0e;
-  --surface-alt:  #111111;
-  --header-bg:        rgba(10,10,10,0.78);
-  --header-bg-scrolled: rgba(10,10,10,0.92);
-  --glass-bg:        rgba(20,20,20,0.55);
-  --glass-bg-strong: rgba(14,14,14,0.74);
-  --glass-border:    rgba(255,255,255,0.18);
+  --bg-to:        #060606;
+  --surface:      #141414;   /* was #0e0e0e — lifted so cards read against bg */
+  --surface-alt:  #1a1a1a;   /* was #111111 */
+  --header-bg:        rgba(10,10,10,0.82);
+  --header-bg-scrolled: rgba(14,14,14,0.95);
+  --glass-bg:        rgba(255,255,255,0.06);  /* was rgba(20,20,20,0.55) — flipped to white-tint so it reads in dark */
+  --glass-bg-strong: rgba(255,255,255,0.10);
+  --glass-border:    rgba(255,255,255,0.14);
 
-  /* Text */
+  /* Text — boosted opacity for WCAG AA contrast on near-black (#0a0a0a) surfaces */
   --text:        #f5f5f5;
-  --text-muted:  rgba(255,255,255,0.7);
-  --text-dim:    rgba(255,255,255,0.5);
+  --text-muted:  rgba(255,255,255,0.80);  /* was 0.7 — too low contrast on #0a0a0a */
+  --text-dim:    rgba(255,255,255,0.60);  /* was 0.5 */
 
   /* Accent palette */
   --accent:       #5eead4; /* primary teal */
@@ -59,13 +59,16 @@
   --accent-teal:  #5eead4; /* secondary teal (alias) */
   --accent-rose:  #f59e6b; /* orange, reused as rose accent */
   --accent-amber: #f59e6b; /* orange */
-  --accent-contrast: #0a0a0a; /* text colour to put ON TOP of solid accent fills */
+  --accent-contrast: #0a0a0a; /* dark text on top of solid teal fills */
+
+  /* Navigation-menu dropdown bg in dark — must be lifted surface not near-black */
+  --nav-dropdown-bg: #1c1c1c;
 
   /* Lines & shadows */
-  --border:        rgba(255,255,255,0.1);
-  --divider:        rgba(255,255,255,0.1);
-  --shadow:         rgba(0,0,0,0.35);
-  --shadow-strong:  rgba(0,0,0,0.6);
+  --border:        rgba(255,255,255,0.12);   /* was 0.1 — lifted for visibility */
+  --divider:        rgba(255,255,255,0.10);
+  --shadow:         rgba(0,0,0,0.40);
+  --shadow-strong:  rgba(0,0,0,0.65);
 
   /* Fonts */
   --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
@@ -107,6 +110,9 @@
   --accent-rose:  #ea7c3c; /* orange */
   --accent-amber: #ea7c3c;
   --accent-contrast: #ffffff;
+
+  /* Navigation-menu dropdown bg in light — white panel */
+  --nav-dropdown-bg: #ffffff;
 
   /* Lines & shadows */
   --border:        rgba(21,20,15,0.10);

@@ -111,7 +111,7 @@ export default async function WorkHubPage() {
                 <item.Icon size={22} color="#6c63ff" />
               </div>
               <h3 className="text-xl font-bold text-work-dark mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed">{item.desc}</p>
               <div className="mt-5 text-sm font-bold text-accent flex items-center gap-1.5">
                 Explore <span aria-hidden>→</span>
               </div>
@@ -171,7 +171,7 @@ export default async function WorkHubPage() {
               {latestPosts.map((post) => (
                 <Link key={post.id} href={`/work/blog/${post.slug}`} className="bg-[var(--surface)] rounded-2xl p-6 border border-work-line hover:border-accent/40 transition-colors">
                   <h3 className="font-bold text-work-dark mb-2 leading-snug">{post.title}</h3>
-                  {post.excerpt && <p className="text-sm text-gray-500 leading-relaxed">{post.excerpt}</p>}
+                  {post.excerpt && <p className="text-sm text-[var(--text-muted)] leading-relaxed">{post.excerpt}</p>}
                 </Link>
               ))}
             </div>

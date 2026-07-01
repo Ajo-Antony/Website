@@ -37,26 +37,26 @@ function BookingRow({ booking }: { booking: Booking }) {
   });
 
   return (
-    <tr className="border-b border-gray-100 last:border-0 align-top">
+    <tr className="border-b border-[var(--border)] last:border-0 align-top">
       <td className="py-3 px-4">
-        <div className="font-semibold text-ink text-sm">{booking.name}</div>
+        <div className="font-semibold text-[var(--text)] text-sm">{booking.name}</div>
         <a href={`mailto:${booking.email}`} className="text-xs text-accent hover:underline">
           {booking.email}
         </a>
       </td>
-      <td className="py-3 px-4 text-sm text-gray-600">{booking.slot}</td>
-      <td className="py-3 px-4 text-sm text-gray-600">{booking.company || "—"}</td>
-      <td className="py-3 px-4 text-sm text-gray-600">{booking.size || "—"}</td>
-      <td className="py-3 px-4 text-sm text-gray-600 max-w-[220px]">
+      <td className="py-3 px-4 text-sm text-[var(--text-muted)]">{booking.slot}</td>
+      <td className="py-3 px-4 text-sm text-[var(--text-muted)]">{booking.company || "—"}</td>
+      <td className="py-3 px-4 text-sm text-[var(--text-muted)]">{booking.size || "—"}</td>
+      <td className="py-3 px-4 text-sm text-[var(--text-muted)] max-w-[220px]">
         <span className="line-clamp-2">{booking.goal || "—"}</span>
       </td>
-      <td className="py-3 px-4 text-xs text-gray-400 whitespace-nowrap">{createdAt}</td>
+      <td className="py-3 px-4 text-xs text-[var(--text-dim)] whitespace-nowrap">{createdAt}</td>
       <td className="py-3 px-4">
         <select
           value={status}
           disabled={busy}
           onChange={(e) => handleStatusChange(e.target.value as BookingStatus)}
-          className="text-xs font-medium rounded-md border border-gray-200 px-2 py-1.5 disabled:opacity-50"
+          className="text-xs font-medium rounded-md border border-[var(--border)] px-2 py-1.5 disabled:opacity-50"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt} value={opt}>
@@ -85,8 +85,8 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
 
   if (bookings.length === 0) {
     return (
-      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 p-12 text-center">
-        <p className="text-gray-500 text-sm">No bookings yet. They'll show up here as soon as someone books a demo.</p>
+      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-12 text-center">
+        <p className="text-[var(--text-muted)] text-sm">No bookings yet. They'll show up here as soon as someone books a demo.</p>
       </div>
     );
   }
@@ -114,17 +114,17 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
         ))}
       </div>
 
-      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 overflow-x-auto">
+      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-x-auto">
         <table className="w-full min-w-[860px]">
           <thead>
-            <tr className="border-b border-gray-100 text-left">
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Contact</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Slot</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Company</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Size</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Goal</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Booked</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
+            <tr className="border-b border-[var(--border)] text-left">
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Contact</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Slot</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Company</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Size</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Goal</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Booked</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Status</th>
               <th className="py-3 px-4"></th>
             </tr>
           </thead>

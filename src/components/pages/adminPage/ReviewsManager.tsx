@@ -51,7 +51,7 @@ function ReviewRow({ review, index }: { review: Review; index: number }) {
   });
 
   return (
-    <tr className="border-b border-gray-100 last:border-0 align-top">
+    <tr className="border-b border-[var(--border)] last:border-0 align-top">
       {/* Avatar + name */}
       <td className="py-4 px-4">
         <div className="flex items-center gap-3">
@@ -64,15 +64,15 @@ function ReviewRow({ review, index }: { review: Review; index: number }) {
             {review.initials}
           </div>
           <div>
-            <div className="font-semibold text-ink text-sm">{review.name}</div>
-            <div className="text-xs text-gray-400">{[review.role, review.company].filter(Boolean).join(" · ") || "—"}</div>
+            <div className="font-semibold text-[var(--text)] text-sm">{review.name}</div>
+            <div className="text-xs text-[var(--text-dim)]">{[review.role, review.company].filter(Boolean).join(" · ") || "—"}</div>
           </div>
         </div>
       </td>
 
       {/* Quote */}
       <td className="py-4 px-4 max-w-[280px]">
-        <p className="text-sm text-gray-600 italic line-clamp-2">&ldquo;{review.quote}&rdquo;</p>
+        <p className="text-sm text-[var(--text-muted)] italic line-clamp-2">&ldquo;{review.quote}&rdquo;</p>
       </td>
 
       {/* Stars */}
@@ -81,7 +81,7 @@ function ReviewRow({ review, index }: { review: Review; index: number }) {
       </td>
 
       {/* Date */}
-      <td className="py-4 px-4 text-xs text-gray-400 whitespace-nowrap">{date}</td>
+      <td className="py-4 px-4 text-xs text-[var(--text-dim)] whitespace-nowrap">{date}</td>
 
       {/* Status badge */}
       <td className="py-4 px-4">
@@ -146,9 +146,9 @@ export default function ReviewsManager({ reviews }: { reviews: Review[] }) {
 
   if (reviews.length === 0) {
     return (
-      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 p-12 text-center">
+      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-12 text-center">
         <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>💬</div>
-        <p className="text-gray-500 text-sm">No reviews yet. They&apos;ll appear here once customers submit them.</p>
+        <p className="text-[var(--text-muted)] text-sm">No reviews yet. They&apos;ll appear here once customers submit them.</p>
       </div>
     );
   }
@@ -182,16 +182,16 @@ export default function ReviewsManager({ reviews }: { reviews: Review[] }) {
         </div>
       )}
 
-      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 overflow-x-auto">
+      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-x-auto">
         <table className="w-full min-w-[860px]">
           <thead>
-            <tr className="border-b border-gray-100 text-left">
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Customer</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Review</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Stars</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Submitted</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-              <th className="py-3 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">Actions</th>
+            <tr className="border-b border-[var(--border)] text-left">
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Customer</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Review</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Stars</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Submitted</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Status</th>
+              <th className="py-3 px-4 text-xs font-semibold text-[var(--text-dim)] uppercase tracking-wide">Actions</th>
             </tr>
           </thead>
           <tbody>

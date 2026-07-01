@@ -21,7 +21,7 @@ export default async function AdminProjectsListPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-extrabold text-ink mb-1">Projects</h1>
-          <p className="text-sm text-gray-500">Case studies shown on strixmind.ai/work/projects.</p>
+          <p className="text-sm text-[var(--text-muted)]">Case studies shown on strixmind.ai/work/projects.</p>
         </div>
         <Link
           href="/admin/projects/new"
@@ -32,9 +32,9 @@ export default async function AdminProjectsListPage() {
       </div>
 
       {projects.length === 0 ? (
-        <p className="text-sm text-gray-500">No projects yet — add your first one.</p>
+        <p className="text-sm text-[var(--text-muted)]">No projects yet — add your first one.</p>
       ) : (
-        <div className="bg-[var(--surface)] rounded-2xl border border-gray-200 divide-y divide-gray-100">
+        <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] divide-y divide-gray-100">
           {projects.map((p) => (
             <div key={p.id} className="flex items-center justify-between px-6 py-4">
               <div className="min-w-0">
@@ -46,19 +46,19 @@ export default async function AdminProjectsListPage() {
                     </span>
                   )}
                   {!p.published && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-[var(--text-muted)] px-2 py-0.5 rounded-full">
                       Draft
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-gray-400 mt-0.5">
+                <div className="text-xs text-[var(--text-dim)] mt-0.5">
                   {p.client ?? "No client"} · {STATUS_LABEL[p.status] ?? p.status} · /work/projects/{p.slug}
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <Link
                   href={`/admin/projects/${p.id}`}
-                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-gray-200 hover:bg-gray-50"
+                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-[var(--border)] hover:bg-gray-50"
                 >
                   Edit
                 </Link>

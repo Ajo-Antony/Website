@@ -106,8 +106,8 @@ export function SiteHeader({
 								<NavigationMenuTrigger className="bg-transparent text-[var(--text-muted)] hover:text-[var(--text)] text-sm font-medium">
 									Product
 								</NavigationMenuTrigger>
-								<NavigationMenuContent className="bg-[var(--surface)] p-1 pr-1.5">
-									<ul className="bg-[var(--surface)] grid w-[540px] grid-cols-2 gap-2 rounded-xl border border-[var(--border)] p-2 shadow-lg">
+								<NavigationMenuContent className="bg-[var(--nav-dropdown-bg,var(--surface))] p-1 pr-1.5">
+									<ul className="bg-[var(--nav-dropdown-bg,var(--surface))] grid w-[540px] grid-cols-2 gap-2 rounded-xl border border-[var(--border)] p-2 shadow-lg">
 										{productLinks.map((item, i) => (
 											<li key={i}>
 												<ListItem {...item} />
@@ -128,9 +128,9 @@ export function SiteHeader({
 								<NavigationMenuTrigger className="bg-transparent text-[var(--text-muted)] hover:text-[var(--text)] text-sm font-medium">
 									Company
 								</NavigationMenuTrigger>
-								<NavigationMenuContent className="bg-[var(--surface)] p-1 pr-1.5 pb-1.5">
+								<NavigationMenuContent className="bg-[var(--nav-dropdown-bg,var(--surface))] p-1 pr-1.5 pb-1.5">
 									<div className="grid w-[480px] grid-cols-2 gap-2">
-										<ul className="bg-[var(--surface)] space-y-1 rounded-xl border border-[var(--border)] p-2 shadow-lg">
+										<ul className="bg-[var(--nav-dropdown-bg,var(--surface))] space-y-1 rounded-xl border border-[var(--border)] p-2 shadow-lg">
 											{companyLinks.map((item, i) => (
 												<li key={i}>
 													<ListItem {...item} />
@@ -157,8 +157,8 @@ export function SiteHeader({
 								<NavigationMenuTrigger className="bg-transparent text-[var(--text-muted)] hover:text-[var(--text)] text-sm font-medium">
 									Work
 								</NavigationMenuTrigger>
-								<NavigationMenuContent className="bg-[var(--surface)] p-1 pr-1.5">
-									<ul className="bg-[var(--surface)] grid w-[320px] gap-2 rounded-xl border border-[var(--border)] p-2 shadow-lg">
+								<NavigationMenuContent className="bg-[var(--nav-dropdown-bg,var(--surface))] p-1 pr-1.5">
+									<ul className="bg-[var(--nav-dropdown-bg,var(--surface))] grid w-[320px] gap-2 rounded-xl border border-[var(--border)] p-2 shadow-lg">
 										{workLinks.map((item, i) => (
 											<li key={i}>
 												<ListItem {...item} />

@@ -176,7 +176,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
               onClick={() => setActivePage(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                 active
-                  ? "bg-white text-ink shadow-sm border border-line"
+                  ? "bg-white text-[var(--text)] shadow-sm border border-line"
                   : "text-ink-soft hover:text-ink hover:bg-white/60 border border-transparent"
               }`}
             >
@@ -193,7 +193,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
           <div className="bg-[var(--surface)] rounded-2xl border border-line overflow-hidden">
             <div className="px-5 py-4 border-b border-line/70 flex items-center justify-between">
               <div>
-                <div className="font-bold text-ink text-sm tracking-tight">Sections</div>
+                <div className="font-bold text-[var(--text)] text-sm tracking-tight">Sections</div>
                 <div className="text-xs text-ink-dim mt-0.5">Drag to reorder · Click to design</div>
               </div>
               <div className="text-xs text-ink-soft font-semibold bg-surface-alt border border-line px-3 py-1.5 rounded-lg tabular-nums">
@@ -248,7 +248,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
                     {/* Label + indicators */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className={`text-sm font-semibold ${isEditing ? "text-accent" : "text-ink"}`}>
+                        <span className={`text-sm font-semibold ${isEditing ? "text-accent" : "text-[var(--text)]"}`}>
                           {section.label}
                         </span>
                         {hasDesign && (

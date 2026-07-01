@@ -14,7 +14,7 @@ export default async function AdminGalleryPage() {
   return (
     <AdminShell active="/admin/gallery">
       <h1 className="text-2xl font-extrabold text-ink mb-1">Gallery</h1>
-      <p className="text-sm text-gray-500 mb-8">Images shown on strixmind.ai/work/gallery.</p>
+      <p className="text-sm text-[var(--text-muted)] mb-8">Images shown on strixmind.ai/work/gallery.</p>
       <GalleryManager images={(data ?? []) as GalleryImage[]} />
     </AdminShell>
   );

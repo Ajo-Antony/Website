@@ -21,7 +21,7 @@ export default async function SectionDesignerPage() {
     <AdminShell active="/admin/section-designer">
       <div className="mb-8">
         <h1 className="text-2xl font-extrabold text-ink mb-1">Section Designer</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[var(--text-muted)]">
           Drag to reorder sections, toggle visibility, and customize colors, patterns,
           backgrounds, marquees, sliders and images for each section independently.
         </p>

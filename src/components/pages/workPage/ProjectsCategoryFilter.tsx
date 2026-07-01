@@ -67,7 +67,7 @@ export default function ProjectsCategoryFilter({ projects }: { projects: Project
               </span>
             </div>
             {p.category && <div className="text-xs font-bold text-accent uppercase tracking-wide mb-1">{p.category}</div>}
-            <h3 className="font-bold text-ink text-lg">{p.title}</h3>
+            <h3 className="font-bold text-[var(--text)] text-lg">{p.title}</h3>
             {p.client && <p className="text-sm text-ink-soft mt-0.5">{p.client}</p>}
           </Link>
         ))}

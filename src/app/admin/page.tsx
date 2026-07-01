@@ -53,14 +53,14 @@ export default async function AdminOverviewPage() {
   return (
     <AdminShell active="/admin">
       <h1 className="text-2xl font-extrabold text-ink mb-1">Overview</h1>
-      <p className="text-sm text-gray-500 mb-8">Manage everything that shows up on strixmind.ai/work.</p>
+      <p className="text-sm text-[var(--text-muted)] mb-8">Manage everything that shows up on strixmind.ai/work.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         {cards.map((c) => (
           <Link
             key={c.href}
             href={c.href}
-            className="bg-[var(--surface)] rounded-2xl border border-gray-200 p-6 hover:border-accent/40 hover:shadow-lg transition-all group"
+            className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 hover:border-accent/40 hover:shadow-lg transition-all group"
           >
             <div
               className="mb-3 w-10 h-10 rounded-xl flex items-center justify-center"
@@ -69,7 +69,7 @@ export default async function AdminOverviewPage() {
               <c.Icon size={20} color="#6c63ff" />
             </div>
             <div className="text-3xl font-extrabold text-ink">{c.count}</div>
-            <div className="text-sm text-gray-500 mt-1">{c.label}</div>
+            <div className="text-sm text-[var(--text-muted)] mt-1">{c.label}</div>
           </Link>
         ))}
       </div>

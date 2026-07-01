@@ -1,244 +1,399 @@
+/**
+ * src/components/ui/hero.tsx
+ * ─────────────────────────────────────────────────────────────
+ * PremiumHero — Shader canvas hero.
+ *
+ * Design: organic blob gradient background (canvas 2D, no WebGL),
+ * mouse-reactive, with a three-line mixed-weight headline:
+ *   line 1 → teal / light weight     (Inter 300)
+ *   line 2 → bold white              (Inter 900)
+ *   line 3 → italic serif / dimmed   (Instrument Serif italic)
+ *
+ * Fonts: Inter (font-body) + Instrument Serif (font-accent) —
+ * both already loaded by layout.tsx via next/font.
+ *
+ * Theme-aware: dark uses deep teal/orange blobs on near-black;
+ * light shifts the canvas backdrop to warm cream and adjusts
+ * text to ink, keeping the same accent teal/orange family.
+ * ─────────────────────────────────────────────────────────────
+ */
 "use client";
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/shadcn-button";
-import { MoveRight, PhoneCall } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 
-interface Beam {
-  x: number;
-  y: number;
-  width: number;
-  length: number;
-  angle: number;
+/* ── Blob config — matches the shader-hero reference exactly ── */
+interface Blob {
+  color: string;
+  baseX: number; baseY: number;
+  r: number;
+  sx: number; sy: number;
   speed: number;
-  opacity: number;
-  pulse: number;
-  pulseSpeed: number;
-  layer: number;
+  phase: number;
 }
 
-function createBeam(width: number, height: number, layer: number): Beam {
-  const angle = -35 + Math.random() * 10;
-  const baseSpeed = 0.2 + layer * 0.2;
-  const baseOpacity = 0.08 + layer * 0.05;
-  const baseWidth = 10 + layer * 5;
-  return {
-    x: Math.random() * width,
-    y: Math.random() * height,
-    width: baseWidth,
-    length: height * 2.5,
-    angle,
-    speed: baseSpeed + Math.random() * 0.2,
-    opacity: baseOpacity + Math.random() * 0.1,
-    pulse: Math.random() * Math.PI * 2,
-    pulseSpeed: 0.01 + Math.random() * 0.015,
-    layer,
-  };
-}
+const DARK_BLOBS: Blob[] = [
+  { color: "#0f3d3a", baseX: 0.18, baseY: 0.35, r: 0.55, sx: 0.10, sy: 0.08, speed: 0.4,  phase: 0   },
+  { color: "#2dd4bf", baseX: 0.30, baseY: 0.20, r: 0.30, sx: 0.08, sy: 0.10, speed: 0.55, phase: 1.3 },
+  { color: "#f0b27a", baseX: 0.60, baseY: 0.62, r: 0.42, sx: 0.12, sy: 0.09, speed: 0.35, phase: 2.6 },
+  { color: "#7dd3c0", baseX: 0.75, baseY: 0.30, r: 0.45, sx: 0.07, sy: 0.11, speed: 0.45, phase: 4.1 },
+  { color: "#0a0a0a", baseX: 0.05, baseY: 0.85, r: 0.50, sx: 0.05, sy: 0.05, speed: 0.3,  phase: 5.0 },
+];
 
-interface PremiumHeroProps {
-  headline?: string;
-  highlight?: string;
+const LIGHT_BLOBS: Blob[] = [
+  { color: "#a7f3d0", baseX: 0.18, baseY: 0.35, r: 0.55, sx: 0.10, sy: 0.08, speed: 0.4,  phase: 0   },
+  { color: "#5eead4", baseX: 0.30, baseY: 0.20, r: 0.30, sx: 0.08, sy: 0.10, speed: 0.55, phase: 1.3 },
+  { color: "#fed7aa", baseX: 0.60, baseY: 0.62, r: 0.42, sx: 0.12, sy: 0.09, speed: 0.35, phase: 2.6 },
+  { color: "#99f6e4", baseX: 0.75, baseY: 0.30, r: 0.45, sx: 0.07, sy: 0.11, speed: 0.45, phase: 4.1 },
+  { color: "#f3f0e9", baseX: 0.05, baseY: 0.85, r: 0.50, sx: 0.05, sy: 0.05, speed: 0.3,  phase: 5.0 },
+];
+
+/* ── Props ── */
+export interface PremiumHeroProps {
+  /** First headline line — displayed in teal, light weight */
+  lineAccent?: string;
+  /** Second headline line — bold white */
+  lineBold?: string;
+  /** Third headline line — italic Instrument Serif, dimmed */
+  lineSerif?: string;
+  /** Subheadline paragraph */
   subheadline?: string;
+  /** Badge pill label */
+  badge?: string;
   primaryCtaLabel?: string;
   primaryCtaHref?: string;
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
+  // Legacy single-string props kept for backward compatibility
+  headline?: string;
+  highlight?: string;
 }
 
 export const PremiumHero = ({
-  headline = "Your Business, Running on",
-  highlight = "AI",
-  subheadline = "Automate repetitive work, manage customer relationships, and grow faster with intelligent business automation.",
-  primaryCtaLabel = "Start Free Trial",
-  primaryCtaHref = "/booking",
+  lineAccent    = "Your Business,",
+  lineBold      = "Running on",
+  lineSerif     = "AI.",
+  subheadline   = "Automate repetitive work, manage customer relationships, and grow faster with intelligent automation built for Indian businesses.",
+  badge         = "✦  AI-powered · WhatsApp · CRM",
+  primaryCtaLabel   = "Start Free Trial",
+  primaryCtaHref    = "/booking",
   secondaryCtaLabel = "Book a Demo",
-  secondaryCtaHref = "/#why",
+  secondaryCtaHref  = "/#contact",
 }: PremiumHeroProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const beamsRef = useRef<Beam[]>([]);
-  const animationFrameRef = useRef<number>(0);
-
-  const LAYERS = 3;
-  const BEAMS_PER_LAYER = 4; // was 8 — halved, same visual density at typical hero size
-  const TARGET_FPS = 30;
-  const FRAME_INTERVAL = 1000 / TARGET_FPS;
-  const MAX_DPR = 1.5; // was uncapped devicePixelRatio (up to 3 on some phones)
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const rafRef     = useRef<number>(0);
+  const mouseRef   = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas  = canvasRef.current;
+    const wrapper = wrapperRef.current;
+    if (!canvas || !wrapper) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(dpr, dpr);
+    let w = 0, h = 0;
 
-      beamsRef.current = [];
-      for (let layer = 1; layer <= LAYERS; layer++) {
-        for (let i = 0; i < BEAMS_PER_LAYER; i++) {
-          beamsRef.current.push(createBeam(window.innerWidth, window.innerHeight, layer));
-        }
-      }
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = wrapper.clientWidth;
+      h = wrapper.clientHeight;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width  = w + "px";
+      canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    const draw = (ts: number) => {
+      const time = ts * 0.0001;
 
-    // StrixMind brand accent (var(--accent)) instead of the generic cyan default,
-    // so the hero reads as part of the same product, not a stock template.
-    const drawBeam = (beam: Beam) => {
-      ctx.save();
-      ctx.translate(beam.x, beam.y);
-      ctx.rotate((beam.angle * Math.PI) / 180);
+      /* ── pick blob colours based on active theme ── */
+      const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+      const blobs  = isDark ? DARK_BLOBS : LIGHT_BLOBS;
+      const baseBg = isDark ? "#0c0c0c" : "#f0ede7";
 
-      const pulsingOpacity = Math.min(1, beam.opacity * (0.8 + Math.sin(beam.pulse) * 0.4));
-      const gradient = ctx.createLinearGradient(0, 0, 0, beam.length);
-      gradient.addColorStop(0, `rgba(108,99,255,0)`);
-      gradient.addColorStop(0.2, `rgba(108,99,255,${pulsingOpacity * 0.5})`);
-      gradient.addColorStop(0.5, `rgba(167,139,250,${pulsingOpacity})`);
-      gradient.addColorStop(0.8, `rgba(108,99,255,${pulsingOpacity * 0.5})`);
-      gradient.addColorStop(1, `rgba(108,99,255,0)`);
+      ctx.fillStyle = baseBg;
+      ctx.fillRect(0, 0, w, h);
 
-      ctx.fillStyle = gradient;
-      ctx.filter = `blur(${2 + beam.layer * 2}px)`;
-      ctx.fillRect(-beam.width / 2, 0, beam.width, beam.length);
-      ctx.restore();
-    };
+      ctx.filter = "blur(60px)";
+      ctx.globalCompositeOperation = isDark ? "lighten" : "multiply";
 
-    let lastFrameTime = 0;
+      blobs.forEach((b) => {
+        const x = (b.baseX + Math.sin(time * b.speed + b.phase) * b.sx) * w;
+        const y = (b.baseY + Math.cos(time * b.speed * 0.8 + b.phase) * b.sy) * h;
+        const r = b.r * Math.max(w, h);
 
-    const render = () => {
-      if (!canvas || !ctx) return;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+        grad.addColorStop(0, b.color);
+        grad.addColorStop(1, "transparent");
 
-      // Read the active theme's bg tokens at render-time so the canvas
-      // background matches both dark and light modes without re-mounting.
-      const style = getComputedStyle(document.documentElement);
-      const bgFrom = style.getPropertyValue("--bg-from").trim() || "#0a0816";
-      const bgTo   = style.getPropertyValue("--bg-to").trim()   || "#13102b";
-
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, bgFrom);
-      gradient.addColorStop(1, bgTo);
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      beamsRef.current.forEach((beam) => {
-        beam.y -= beam.speed * (beam.layer / LAYERS + 0.5);
-        beam.pulse += beam.pulseSpeed;
-        if (beam.y + beam.length < -50) {
-          beam.y = window.innerHeight + 50;
-          beam.x = Math.random() * window.innerWidth;
-        }
-        drawBeam(beam);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
       });
+
+      ctx.globalCompositeOperation = "source-over";
+      ctx.filter = "none";
+
+      /* subtle vignette */
+      const vig = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.75);
+      vig.addColorStop(0, "rgba(0,0,0,0)");
+      vig.addColorStop(1, isDark ? "rgba(0,0,0,0.38)" : "rgba(0,0,0,0.08)");
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, w, h);
+
+      /* ease mouse */
+      const m = mouseRef.current;
+      m.x += (m.tx - m.x) * 0.04;
+      m.y += (m.ty - m.y) * 0.04;
+
+      rafRef.current = requestAnimationFrame(draw);
     };
 
-    const animate = (time: number) => {
-      animationFrameRef.current = requestAnimationFrame(animate);
-      // Throttle to TARGET_FPS instead of running flat-out every display refresh
-      if (time - lastFrameTime < FRAME_INTERVAL) return;
-      lastFrameTime = time;
-      render();
+    const onMouse = (e: MouseEvent) => {
+      const rect = wrapper.getBoundingClientRect();
+      mouseRef.current.tx = (e.clientX - rect.left) / rect.width;
+      mouseRef.current.ty = (e.clientY - rect.top)  / rect.height;
     };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationFrameRef.current);
-      } else {
-        lastFrameTime = 0;
-        animationFrameRef.current = requestAnimationFrame(animate);
-      }
-    };
+    resize();
+    window.addEventListener("resize", resize);
+    wrapper.addEventListener("mousemove", onMouse);
 
-    // Respect users who've asked the OS for reduced motion: draw one static frame.
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      render();
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      draw(0);
     } else {
-      animationFrameRef.current = requestAnimationFrame(animate);
-      document.addEventListener("visibilitychange", handleVisibility);
+      rafRef.current = requestAnimationFrame(draw);
     }
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      document.removeEventListener("visibilitychange", handleVisibility);
-      cancelAnimationFrame(animationFrameRef.current);
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", resize);
+      wrapper.removeEventListener("mousemove", onMouse);
     };
   }, []);
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-72px)] overflow-hidden">
-      {/* Static grain texture — replaces the old per-frame JS-generated noise canvas.
-          Painted once by the browser, no JS, no per-frame CPU cost. */}
+    <div
+      ref={wrapperRef}
+      className="relative w-full overflow-hidden"
+      style={{ minHeight: "calc(100vh - 72px)" }}
+    >
+      {/* ── Shader canvas ── */}
+      <canvas
+        ref={canvasRef}
+        aria-hidden
+        className="absolute inset-0 w-full h-full"
+      />
+
+      {/* ── Dark overlay for contrast ── */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none opacity-[0.045]"
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          background:
+            "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.42) 100%)",
         }}
       />
-      <canvas ref={canvasRef} className="absolute inset-0 z-10" />
 
-      <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-4 sm:px-6 py-16 sm:py-20 text-center">
-        <div className="container mx-auto flex max-w-3xl flex-col items-center gap-6 sm:gap-8 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="max-w-3xl text-[2.5rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl sm:leading-[1.08] sm:tracking-tighter md:text-7xl md:leading-[1.05]"
-          >
-            <span className="text-[var(--text)]">{headline} </span>
-            <span className="bg-gradient-to-r from-[var(--accent-2)] via-[#8b7ffc] to-[var(--accent)] bg-clip-text text-transparent">
-              {highlight}
-            </span>
-          </motion.h1>
+      {/* ── Content ── */}
+      <div
+        className="relative z-10 flex flex-col items-start justify-center h-full"
+        style={{ minHeight: "calc(100vh - 72px)", padding: "clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)" }}
+      >
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 rounded-full border text-sm font-medium mb-8 px-4 py-2"
+          style={{
+            background: "rgba(20,20,20,0.55)",
+            border: "1px solid rgba(255,255,255,0.18)",
+            backdropFilter: "blur(8px)",
+            color: "rgba(255,255,255,0.92)",
+          }}
+        >
+          <span style={{ color: "#a78bfa" }}>✦</span>
+          {badge}
+        </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-base leading-relaxed tracking-tight text-[var(--text-muted)] sm:text-lg md:text-xl text-center"
+        {/* Three-line headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.08 }}
+          className="flex flex-col mb-7"
+          style={{ lineHeight: 0.94 }}
+        >
+          {/* Line 1 — teal / light weight */}
+          <span
+            style={{
+              fontFamily: "var(--font-body)",
+              fontWeight: 300,
+              fontSize: "clamp(2.4rem, 5.2vw, 4rem)",
+              color: "#5eead4",
+              letterSpacing: "-0.03em",
+              lineHeight: 1.05,
+            }}
           >
-            {subheadline}
-          </motion.p>
+            {lineAccent}
+          </span>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center"
+          {/* Line 2 — bold white */}
+          <span
+            style={{
+              fontFamily: "var(--font-body)",
+              fontWeight: 900,
+              fontSize: "clamp(3.2rem, 7.5vw, 5.75rem)",
+              color: "#f5f5f5",
+              letterSpacing: "-0.045em",
+              lineHeight: 1.0,
+            }}
           >
-            <Button
-              asChild
-              size="lg"
-              className="w-full gap-2 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white shadow-[0_12px_36px_var(--shadow-strong)] hover:opacity-90 sm:w-auto"
-            >
-              <Link href={primaryCtaHref}>
-                {primaryCtaLabel} <MoveRight className="w-4 h-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full gap-2 border-[var(--border)] bg-transparent text-[var(--text)] hover:bg-[var(--glass-bg)] sm:w-auto"
-            >
-              <Link href={secondaryCtaHref}>
-                {secondaryCtaLabel} <PhoneCall className="w-4 h-4" />
-              </Link>
-            </Button>
-          </motion.div>
+            {lineBold}
+          </span>
+
+          {/* Line 3 — italic Instrument Serif */}
+          <span
+            style={{
+              fontFamily: "var(--font-accent)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
+              color: "rgba(255,255,255,0.82)",
+              letterSpacing: "-0.025em",
+              lineHeight: 1.05,
+              marginTop: "0.05em",
+            }}
+          >
+            {lineSerif}
+          </span>
+        </motion.h1>
+
+        {/* Subheadline */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.18 }}
+          className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }}
+        >
+          {subheadline}
+        </motion.p>
+
+        {/* CTA row */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.26 }}
+          className="flex flex-wrap gap-4"
+        >
+          {/* Ghost */}
+          <Link
+            href={secondaryCtaHref}
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.35)",
+              color: "#fff",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
+            onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+          >
+            <Calendar className="w-4 h-4" />
+            {secondaryCtaLabel}
+          </Link>
+
+          {/* Gradient */}
+          <Link
+            href={primaryCtaHref}
+            className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-0.5"
+            style={{
+              background: "linear-gradient(90deg, #38bdf8, #f97316)",
+              boxShadow: "0 8px 24px -8px rgba(249,115,22,0.5)",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 12px 30px -8px rgba(249,115,22,0.65)")}
+            onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 8px 24px -8px rgba(249,115,22,0.5)")}
+          >
+            {primaryCtaLabel}
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+
+        {/* Spinning corner badge */}
+        <div
+          className="absolute bottom-6 right-6 z-10 hidden sm:flex items-center justify-center"
+          aria-hidden
+        >
+          <div
+            style={{
+              width: 56, height: 56,
+              borderRadius: "50%",
+              background: "conic-gradient(from 90deg, #38bdf8, #a78bfa, #f97316, #38bdf8)",
+              animation: "spin 6s linear infinite",
+              position: "relative",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                inset: 5,
+                borderRadius: "50%",
+                background: "#0e0e0e",
+              }}
+            />
+          </div>
+          <span
+            style={{
+              position: "absolute",
+              fontSize: 9,
+              fontWeight: 600,
+              color: "#fff",
+              opacity: 0.85,
+              fontFamily: "var(--font-body)",
+            }}
+          >
+            StrixMind
+          </span>
         </div>
       </div>
+
+      {/* Side nav arrows */}
+      <button
+        aria-label="Previous"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
+        style={{
+          background: "rgba(20,20,20,0.55)",
+          border: "1px solid rgba(255,255,255,0.18)",
+          backdropFilter: "blur(6px)",
+          color: "#fff",
+          fontSize: 20,
+        }}
+      >
+        ‹
+      </button>
+      <button
+        aria-label="Next"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
+        style={{
+          background: "rgba(20,20,20,0.55)",
+          border: "1px solid rgba(255,255,255,0.18)",
+          backdropFilter: "blur(6px)",
+          color: "#fff",
+          fontSize: 20,
+        }}
+      >
+        ›
+      </button>
+
+      {/* spin keyframe — injected once */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 };

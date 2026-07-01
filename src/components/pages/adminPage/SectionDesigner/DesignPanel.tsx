@@ -677,7 +677,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
 
       {/* Active tab label */}
       <div className="px-5 pt-4 pb-1 shrink-0">
-        <div className="flex items-center gap-2 text-ink text-sm font-bold">
+        <div className="flex items-center gap-2 text-[var(--text)] text-sm font-bold">
           <activeTab.Icon size={15} strokeWidth={1.8} className="text-accent" />
           {activeTab.label}
         </div>

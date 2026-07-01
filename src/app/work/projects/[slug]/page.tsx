@@ -111,7 +111,7 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
                 <div className="text-xs font-bold text-ink-dim uppercase tracking-wide mb-2">Stack</div>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="bg-surface-alt text-ink text-xs font-semibold px-3 py-1.5 rounded-full border border-line">
+                    <span key={tag} className="bg-surface-alt text-[var(--text)] text-xs font-semibold px-3 py-1.5 rounded-full border border-line">
                       {tag}
                     </span>
                   ))}
@@ -126,7 +126,7 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
                   {project.results.map((r, i) => (
                     <div key={i} className="bg-surface-alt rounded-xl p-3.5 border border-line">
                       <div className="text-xs text-ink-soft">{r.label}</div>
-                      <div className="font-bold text-ink text-sm mt-0.5">{r.value}</div>
+                      <div className="font-bold text-[var(--text)] text-sm mt-0.5">{r.value}</div>
                     </div>
                   ))}
                 </div>
