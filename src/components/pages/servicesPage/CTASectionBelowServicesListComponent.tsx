@@ -10,7 +10,7 @@ export default function CTASectionBelowServicesListComponent({
   secondaryCtaLabel = D.secondaryCtaLabel, secondaryCtaHref = D.secondaryCtaHref,
 }: CtaProps) {
   return (
-    <section style={{ padding: "6rem 0", background: "#F4F2FE", borderTop: "1px solid var(--border)" }}>
+    <section style={{ padding: "6rem 0", background: "var(--surface-alt)", borderTop: "1px solid var(--border)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
         <div style={{ borderRadius: 32, padding: "4.5rem 3rem", textAlign: "center", background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 24px 80px var(--border)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,var(--accent),var(--accent-2))" }} />

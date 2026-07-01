@@ -33,14 +33,14 @@ const CARDS = [
     title: "Multi-Agent AI",
     description: "Six specialised agents, priority task queue",
     date: "Core platform",
-    className: `[grid-area:stack] translate-x-8 translate-y-6 sm:translate-x-16 sm:translate-y-10 hover:-translate-y-1 ${STACK_BASE}`,
+    className: `[grid-area:stack] translate-x-4 translate-y-6 sm:translate-x-16 sm:translate-y-10 hover:-translate-y-1 ${STACK_BASE}`,
   },
   {
     icon: <MessageSquareText className="size-4 text-accent-2" />,
     title: "WhatsApp CRM",
     description: "Session-aware messaging, pipelines, forecasting",
     date: "Core platform",
-    className: "[grid-area:stack] translate-x-16 translate-y-12 sm:translate-x-32 sm:translate-y-20 hover:translate-y-10",
+    className: "[grid-area:stack] translate-x-8 translate-y-12 sm:translate-x-32 sm:translate-y-20 hover:translate-y-10",
   },
 ];
 

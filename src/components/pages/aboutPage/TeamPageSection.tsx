@@ -14,7 +14,7 @@ export default function TeamPageSection({ eyebrow = D.eyebrow, heading = D.headi
         <h2 style={{ fontSize: "clamp(1.75rem,3vw,2.5rem)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1.1, marginBottom: "3rem" }}>{heading}</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "1.5rem" }}>
           {members.map((m, i) => (
-            <div key={m.name} style={{ background: "#F4F2FE", borderRadius: 22, padding: "2rem", border: "1px solid var(--border)", textAlign: "center", transition: "transform 0.3s ease, box-shadow 0.3s ease" }}>
+            <div key={m.name} style={{ background: "var(--surface-alt)", borderRadius: 22, padding: "2rem", border: "1px solid var(--border)", textAlign: "center", transition: "transform 0.3s ease, box-shadow 0.3s ease" }}>
               {m.photo && m.photo.trim() ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={m.photo} alt={m.name} loading="lazy" decoding="async" style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", margin: "0 auto 1.25rem", display: "block" }} />

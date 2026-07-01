@@ -11,7 +11,7 @@ export default function PricingHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, subheading = D.subheading, note = D.note, plans = D.plans,
 }: PricingProps) {
   return (
-    <section id="pricing" style={{ background: "#F4F2FE", padding: "7rem 0", borderTop: "1px solid var(--divider)" }}>
+    <section id="pricing" style={{ background: "var(--surface-alt)", padding: "7rem 0", borderTop: "1px solid var(--divider)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
 
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>
