@@ -206,23 +206,6 @@ export const PremiumHero = ({
         className="relative z-10 flex flex-col items-start justify-center h-full"
         style={{ minHeight: "calc(100vh - 72px)", padding: "clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)" }}
       >
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border text-sm font-medium mb-8 px-4 py-2"
-          style={{
-            background: "rgba(20,20,20,0.55)",
-            border: "1px solid rgba(255,255,255,0.18)",
-            backdropFilter: "blur(8px)",
-            color: "rgba(255,255,255,0.92)",
-          }}
-        >
-          <span style={{ color: "#a78bfa" }}>✦</span>
-          {badge}
-        </motion.div>
-
         {/* Three-line headline */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
