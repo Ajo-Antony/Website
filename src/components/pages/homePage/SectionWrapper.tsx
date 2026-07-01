@@ -104,7 +104,7 @@ function buildSectionStyle(d: DesignSettings): CSSProperties {
     style.background = `linear-gradient(${dir}, ${d.bgGradientFrom ?? "#ffffff"}, ${d.bgGradientTo ?? "#f3f4f6"})`;
   } else if (bgType === "pattern") {
     if (d.bgColor) style.backgroundColor = d.bgColor;
-    const pc = d.bgPatternColor ?? "#6c63ff";
+    const pc = d.bgPatternColor ?? "var(--accent)";
     const po = Math.round((d.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2, "0");
     const col = `${pc}${po}`;
     const patternMap: Record<PatternType, string> = {

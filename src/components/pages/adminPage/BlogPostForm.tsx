@@ -25,7 +25,7 @@ export default function BlogPostForm({
   }
 
   return (
-    <form action={handleSubmit} className="bg-white rounded-2xl border border-gray-200 p-8 max-w-2xl">
+    <form action={handleSubmit} className="bg-[var(--surface)] rounded-2xl border border-gray-200 p-8 max-w-2xl">
       {error && (
         <div className="mb-5 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{error}</div>
       )}

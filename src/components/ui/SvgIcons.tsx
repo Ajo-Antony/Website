@@ -8,7 +8,7 @@
  *
  * HOW TO USE:
  *   import { IconTarget, IconBolt, ... } from "@/components/ui/SvgIcons";
- *   <IconTarget size={24} color="#6c63ff" />
+ *   <IconTarget size={24} color="var(--accent)" />
  *
  * ICONS PROVIDED:
  *   IconTarget      → replaces 🎯  (Goals / Provider routing)

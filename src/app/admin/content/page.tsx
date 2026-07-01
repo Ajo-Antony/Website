@@ -22,7 +22,7 @@ export default function AdminContentIndexPage() {
                 <Link
                   key={s.key}
                   href={`/admin/content/${s.key}`}
-                  className="bg-white rounded-2xl border border-line p-5 hover:border-accent/40 hover:shadow-[0_12px_32px_rgba(108,99,255,0.12)] transition-all"
+                  className="bg-[var(--surface)] rounded-2xl border border-line p-5 hover:border-accent/40 hover:shadow-[0_12px_32px_rgba(108,99,255,0.12)] transition-all"
                 >
                   <div className="font-bold text-ink mb-1">{s.label}</div>
                   {s.description && <p className="text-xs text-ink-soft leading-relaxed">{s.description}</p>}

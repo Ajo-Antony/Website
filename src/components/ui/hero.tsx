@@ -58,36 +58,29 @@ export const PremiumHero = ({
   secondaryCtaHref = "/#why",
 }: PremiumHeroProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const noiseRef = useRef<HTMLCanvasElement>(null);
   const beamsRef = useRef<Beam[]>([]);
   const animationFrameRef = useRef<number>(0);
 
   const LAYERS = 3;
-  const BEAMS_PER_LAYER = 8;
+  const BEAMS_PER_LAYER = 4; // was 8 — halved, same visual density at typical hero size
+  const TARGET_FPS = 30;
+  const FRAME_INTERVAL = 1000 / TARGET_FPS;
+  const MAX_DPR = 1.5; // was uncapped devicePixelRatio (up to 3 on some phones)
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const noiseCanvas = noiseRef.current;
-    if (!canvas || !noiseCanvas) return;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    const nCtx = noiseCanvas.getContext("2d");
-    if (!ctx || !nCtx) return;
+    if (!ctx) return;
 
     const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-
-      noiseCanvas.width = window.innerWidth * dpr;
-      noiseCanvas.height = window.innerHeight * dpr;
-      noiseCanvas.style.width = `${window.innerWidth}px`;
-      noiseCanvas.style.height = `${window.innerHeight}px`;
-      nCtx.setTransform(1, 0, 0, 1, 0, 0);
-      nCtx.scale(dpr, dpr);
 
       beamsRef.current = [];
       for (let layer = 1; layer <= LAYERS; layer++) {
@@ -100,19 +93,7 @@ export const PremiumHero = ({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    const generateNoise = () => {
-      const imgData = nCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        const v = Math.random() * 255;
-        imgData.data[i] = v;
-        imgData.data[i + 1] = v;
-        imgData.data[i + 2] = v;
-        imgData.data[i + 3] = 12;
-      }
-      nCtx.putImageData(imgData, 0, 0);
-    };
-
-    // StrixMind brand accent (#6c63ff) instead of the generic cyan default,
+    // StrixMind brand accent (var(--accent)) instead of the generic cyan default,
     // so the hero reads as part of the same product, not a stock template.
     const drawBeam = (beam: Beam) => {
       ctx.save();
@@ -133,12 +114,20 @@ export const PremiumHero = ({
       ctx.restore();
     };
 
-    const animate = () => {
+    let lastFrameTime = 0;
+
+    const render = () => {
       if (!canvas || !ctx) return;
 
+      // Read the active theme's bg tokens at render-time so the canvas
+      // background matches both dark and light modes without re-mounting.
+      const style = getComputedStyle(document.documentElement);
+      const bgFrom = style.getPropertyValue("--bg-from").trim() || "#0a0816";
+      const bgTo   = style.getPropertyValue("--bg-to").trim()   || "#13102b";
+
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, "#0a0816");
-      gradient.addColorStop(1, "#13102b");
+      gradient.addColorStop(0, bgFrom);
+      gradient.addColorStop(1, bgTo);
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -151,21 +140,52 @@ export const PremiumHero = ({
         }
         drawBeam(beam);
       });
-
-      generateNoise();
-      animationFrameRef.current = requestAnimationFrame(animate);
     };
-    animate();
+
+    const animate = (time: number) => {
+      animationFrameRef.current = requestAnimationFrame(animate);
+      // Throttle to TARGET_FPS instead of running flat-out every display refresh
+      if (time - lastFrameTime < FRAME_INTERVAL) return;
+      lastFrameTime = time;
+      render();
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameRef.current);
+      } else {
+        lastFrameTime = 0;
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    // Respect users who've asked the OS for reduced motion: draw one static frame.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      render();
+    } else {
+      animationFrameRef.current = requestAnimationFrame(animate);
+      document.addEventListener("visibilitychange", handleVisibility);
+    }
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
+      document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(animationFrameRef.current);
     };
   }, []);
 
   return (
     <div className="relative w-full min-h-[calc(100vh-72px)] overflow-hidden">
-      <canvas ref={noiseRef} className="absolute inset-0 z-0 pointer-events-none" />
+      {/* Static grain texture — replaces the old per-frame JS-generated noise canvas.
+          Painted once by the browser, no JS, no per-frame CPU cost. */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.045]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+      />
       <canvas ref={canvasRef} className="absolute inset-0 z-10" />
 
       <div className="relative z-20 flex min-h-[calc(100vh-72px)] w-full items-center justify-center px-4 sm:px-6 py-16 sm:py-20 text-center">
@@ -176,8 +196,8 @@ export const PremiumHero = ({
             transition={{ duration: 0.6, delay: 0.1 }}
             className="max-w-3xl text-[2.5rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl sm:leading-[1.08] sm:tracking-tighter md:text-7xl md:leading-[1.05]"
           >
-            <span className="text-white">{headline} </span>
-            <span className="bg-gradient-to-r from-[#a78bfa] via-[#8b7ffc] to-[#6c63ff] bg-clip-text text-transparent">
+            <span {className="text-[var(--text)]"}>{headline} </span>
+            <span className="bg-gradient-to-r from-[var(--accent-2)] via-[#8b7ffc] to-[var(--accent)] bg-clip-text text-transparent">
               {highlight}
             </span>
           </motion.h1>
@@ -186,7 +206,7 @@ export const PremiumHero = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-2xl text-base leading-relaxed tracking-tight text-white/55 sm:text-lg md:text-xl text-center"
+            className="max-w-2xl text-base leading-relaxed tracking-tight text-[var(--text-muted)] sm:text-lg md:text-xl text-center"
           >
             {subheadline}
           </motion.p>
@@ -200,7 +220,7 @@ export const PremiumHero = ({
             <Button
               asChild
               size="lg"
-              className="w-full gap-2 bg-gradient-to-br from-[#6c63ff] to-[#a78bfa] text-white shadow-[0_12px_36px_rgba(108,99,255,0.38)] hover:opacity-90 sm:w-auto"
+              className="w-full gap-2 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] text-white shadow-[0_12px_36px_var(--shadow-strong)] hover:opacity-90 sm:w-auto"
             >
               <Link href={primaryCtaHref}>
                 {primaryCtaLabel} <MoveRight className="w-4 h-4" />
@@ -210,7 +230,7 @@ export const PremiumHero = ({
               asChild
               size="lg"
               variant="outline"
-              className="w-full gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 sm:w-auto"
+              className="w-full gap-2 border-[var(--border)] bg-transparent text-[var(--text)] hover:bg-[var(--glass-bg)] sm:w-auto"
             >
               <Link href={secondaryCtaHref}>
                 {secondaryCtaLabel} <PhoneCall className="w-4 h-4" />

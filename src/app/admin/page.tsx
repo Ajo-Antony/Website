@@ -60,7 +60,7 @@ export default async function AdminOverviewPage() {
           <Link
             key={c.href}
             href={c.href}
-            className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-accent/40 hover:shadow-lg transition-all group"
+            className="bg-[var(--surface)] rounded-2xl border border-gray-200 p-6 hover:border-accent/40 hover:shadow-lg transition-all group"
           >
             <div
               className="mb-3 w-10 h-10 rounded-xl flex items-center justify-center"

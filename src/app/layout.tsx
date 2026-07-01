@@ -4,18 +4,19 @@
  * Uses new SiteHeader with dropdown navigation menu.
  */
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import { unstable_cache } from "next/cache";
 import SiteHeader from "@/components/ui/site-header";
 import FooterCommonSharedComponent from "@/components/pages/commonSharedComponents/FooterCommonSharedComponent";
 import GsapScripts from "@/components/ui/GsapScripts";
 import AnimationBoot from "@/components/ui/AnimationBoot";
+import { ThemeProvider } from "@/components/Theme/ThemeProvider";
 import { getContentMany } from "@/lib/actions/content";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
@@ -24,6 +25,14 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
   display: "swap",
 });
 
@@ -101,43 +110,53 @@ export default async function RootLayout({
   const nav = content["global.nav"] as any;
 
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}>
       <head>
         <GsapScripts />
+        {/* No-flash theme script — runs before paint, reads localStorage
+            (falling back to OS preference) and sets data-theme on <html>
+            so the very first frame already matches the user's choice. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('strixmind-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
       </head>
       <body suppressHydrationWarning>
-        {/* Reading progress bar */}
-        <div
-          id="strix-progress-bar"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 2,
-            zIndex: 9999,
-            background: "linear-gradient(90deg, #6c63ff, #a78bfa)",
-            transformOrigin: "left center",
-            transform: "scaleX(0)",
-            pointerEvents: "none",
-          }}
-        />
-        <AnimationBoot />
+        <ThemeProvider>
+          {/* Reading progress bar */}
+          <div
+            id="strix-progress-bar"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 2,
+              zIndex: 9999,
+              background: "linear-gradient(90deg, var(--accent), var(--accent-2))",
+              transformOrigin: "left center",
+              transform: "scaleX(0)",
+              pointerEvents: "none",
+            }}
+          />
+          <AnimationBoot />
 
-        {/* New header with dropdown navigation */}
-        <SiteHeader
-          links={nav?.links}
-          signInLabel={nav?.signInLabel}
-          ctaLabel={nav?.ctaLabel}
-          ctaHref={nav?.ctaHref}
-        />
+          {/* New header with dropdown navigation */}
+          <SiteHeader
+            links={nav?.links}
+            signInLabel={nav?.signInLabel}
+            ctaLabel={nav?.ctaLabel}
+            ctaHref={nav?.ctaHref}
+          />
 
-        <main>{children}</main>
-        <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
+          <main>{children}</main>
+          <FooterCommonSharedComponent {...(content["global.footer"] as any)} />
+        </ThemeProvider>
       </body>
     </html>
   );

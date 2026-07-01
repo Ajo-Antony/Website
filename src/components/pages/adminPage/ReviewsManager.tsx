@@ -4,7 +4,7 @@ import { useState } from "react";
 import { approveReview, rejectReview, deleteReview } from "@/lib/actions/reviews";
 import type { Review, ReviewStatus } from "@/lib/actions/reviews";
 
-const AVATAR_COLORS = ["#6c63ff", "#0ea5e9", "#f59e0b", "#f472b6", "#22c55e", "#8b5cf6"];
+const AVATAR_COLORS = ["var(--accent)", "var(--accent-teal)", "#f59e0b", "#f472b6", "#22c55e", "#8b5cf6"];
 
 const STATUS_BADGE: Record<ReviewStatus, { label: string; bg: string; color: string }> = {
   pending:  { label: "Pending",  bg: "rgba(245,158,11,0.1)",  color: "#d97706" },
@@ -146,7 +146,7 @@ export default function ReviewsManager({ reviews }: { reviews: Review[] }) {
 
   if (reviews.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 p-12 text-center">
         <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>💬</div>
         <p className="text-gray-500 text-sm">No reviews yet. They&apos;ll appear here once customers submit them.</p>
       </div>
@@ -164,7 +164,7 @@ export default function ReviewsManager({ reviews }: { reviews: Review[] }) {
             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors capitalize ${
               filter === key
                 ? "bg-ink text-white border-ink"
-                : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
             }`}
           >
             {label}
@@ -182,7 +182,7 @@ export default function ReviewsManager({ reviews }: { reviews: Review[] }) {
         </div>
       )}
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
+      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 overflow-x-auto">
         <table className="w-full min-w-[860px]">
           <thead>
             <tr className="border-b border-gray-100 text-left">

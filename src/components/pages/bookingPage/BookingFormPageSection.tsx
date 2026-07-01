@@ -15,7 +15,7 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
   const [emailSent, setEmailSent] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const inputStyle: React.CSSProperties = { width:"100%", padding:"0.875rem 1.125rem", borderRadius:14, border:"1.5px solid #E5E0FA", background:"#F8F7FF", fontSize:"0.9rem", color:"#1a1333", fontFamily:"Inter,sans-serif", outline:"none", marginBottom:"1rem" };
+  const inputStyle: React.CSSProperties = { width:"100%", padding:"0.875rem 1.125rem", borderRadius:14, border:"1.5px solid var(--border)", background:"var(--surface-alt)", fontSize:"0.9rem", color:"var(--text)", fontFamily:"Inter,sans-serif", outline:"none", marginBottom:"1rem" };
 
   async function handleConfirm() {
     if (!form.name || !form.email || submitting) return;
@@ -39,34 +39,34 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
   }
 
   return (
-    <section style={{ padding:"4rem 0 8rem", background:"#fff", borderTop:"1px solid #E5E0FA" }}>
+    <section style={{ padding:"4rem 0 8rem", background:"var(--surface)", borderTop:"1px solid var(--border)" }}>
       <div style={{ maxWidth:760, margin:"0 auto", padding:"0 2rem" }}>
-        <div style={{ background:"#fff", borderRadius:28, padding:"2.5rem", border:"1px solid #E5E0FA", boxShadow:"0 16px 56px rgba(108,99,255,0.10)", position:"relative", overflow:"hidden" }}>
-          <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,#6c63ff,#a78bfa)" }} />
+        <div style={{ background:"var(--surface)", borderRadius:28, padding:"2.5rem", border:"1px solid var(--border)", boxShadow:"0 16px 56px var(--shadow)", position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,var(--accent),var(--accent-2))" }} />
           {booked ? (
             <div style={{ textAlign:"center", padding:"3rem 0" }}>
               <div style={{ marginBottom:"1rem", display:"flex", justifyContent:"center" }}><IconCheckCircle size={44} color="#22c55e" strokeWidth={1.5} /></div>
-              <div style={{ fontSize:"1.25rem", fontWeight:800, color:"#1a1333", marginBottom:"0.75rem" }}>You're booked!</div>
+              <div style={{ fontSize:"1.25rem", fontWeight:800, color:"var(--text)", marginBottom:"0.75rem" }}>You're booked!</div>
               {emailSent ? (
-                <p style={{ color:"#5b5478" }}>Confirmation sent to <strong>{form.email}</strong>. See you at <strong>{slot}</strong>.</p>
+                <p style={{ color:"var(--text-muted)" }}>Confirmation sent to <strong>{form.email}</strong>. See you at <strong>{slot}</strong>.</p>
               ) : (
-                <p style={{ color:"#5b5478" }}>You&apos;re all set for <strong>{slot}</strong>. We couldn&apos;t send a confirmation email right now, but your spot is saved — we&apos;ll reach out at <strong>{form.email}</strong>.</p>
+                <p style={{ color:"var(--text-muted)" }}>You&apos;re all set for <strong>{slot}</strong>. We couldn&apos;t send a confirmation email right now, but your spot is saved — we&apos;ll reach out at <strong>{form.email}</strong>.</p>
               )}
             </div>
           ) : step === 1 ? (
             <>
-              <h3 style={{ fontSize:"1.1rem", fontWeight:800, color:"#1a1333", marginBottom:"1.5rem" }}>Step 1 — Pick a time slot</h3>
+              <h3 style={{ fontSize:"1.1rem", fontWeight:800, color:"var(--text)", marginBottom:"1.5rem" }}>Step 1 — Pick a time slot</h3>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:"0.75rem", marginBottom:"1.5rem" }}>
                 {slots.map(s=>(
-                  <button key={s} onClick={()=>setSlot(s)} style={{ padding:"0.75rem", borderRadius:12, fontFamily:"Inter,sans-serif", fontSize:"0.78rem", fontWeight:600, cursor:"pointer", border:slot===s?"2px solid #6c63ff":"1px solid #E5E0FA", background:slot===s?"rgba(108,99,255,0.08)":"#F8F7FF", color:slot===s?"#4c46c4":"#5b5478", transition:"all 0.2s" }}>{s}</button>
+                  <button key={s} onClick={()=>setSlot(s)} style={{ padding:"0.75rem", borderRadius:12, fontFamily:"Inter,sans-serif", fontSize:"0.78rem", fontWeight:600, cursor:"pointer", border:slot===s?"2px solid var(--accent)":"1px solid var(--border)", background:slot===s?"var(--glass-bg)":"var(--surface-alt)", color:slot===s?"var(--accent-deep)":"var(--text-muted)", transition:"all 0.2s" }}>{s}</button>
                 ))}
               </div>
-              <button onClick={()=>slot&&setStep(2)} style={{ fontFamily:"Inter,sans-serif", fontSize:"0.9rem", fontWeight:700, padding:"0.9rem 2rem", background:slot?"linear-gradient(135deg,#6c63ff,#a78bfa)":"rgba(108,99,255,0.18)", color:slot?"#fff":"#a39ecf", border:"none", borderRadius:100, cursor:slot?"pointer":"not-allowed", transition:"all 0.2s", boxShadow:slot?"0 8px 24px rgba(108,99,255,0.32)":"none" }}>Continue →</button>
+              <button onClick={()=>slot&&setStep(2)} style={{ fontFamily:"Inter,sans-serif", fontSize:"0.9rem", fontWeight:700, padding:"0.9rem 2rem", background:slot?"linear-gradient(135deg,var(--accent),var(--accent-2))":"var(--glass-bg)", color:slot?"#fff":"var(--text-dim)", border:"none", borderRadius:100, cursor:slot?"pointer":"not-allowed", transition:"all 0.2s", boxShadow:slot?"0 8px 24px var(--shadow-strong)":"none" }}>Continue →</button>
             </>
           ) : (
             <>
-              <button onClick={()=>{setStep(1);setError("");}} style={{ fontSize:"0.8rem", color:"#6c63ff", background:"none", border:"none", cursor:"pointer", marginBottom:"1.25rem", fontWeight:600 }}>← Change time</button>
-              <h3 style={{ fontSize:"1.1rem", fontWeight:800, color:"#1a1333", marginBottom:"1.5rem" }}>Step 2 — About your business</h3>
+              <button onClick={()=>{setStep(1);setError("");}} style={{ fontSize:"0.8rem", color:"var(--accent)", background:"none", border:"none", cursor:"pointer", marginBottom:"1.25rem", fontWeight:600 }}>← Change time</button>
+              <h3 style={{ fontSize:"1.1rem", fontWeight:800, color:"var(--text)", marginBottom:"1.5rem" }}>Step 2 — About your business</h3>
               <input style={inputStyle} placeholder="Full name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} />
               <input style={inputStyle} type="email" placeholder="Work email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} />
               <input style={inputStyle} placeholder="Company name" value={form.company} onChange={e=>setForm({...form,company:e.target.value})} />
@@ -82,12 +82,12 @@ export default function BookingFormPageSection({ slots = D.slots }: SlotsProps) 
                 disabled={!form.name || !form.email || submitting}
                 style={{
                   width:"100%", padding:"1rem",
-                  background: (form.name && form.email && !submitting) ? "linear-gradient(135deg,#6c63ff,#a78bfa)" : "rgba(108,99,255,0.18)",
-                  color: (form.name && form.email && !submitting) ? "#fff" : "#a39ecf",
+                  background: (form.name && form.email && !submitting) ? "linear-gradient(135deg,var(--accent),var(--accent-2))" : "var(--glass-bg)",
+                  color: (form.name && form.email && !submitting) ? "#fff" : "var(--text-dim)",
                   border:"none", borderRadius:100, fontSize:"0.95rem", fontWeight:700,
                   cursor: (form.name && form.email && !submitting) ? "pointer" : "not-allowed",
                   fontFamily:"Inter,sans-serif",
-                  boxShadow:(form.name && form.email && !submitting) ? "0 8px 24px rgba(108,99,255,0.32)" : "none",
+                  boxShadow:(form.name && form.email && !submitting) ? "0 8px 24px var(--shadow-strong)" : "none",
                 }}
               >
                 {submitting ? "Booking…" : "Confirm booking →"}

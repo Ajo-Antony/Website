@@ -686,6 +686,8 @@
  *                                          by GSAP fallbacks and hero badge
  *
  * LOADED BY:  src/app/layout.tsx  (import "./globals.css")
+ * NOTE: Font loading is handled by next/font/google in layout.tsx
+ *       (self-hosted, preloaded, display:swap). No @import needed here.
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -3152,11 +3154,6 @@ video {
   --tw-gradient-to: rgb(255 255 255 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
-.from-black\/85 {
-  --tw-gradient-from: rgb(0 0 0 / 0.85) var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(0 0 0 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
 .via-\[\#4c46c4\]\/80 {
   --tw-gradient-to: rgb(76 70 196 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), rgb(76 70 196 / 0.8) var(--tw-gradient-via-position), var(--tw-gradient-to);
@@ -3176,10 +3173,6 @@ video {
 .via-black\/40 {
   --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), rgb(0 0 0 / 0.4) var(--tw-gradient-via-position), var(--tw-gradient-to);
-}
-.via-black\/30 {
-  --tw-gradient-to: rgb(0 0 0 / 0)  var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), rgb(0 0 0 / 0.3) var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 .to-\[\#4c46c4\] {
   --tw-gradient-to: #4c46c4 var(--tw-gradient-to-position);
@@ -3976,8 +3969,6 @@ video {
 .\[stroke-dashoffset\:-32\.42px\] {
   stroke-dashoffset: -32.42px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400;1,14..32,500&display=swap');
 
 /* ── StrixMind Design Tokens — Light Premium Glass ──
    Single source of truth for every page (Home, About, Services,

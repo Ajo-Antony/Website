@@ -56,13 +56,13 @@ export default function ProjectsCategoryFilter({ projects }: { projects: Project
             <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-accent to-accent-2 mb-4 overflow-hidden relative">
               {p.cover_image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.cover_image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <img src={p.cover_image} alt={p.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-white text-5xl font-bold">
                   {p.title.charAt(0)}
                 </div>
               )}
-              <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wide bg-white/90 text-ink px-2.5 py-1 rounded-full">
+              <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-wide bg-[var(--glass-bg-strong)] text-[var(--text)] px-2.5 py-1 rounded-full">
                 {STATUS_LABEL[p.status] ?? p.status}
               </span>
             </div>

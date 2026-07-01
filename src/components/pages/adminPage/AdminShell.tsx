@@ -30,7 +30,7 @@ const NAV: NavItem[] = [
 export default function AdminShell({ active, children }: { active: string; children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex" style={{ background: "linear-gradient(180deg,#f7f6fd,#eef0fb)" }}>
-      <aside className="w-64 shrink-0 text-white flex flex-col" style={{ background: "linear-gradient(165deg,#241c4d,#1a1333)" }}>
+      <aside className="w-64 shrink-0 text-white flex flex-col" style={{ background: "linear-gradient(165deg,#241c4d,var(--text))" }}>
         <div className="px-6 py-6 border-b border-white/10">
           <StrixmindWordmark theme="dark" height={20} />
           <div className="text-xs text-white/40 mt-1">Content dashboard</div>
@@ -44,7 +44,7 @@ export default function AdminShell({ active, children }: { active: string; child
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-gradient-to-r from-accent to-accent-2 text-white shadow-[0_4px_16px_rgba(108,99,255,0.4)]"
+                    ? "bg-gradient-to-r from-accent to-accent-2 text-white shadow-[0_4px_16px_var(--shadow-strong)]"
                     : "text-white/65 hover:bg-white/10 hover:text-white"
                 }`}
               >

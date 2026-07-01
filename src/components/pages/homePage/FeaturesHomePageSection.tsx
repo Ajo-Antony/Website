@@ -64,7 +64,7 @@ const FEATURES: {
 
 export default function FeaturesHomePageSection() {
   return (
-    <section id="features" style={{ background: "#fff", padding: "7rem 0" }}>
+    <section id="features" style={{ background: "var(--surface)", padding: "7rem 0" }}>
       <style>{`
         @keyframes strix-icon-spin {
           from { transform: rotate(0deg); }
@@ -106,7 +106,7 @@ export default function FeaturesHomePageSection() {
               key={f.num}
               className="strix-feature-card"
               data-strix-grid-item
-              style={{ background: "#fff", border: "1.5px solid #E5E7EB", borderRadius: 24, padding: "2.25rem", transition: "all 0.35s ease", cursor: "default", transitionDelay: `${i * 0.05}s` }}
+              style={{ background: "var(--surface)", border: "1.5px solid #E5E7EB", borderRadius: 24, padding: "2.25rem", transition: "all 0.35s ease", cursor: "default", transitionDelay: `${i * 0.05}s` }}
               onMouseEnter={e => {
                 const d = e.currentTarget as HTMLDivElement;
                 d.style.transform = "translateY(-6px)";

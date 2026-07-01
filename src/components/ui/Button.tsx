@@ -8,9 +8,9 @@ export default function Button({ children, href, onClick, variant = "solid", siz
     fontWeight: 700, padding: sizes[size], borderRadius: 100, cursor: "pointer",
     textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem",
     border: "none", fontFamily: "Inter, sans-serif", transition: "all 0.3s ease",
-    ...(variant === "solid" ? { background: "linear-gradient(135deg,#6c63ff,#a78bfa)", color: "#fff", boxShadow: "0 8px 24px rgba(108,99,255,0.32)" }
-      : variant === "ghost" ? { background: "#F4F2FE", color: "#4c46c4", border: "1.5px solid rgba(108,99,255,0.2)" }
-      : { background: "transparent", color: "#6c63ff", border: "1.5px solid #6c63ff" }),
+    ...(variant === "solid" ? { background: "linear-gradient(135deg,var(--accent),var(--accent-2))", color: "#fff", boxShadow: "0 8px 24px var(--shadow-strong)" }
+      : variant === "ghost" ? { background: "#F4F2FE", color: "var(--accent-deep)", border: "1.5px solid rgba(108,99,255,0.2)" }
+      : { background: "transparent", color: "var(--accent)", border: "1.5px solid var(--accent)" }),
   };
   return href ? <Link href={href} style={style}>{children}</Link> : <button style={style} onClick={onClick}>{children}</button>;
 }

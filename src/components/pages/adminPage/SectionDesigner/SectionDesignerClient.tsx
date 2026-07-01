@@ -151,7 +151,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
       {/* Toast */}
       {toast && (
         <div
-          className={`fixed top-6 right-6 z-50 flex items-center gap-2.5 bg-white text-ink text-sm font-medium pl-3 pr-4 py-2.5 rounded-xl shadow-[0_8px_30px_rgba(26,19,51,0.16)] border ${
+          className={`fixed top-6 right-6 z-50 flex items-center gap-2.5 bg-[var(--surface)] text-[var(--text)] text-sm font-medium pl-3 pr-4 py-2.5 rounded-xl shadow-[0_8px_30px_rgba(26,19,51,0.16)] border ${
             toast.tone === "error" ? "border-rose-200" : "border-line"
           }`}
         >
@@ -190,7 +190,7 @@ export default function SectionDesignerClient({ initialSections }: Props) {
       <div className="flex gap-6 items-start">
         {/* Section list */}
         <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-2xl border border-line overflow-hidden">
+          <div className="bg-[var(--surface)] rounded-2xl border border-line overflow-hidden">
             <div className="px-5 py-4 border-b border-line/70 flex items-center justify-between">
               <div>
                 <div className="font-bold text-ink text-sm tracking-tight">Sections</div>

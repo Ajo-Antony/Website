@@ -51,8 +51,8 @@ export default function CapabilitiesShowcaseSection() {
         <div
           style={{
             display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em",
-            textTransform: "uppercase", color: "#4c46c4", background: "rgba(108,99,255,0.08)",
-            border: "1px solid rgba(108,99,255,0.16)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem",
+            textTransform: "uppercase", color: "var(--accent-deep)", background: "var(--glass-bg)",
+            border: "1px solid var(--border)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem",
           }}
         >
           Under the hood
@@ -60,7 +60,7 @@ export default function CapabilitiesShowcaseSection() {
         <h2
           style={{
             fontSize: "clamp(1.9rem,3.5vw,2.9rem)", fontWeight: 800, letterSpacing: "-0.03em",
-            color: "#1a1333", lineHeight: 1.15, marginBottom: "3.5rem",
+            color: "var(--text)", lineHeight: 1.15, marginBottom: "3.5rem",
           }}
         >
           One platform, three engines

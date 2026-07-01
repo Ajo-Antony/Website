@@ -39,28 +39,28 @@ import {
 } from "./icons";
 
 const PATTERNS: { key: PatternType; label: string; preview: string }[] = [
-  { key: "dots",       label: "Dots",        preview: "radial-gradient(circle, #6c63ff22 1.5px, transparent 1.5px)" },
-  { key: "grid",       label: "Grid",        preview: "linear-gradient(#6c63ff22 1px, transparent 1px), linear-gradient(90deg, #6c63ff22 1px, transparent 1px)" },
-  { key: "diagonal",   label: "Diagonal",    preview: "repeating-linear-gradient(45deg, #6c63ff22 0, #6c63ff22 1px, transparent 0, transparent 50%)" },
-  { key: "zigzag",     label: "Zigzag",      preview: "repeating-linear-gradient(135deg, #6c63ff22 0, #6c63ff22 2px, transparent 0, transparent 10px)" },
-  { key: "waves",      label: "Waves",       preview: "repeating-radial-gradient(ellipse at 0% 50%, transparent 0%, transparent 45%, #6c63ff22 50%, transparent 55%)" },
-  { key: "hexagon",    label: "Hexagon",     preview: "radial-gradient(circle farthest-side at 0% 50%, #6c63ff22 24%, transparent 0) calc(8px*1) calc(8px*1), radial-gradient(circle farthest-side at 0% 50%, transparent 24%, #6c63ff22 25%, #6c63ff22 36%, transparent 37%) 0 0" },
-  { key: "crosshatch", label: "Crosshatch",  preview: "repeating-linear-gradient(45deg, #6c63ff22 0, #6c63ff22 1px, transparent 0, transparent 50%), repeating-linear-gradient(-45deg, #6c63ff22 0, #6c63ff22 1px, transparent 0, transparent 50%)" },
-  { key: "circles",    label: "Circles",     preview: "radial-gradient(circle at 50% 50%, transparent 30%, #6c63ff22 30%, #6c63ff22 32%, transparent 32%)" },
+  { key: "dots",       label: "Dots",        preview: "radial-gradient(circle, var(--accent)22 1.5px, transparent 1.5px)" },
+  { key: "grid",       label: "Grid",        preview: "linear-gradient(var(--accent)22 1px, transparent 1px), linear-gradient(90deg, var(--accent)22 1px, transparent 1px)" },
+  { key: "diagonal",   label: "Diagonal",    preview: "repeating-linear-gradient(45deg, var(--accent)22 0, var(--accent)22 1px, transparent 0, transparent 50%)" },
+  { key: "zigzag",     label: "Zigzag",      preview: "repeating-linear-gradient(135deg, var(--accent)22 0, var(--accent)22 2px, transparent 0, transparent 10px)" },
+  { key: "waves",      label: "Waves",       preview: "repeating-radial-gradient(ellipse at 0% 50%, transparent 0%, transparent 45%, var(--accent)22 50%, transparent 55%)" },
+  { key: "hexagon",    label: "Hexagon",     preview: "radial-gradient(circle farthest-side at 0% 50%, var(--accent)22 24%, transparent 0) calc(8px*1) calc(8px*1), radial-gradient(circle farthest-side at 0% 50%, transparent 24%, var(--accent)22 25%, var(--accent)22 36%, transparent 37%) 0 0" },
+  { key: "crosshatch", label: "Crosshatch",  preview: "repeating-linear-gradient(45deg, var(--accent)22 0, var(--accent)22 1px, transparent 0, transparent 50%), repeating-linear-gradient(-45deg, var(--accent)22 0, var(--accent)22 1px, transparent 0, transparent 50%)" },
+  { key: "circles",    label: "Circles",     preview: "radial-gradient(circle at 50% 50%, transparent 30%, var(--accent)22 30%, var(--accent)22 32%, transparent 32%)" },
 ];
 
 const PRESET_COLORS = [
-  "#ffffff", "#f9fafb", "#f3f4f6", "#1a1333",
-  "#6c63ff", "#4c46c4", "#0D9488", "#7C3AED",
+  "#ffffff", "#f9fafb", "#f3f4f6", "var(--text)",
+  "var(--accent)", "var(--accent-deep)", "#0D9488", "#7C3AED",
   "#111827", "#374151", "#e5e7eb", "#fef3c7",
   "#ecfdf5", "#fdf2f8", "#eff6ff", "#fef9c3",
 ];
 
 const GRADIENT_PRESETS = [
-  { from: "#1a1333", to: "#241c4d",  label: "Dark Purple" },
-  { from: "#6c63ff", to: "#4c46c4",  label: "Violet" },
-  { from: "#0D9488", to: "#6c63ff",  label: "Teal → Violet" },
-  { from: "#1a1333", to: "#0D9488",  label: "Dark → Teal" },
+  { from: "var(--text)", to: "#241c4d",  label: "Dark Purple" },
+  { from: "var(--accent)", to: "var(--accent-deep)",  label: "Violet" },
+  { from: "#0D9488", to: "var(--accent)",  label: "Teal → Violet" },
+  { from: "var(--text)", to: "#0D9488",  label: "Dark → Teal" },
   { from: "#f7f6fd", to: "#eef0fb",  label: "Light" },
   { from: "#ffffff", to: "#f3f4f6",  label: "White → Gray" },
   { from: "#fdf2f8", to: "#eff6ff",  label: "Pink → Blue" },
@@ -140,7 +140,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder="#ffffff"
-            className="flex-1 text-xs font-mono border border-line rounded-lg px-2.5 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-accent"
+            className="flex-1 text-xs font-mono border border-line rounded-lg px-2.5 py-2 bg-[var(--surface)] focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
         <div className="flex flex-wrap gap-1.5 mt-2">
@@ -149,7 +149,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
               key={c}
               onClick={() => onChange(c)}
               title={c}
-              style={{ background: c, border: value === c ? "2px solid #6c63ff" : "1.5px solid #e5e7eb" }}
+              style={{ background: c, border: value === c ? "2px solid var(--accent)" : "1.5px solid #e5e7eb" }}
               className="w-5 h-5 rounded-md transition-transform hover:scale-110"
             />
           ))}
@@ -174,7 +174,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                 className={`text-xs py-2 rounded-lg font-semibold capitalize transition-all border ${
                   bgType === t
                     ? "bg-accent text-white border-accent shadow-sm"
-                    : "bg-white text-ink-soft border-line hover:border-accent/40"
+                    : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                 }`}
               >
                 {t}
@@ -240,11 +240,11 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                       backgroundImage: p.preview,
                       backgroundSize: "16px 16px",
                       backgroundColor: "#f9fafb",
-                      border: design.bgPattern === p.key ? "2px solid #6c63ff" : "2px solid #e5e7eb",
+                      border: design.bgPattern === p.key ? "2px solid var(--accent)" : "2px solid #e5e7eb",
                     }}
                     className="h-12 rounded-lg transition-all hover:border-accent/40 flex items-end justify-center pb-1"
                   >
-                    <span className="text-[9px] bg-white/80 px-1 rounded font-medium text-ink-soft">{p.label}</span>
+                    <span className="text-[9px] bg-[var(--glass-bg)] px-1 rounded font-medium text-[var(--text-muted)]">{p.label}</span>
                   </button>
                 ))}
               </div>
@@ -324,7 +324,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
             style={buildBgStyle(design)}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <div style={{ color: design.textColor ?? "#1a1333" }} className="text-sm font-bold opacity-80">
+              <div style={{ color: design.textColor ?? "var(--text)" }} className="text-sm font-bold opacity-80">
                 {section.label}
               </div>
             </div>
@@ -354,7 +354,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs rounded-lg font-semibold border transition-all ${
                   (design.textAlign ?? "left") === a.key
                     ? "bg-accent text-white border-accent"
-                    : "bg-white text-ink-soft border-line hover:border-accent/40"
+                    : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                 }`}>
                 <a.Icon size={13} strokeWidth={1.8} />
                 {a.label}
@@ -378,7 +378,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                 className={`text-xs py-2 rounded-lg font-semibold capitalize border transition-all ${
                   (design.sectionWidth ?? "contained") === w
                     ? "bg-accent text-white border-accent"
-                    : "bg-white text-ink-soft border-line hover:border-accent/40"
+                    : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                 }`}>
                 {w}
               </button>
@@ -472,7 +472,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                     className={`flex-1 py-2 text-xs rounded-lg font-semibold capitalize border transition-all ${
                       (design.marqueeSpeed ?? "medium") === s
                         ? "bg-accent text-white border-accent"
-                        : "bg-white text-ink-soft border-line hover:border-accent/40"
+                        : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                     }`}>{s}</button>
                 ))}
               </div>
@@ -488,7 +488,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs rounded-lg font-semibold border transition-all ${
                       (design.marqueeDirection ?? "left") === d.key
                         ? "bg-accent text-white border-accent"
-                        : "bg-white text-ink-soft border-line hover:border-accent/40"
+                        : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                     }`}>
                     {d.key === "left" && <d.Icon size={13} strokeWidth={1.8} />}
                     {d.label}
@@ -534,7 +534,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
                     className={`flex-1 py-2 text-xs rounded-lg font-semibold capitalize border transition-all ${
                       (design.sliderType ?? "slide") === t
                         ? "bg-accent text-white border-accent"
-                        : "bg-white text-ink-soft border-line hover:border-accent/40"
+                        : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
                     }`}>{t}</button>
                 ))}
               </div>
@@ -641,15 +641,15 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
   const activeTab = PANEL_TABS.find((t) => t.key === tab)!;
 
   return (
-    <div className="bg-white rounded-2xl border border-line overflow-hidden flex flex-col" style={{ maxHeight: "85vh" }}>
+    <div className="bg-[var(--surface)] rounded-2xl border border-line overflow-hidden flex flex-col" style={{ maxHeight: "85vh" }}>
       {/* Header */}
       <div className="px-5 py-4 border-b border-line/70 flex items-center justify-between shrink-0"
-        style={{ background: "linear-gradient(135deg, #241c4d, #1a1333)" }}>
+        style={{ background: "linear-gradient(135deg, #241c4d, var(--text))" }}>
         <div>
           <div className="text-white font-bold text-sm">{section.label}</div>
           <div className="text-white/50 text-xs font-mono">{section.section_key}</div>
         </div>
-        <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors">
+        <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-[var(--glass-bg)] transition-colors">
           <IconClose size={15} strokeWidth={1.8} />
         </button>
       </div>
@@ -697,7 +697,7 @@ export default function DesignPanel({ section, onSave, onClose }: Props) {
       <div className="px-5 py-3 border-t border-line/70 flex gap-2 shrink-0 bg-surface-alt/60">
         <button
           onClick={handleReset}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-line text-ink-soft hover:bg-white font-medium transition-colors"
+          className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-line text-ink-soft hover:bg-[var(--glass-bg)] font-medium transition-colors"
         >
           <IconRotateLeft size={13} strokeWidth={1.8} />
           Reset
@@ -736,14 +736,14 @@ export function buildBgStyle(design: DesignSettings): React.CSSProperties {
     style.background = `linear-gradient(${dir}, ${design.bgGradientFrom ?? "#ffffff"}, ${design.bgGradientTo ?? "#f3f4f6"})`;
   } else if (bgType === "pattern") {
     const patternMap: Record<PatternType, string> = {
-      dots:       `radial-gradient(circle, ${design.bgPatternColor ?? "#6c63ff"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1.5px, transparent 1.5px)`,
-      grid:       `linear-gradient(${design.bgPatternColor ?? "#6c63ff"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1px, transparent 1px), linear-gradient(90deg, ${design.bgPatternColor ?? "#6c63ff"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1px, transparent 1px)`,
-      diagonal:   `repeating-linear-gradient(45deg, ${design.bgPatternColor ?? "#6c63ff"}22 0, ${design.bgPatternColor ?? "#6c63ff"}22 1px, transparent 0, transparent 50%)`,
-      zigzag:     `repeating-linear-gradient(135deg, ${design.bgPatternColor ?? "#6c63ff"}22 0, ${design.bgPatternColor ?? "#6c63ff"}22 2px, transparent 0, transparent 10px)`,
-      waves:      `repeating-radial-gradient(ellipse at 0% 50%, transparent 0%, transparent 45%, ${design.bgPatternColor ?? "#6c63ff"}22 50%, transparent 55%)`,
-      hexagon:    `radial-gradient(circle, ${design.bgPatternColor ?? "#6c63ff"}22 30%, transparent 31%)`,
-      crosshatch: `repeating-linear-gradient(45deg, ${design.bgPatternColor ?? "#6c63ff"}22 0, ${design.bgPatternColor ?? "#6c63ff"}22 1px, transparent 0, transparent 50%), repeating-linear-gradient(-45deg, ${design.bgPatternColor ?? "#6c63ff"}22 0, ${design.bgPatternColor ?? "#6c63ff"}22 1px, transparent 0, transparent 50%)`,
-      circles:    `radial-gradient(circle at 50% 50%, transparent 30%, ${design.bgPatternColor ?? "#6c63ff"}22 30%, ${design.bgPatternColor ?? "#6c63ff"}22 32%, transparent 32%)`,
+      dots:       `radial-gradient(circle, ${design.bgPatternColor ?? "var(--accent)"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1.5px, transparent 1.5px)`,
+      grid:       `linear-gradient(${design.bgPatternColor ?? "var(--accent)"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1px, transparent 1px), linear-gradient(90deg, ${design.bgPatternColor ?? "var(--accent)"}${Math.round((design.bgPatternOpacity ?? 0.15) * 255).toString(16).padStart(2,"0")} 1px, transparent 1px)`,
+      diagonal:   `repeating-linear-gradient(45deg, ${design.bgPatternColor ?? "var(--accent)"}22 0, ${design.bgPatternColor ?? "var(--accent)"}22 1px, transparent 0, transparent 50%)`,
+      zigzag:     `repeating-linear-gradient(135deg, ${design.bgPatternColor ?? "var(--accent)"}22 0, ${design.bgPatternColor ?? "var(--accent)"}22 2px, transparent 0, transparent 10px)`,
+      waves:      `repeating-radial-gradient(ellipse at 0% 50%, transparent 0%, transparent 45%, ${design.bgPatternColor ?? "var(--accent)"}22 50%, transparent 55%)`,
+      hexagon:    `radial-gradient(circle, ${design.bgPatternColor ?? "var(--accent)"}22 30%, transparent 31%)`,
+      crosshatch: `repeating-linear-gradient(45deg, ${design.bgPatternColor ?? "var(--accent)"}22 0, ${design.bgPatternColor ?? "var(--accent)"}22 1px, transparent 0, transparent 50%), repeating-linear-gradient(-45deg, ${design.bgPatternColor ?? "var(--accent)"}22 0, ${design.bgPatternColor ?? "var(--accent)"}22 1px, transparent 0, transparent 50%)`,
+      circles:    `radial-gradient(circle at 50% 50%, transparent 30%, ${design.bgPatternColor ?? "var(--accent)"}22 30%, ${design.bgPatternColor ?? "var(--accent)"}22 32%, transparent 32%)`,
     };
     style.backgroundImage = patternMap[design.bgPattern ?? "dots"] ?? patternMap.dots;
     style.backgroundSize = "24px 24px";

@@ -133,30 +133,30 @@ export function FeatureCarousel() {
   };
 
   return (
-    <section id="why" style={{ padding: "8rem 0", borderTop: "1px solid rgba(108,99,255,0.08)" }}>
+    <section id="why" style={{ padding: "8rem 0", borderTop: "1px solid var(--glass-bg)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
 
         {/* Section header */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#6c63ff", background: "rgba(108,99,255,0.07)", border: "1px solid rgba(108,99,255,0.18)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
+          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "var(--accent)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
             Why StrixMind
           </div>
-          <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "#1a1333", maxWidth: 600, margin: "0 auto 1rem" }}>
+          <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", maxWidth: 600, margin: "0 auto 1rem" }}>
             Everything your business needs, in one intelligent platform
           </h2>
-          <p style={{ fontSize: "1rem", color: "#5b5478", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
+          <p style={{ fontSize: "1rem", color: "var(--text-muted)", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
             From lead capture to deal closure, StrixMind automates every step so your team can focus on what matters most.
           </p>
         </div>
 
         {/* Carousel */}
         <div className="w-full max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-[2.5rem] lg:rounded-[3rem] flex flex-col lg:flex-row min-h-[600px] lg:aspect-video border border-[rgba(108,99,255,0.15)] shadow-[0_20px_64px_rgba(108,99,255,0.12)]">
+          <div className="relative overflow-hidden rounded-[2.5rem] lg:rounded-[3rem] flex flex-col lg:flex-row min-h-[600px] lg:aspect-video border border-[rgba(108,99,255,0.15)] shadow-[0_20px_64px_var(--border)]">
 
             {/* Left panel — feature list */}
-            <div className="w-full lg:w-[40%] min-h-[350px] md:min-h-[450px] lg:h-full relative z-30 flex flex-col items-start justify-center overflow-hidden px-8 md:px-16 lg:pl-16 bg-gradient-to-br from-[#6c63ff] to-[#4c46c4]">
-              <div className="absolute inset-x-0 top-0 h-12 md:h-20 lg:h-16 bg-gradient-to-b from-[#6c63ff] via-[#6c63ff]/80 to-transparent z-40" />
-              <div className="absolute inset-x-0 bottom-0 h-12 md:h-20 lg:h-16 bg-gradient-to-t from-[#4c46c4] via-[#4c46c4]/80 to-transparent z-40" />
+            <div className="w-full lg:w-[40%] min-h-[350px] md:min-h-[450px] lg:h-full relative z-30 flex flex-col items-start justify-center overflow-hidden px-8 md:px-16 lg:pl-16 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-deep)]">
+              <div className="absolute inset-x-0 top-0 h-12 md:h-20 lg:h-16 bg-gradient-to-b from-[var(--accent)] via-[var(--accent)]/80 to-transparent z-40" />
+              <div className="absolute inset-x-0 bottom-0 h-12 md:h-20 lg:h-16 bg-gradient-to-t from-[var(--accent-deep)] via-[var(--accent-deep)]/80 to-transparent z-40" />
 
               <div className="relative w-full h-full flex items-center justify-center lg:justify-start z-20">
                 {FEATURES.map((feature, index) => {
@@ -187,11 +187,11 @@ export function FeatureCarousel() {
                         className={cn(
                           "relative flex items-center gap-4 px-6 md:px-10 lg:px-8 py-3.5 md:py-5 lg:py-4 rounded-full transition-all duration-700 text-left group border",
                           isActive
-                            ? "bg-white text-[#6c63ff] border-white z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                            ? "bg-[var(--surface)] text-[var(--accent)] border-[var(--border)] z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
                             : "bg-transparent text-white/60 border-white/20 hover:border-white/40 hover:text-white"
                         )}
                       >
-                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[#6c63ff]" : "text-white/40")}>
+                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent)]" : "text-white/40")}>
                           <Icon size={18} strokeWidth={2} />
                         </div>
                         <span className="font-semibold text-sm md:text-[15px] tracking-tight whitespace-nowrap">
@@ -205,7 +205,7 @@ export function FeatureCarousel() {
             </div>
 
             {/* Right panel — image cards */}
-            <div className="flex-1 min-h-[500px] md:min-h-[600px] lg:h-full relative bg-[#f7f6fd] flex items-center justify-center py-16 md:py-24 lg:py-16 px-6 md:px-12 lg:px-10 overflow-hidden border-t lg:border-t-0 lg:border-l border-[rgba(108,99,255,0.12)]">
+            <div className="flex-1 min-h-[500px] md:min-h-[600px] lg:h-full relative bg-[#f7f6fd] flex items-center justify-center py-16 md:py-24 lg:py-16 px-6 md:px-12 lg:px-10 overflow-hidden border-t lg:border-t-0 lg:border-l border-[var(--border)]">
               <div className="relative w-full max-w-[420px] aspect-[4/5] flex items-center justify-center">
                 {FEATURES.map((feature, index) => {
                   const status = getCardStatus(index);
@@ -226,12 +226,14 @@ export function FeatureCarousel() {
                         pointerEvents: isActive ? "auto" : "none",
                       }}
                       transition={{ type: "spring", stiffness: 260, damping: 25, mass: 0.8 }}
-                      className="absolute inset-0 rounded-[2rem] md:rounded-[2.8rem] overflow-hidden border-4 md:border-8 border-white bg-white origin-center shadow-[0_20px_60px_rgba(108,99,255,0.15)]"
+                      className="absolute inset-0 rounded-[2rem] md:rounded-[2.8rem] overflow-hidden border-4 md:border-8 border-[var(--border)] bg-[var(--surface)] origin-center shadow-[0_20px_60px_rgba(108,99,255,0.15)]"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={feature.image}
                         alt={feature.label}
+                        loading={isActive ? "eager" : "lazy"}
+                        decoding="async"
                         className={cn(
                           "w-full h-full object-cover transition-all duration-700",
                           isActive ? "grayscale-0 blur-0" : "grayscale blur-[2px] brightness-75"
@@ -246,7 +248,7 @@ export function FeatureCarousel() {
                             exit={{ opacity: 0, y: 10 }}
                             className="absolute inset-x-0 bottom-0 p-10 pt-32 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end pointer-events-none"
                           >
-                            <div className="bg-white text-[#6c63ff] px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] w-fit shadow-lg mb-3 border border-[rgba(108,99,255,0.2)]">
+                            <div className="bg-[var(--surface)] text-[var(--accent)] px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] w-fit shadow-lg mb-3 border border-[rgba(108,99,255,0.2)]">
                               {index + 1} • {feature.label}
                             </div>
                             <p className="text-white font-semibold text-xl md:text-2xl leading-tight drop-shadow-md tracking-tight">
@@ -257,7 +259,7 @@ export function FeatureCarousel() {
                       </AnimatePresence>
 
                       <div className={cn("absolute top-8 left-8 flex items-center gap-3 transition-opacity duration-300", isActive ? "opacity-100" : "opacity-0")}>
-                        <div className="w-2 h-2 rounded-full bg-[#6c63ff] shadow-[0_0_10px_rgba(108,99,255,0.8)]" />
+                        <div className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-[0_0_10px_rgba(108,99,255,0.8)]" />
                         <span className="text-white/90 text-[10px] font-bold uppercase tracking-[0.3em] font-mono bg-black/30 px-2 py-0.5 rounded-full">
                           StrixMind
                         </span>

@@ -15,7 +15,7 @@ export default function TrustedByHomePageSection({ heading = D.heading, logos = 
   return (
     <section style={{ background: "rgba(255,255,255,0.5)", padding: "3rem 0", borderTop: "1px solid var(--divider)", borderBottom: "1px solid var(--divider)", overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
-        <div style={{ textAlign: "center", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "#9b92c0", marginBottom: "2rem" }}>
+        <div style={{ textAlign: "center", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "var(--text-dim)", marginBottom: "2rem" }}>
           {heading}
         </div>
       </div>
@@ -34,7 +34,7 @@ export default function TrustedByHomePageSection({ heading = D.heading, logos = 
           {track.map((l, i) => (
             <span
               key={`${l}-${i}`}
-              style={{ fontWeight: 800, fontSize: "1.1rem", color: "rgba(108,99,255,0.32)", letterSpacing: "-0.02em", whiteSpace: "nowrap", userSelect: "none" as const }}
+              style={{ fontWeight: 800, fontSize: "1.1rem", color: "var(--shadow-strong)", letterSpacing: "-0.02em", whiteSpace: "nowrap", userSelect: "none" as const }}
             >
               {l}
             </span>

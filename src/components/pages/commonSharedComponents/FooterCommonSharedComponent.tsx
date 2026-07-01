@@ -1,21 +1,13 @@
 /**
  * src/components/pages/commonSharedComponents/FooterCommonSharedComponent.tsx
- * ─────────────────────────────────────────────────────────────
- * FILE PURPOSE:
- *   Shared Footer rendered on all public pages.
- *   Brand column (logo + tagline + status indicator + CTA button),
- *   four link columns, social links, and copyright row.
- *
- * USED BY:   src/app/layout.tsx  →  <FooterCommonSharedComponent />
- * CMS KEY:   "global.footer"  (src/lib/cms/registry.ts)
- *
- * PROPS (all optional — fall back to CMS defaults):
- *   tagline, ctaLabel, ctaHref, statusLabel, columns, socials, bottomText
- * ─────────────────────────────────────────────────────────────
+ * Shared Footer — theme-aware (dark / light).
+ * Reads logo theme dynamically from ThemeProvider so it matches whatever
+ * the user has toggled.
  */
 "use client";
 import Link from "next/link";
 import StrixmindLogo from "@/components/ui/StrixmindLogo";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 type LinkItem = { label: string; href: string };
@@ -42,8 +34,14 @@ export default function FooterCommonSharedComponent({
   socials = DEFAULTS.socials,
   bottomText = DEFAULTS.bottomText,
 }: FooterProps) {
+  const { theme } = useTheme();
+
   return (
-    <footer className="relative pt-20 bg-gradient-to-b from-white to-surface-alt border-t border-line overflow-hidden">
+    <footer
+      className="relative pt-20 border-t border-line overflow-hidden"
+      style={{ background: "linear-gradient(180deg, var(--bg-from) 0%, var(--surface-alt) 100%)" }}
+    >
+      {/* Accent top stripe */}
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-accent via-accent-2 to-accent" />
 
       <div className="max-w-[1280px] mx-auto px-6 sm:px-8 pt-16">
@@ -51,7 +49,7 @@ export default function FooterCommonSharedComponent({
           {/* Brand column */}
           <div>
             <Link href="/" className="inline-flex items-center no-underline mb-5">
-              <StrixmindLogo size={30} variant="full" theme="light" />
+              <StrixmindLogo size={30} variant="full" theme={theme} />
             </Link>
 
             <p className="text-sm text-ink-soft leading-[1.85] mb-6 max-w-[240px]">{tagline}</p>
@@ -63,7 +61,7 @@ export default function FooterCommonSharedComponent({
 
             <Link
               href={ctaHref}
-              className="inline-flex text-sm font-bold text-white bg-gradient-to-br from-accent to-accent-2 px-6 py-2.5 rounded-full no-underline shadow-[0_8px_24px_rgba(108,99,255,0.32)] hover:shadow-[0_10px_30px_rgba(108,99,255,0.45)] hover:-translate-y-0.5 transition-all"
+              className="inline-flex text-sm font-bold text-white bg-gradient-to-br from-accent to-accent-2 px-6 py-2.5 rounded-full no-underline shadow-[0_8px_24px_var(--shadow-strong)] hover:shadow-[0_10px_30px_var(--shadow-strong)] hover:-translate-y-0.5 transition-all"
             >
               {ctaLabel}
             </Link>

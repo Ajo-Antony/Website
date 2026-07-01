@@ -7,7 +7,7 @@ import { updateContent, resetContent, uploadContentImage } from "@/lib/actions/c
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 
 const inputCls =
-  "w-full px-3.5 py-2.5 border border-line rounded-xl text-sm text-ink bg-white focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors";
+  "w-full px-3.5 py-2.5 border border-line rounded-xl text-sm text-ink bg-[var(--surface)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors";
 const labelCls = "block text-xs font-semibold text-ink-soft mb-1.5";
 
 // ── Leaf field types ────────────────────────────────────────────────────
@@ -306,7 +306,7 @@ export default function ContentForm({ schema, initialValue }: { schema: SectionS
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-line p-6 sm:p-8 max-w-2xl">
+    <div className="bg-[var(--surface)] rounded-2xl border border-line p-6 sm:p-8 max-w-2xl">
       {status && (
         <div
           className={`mb-5 text-sm rounded-lg px-4 py-3 border ${

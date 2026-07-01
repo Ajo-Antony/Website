@@ -34,7 +34,7 @@ export default async function AdminProjectsListPage() {
       {projects.length === 0 ? (
         <p className="text-sm text-gray-500">No projects yet — add your first one.</p>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100">
+        <div className="bg-[var(--surface)] rounded-2xl border border-gray-200 divide-y divide-gray-100">
           {projects.map((p) => (
             <div key={p.id} className="flex items-center justify-between px-6 py-4">
               <div className="min-w-0">

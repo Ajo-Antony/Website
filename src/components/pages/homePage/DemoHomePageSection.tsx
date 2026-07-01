@@ -82,7 +82,7 @@ export default function DemoHomePageSection() {
         </div>
 
         {/* Right: platform preview card */}
-        <div style={{ background: "#fff", borderRadius: 28, padding: "2rem", boxShadow: "0 24px 80px rgba(0,99,229,0.12)", border: "1.5px solid #E5E7EB", position: "relative" as const, overflow: "hidden" }}>
+        <div style={{ background: "var(--surface)", borderRadius: 28, padding: "2rem", boxShadow: "0 24px 80px rgba(0,99,229,0.12)", border: "1.5px solid #E5E7EB", position: "relative" as const, overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg, #0063E5, #6aabff)" }} />
 
           {/* Header row */}

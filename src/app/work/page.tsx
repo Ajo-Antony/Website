@@ -169,7 +169,7 @@ export default async function WorkHubPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {latestPosts.map((post) => (
-                <Link key={post.id} href={`/work/blog/${post.slug}`} className="bg-white rounded-2xl p-6 border border-work-line hover:border-accent/40 transition-colors">
+                <Link key={post.id} href={`/work/blog/${post.slug}`} className="bg-[var(--surface)] rounded-2xl p-6 border border-work-line hover:border-accent/40 transition-colors">
                   <h3 className="font-bold text-work-dark mb-2 leading-snug">{post.title}</h3>
                   {post.excerpt && <p className="text-sm text-gray-500 leading-relaxed">{post.excerpt}</p>}
                 </Link>

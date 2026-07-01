@@ -82,7 +82,7 @@ export function StrixmindWordmark({
   const grad0 = `strixmind-wm-grad0-${uid}`;
   const grad1 = `strixmind-wm-grad1-${uid}`;
   const clipId = `strixmind-wm-clip-${uid}`;
-  const color = theme === "dark" ? "#FFFFFF" : "#1a1333";
+  const color = theme === "dark" ? "#FFFFFF" : "var(--text)";
   const width = (524 / 115) * height;
 
   return (
@@ -117,7 +117,7 @@ export function StrixmindWordmark({
           <stop offset="1" stopColor="#0063E5" />
         </linearGradient>
         <clipPath id={clipId}>
-          <rect width="473" height="85" fill="white" transform="translate(25 15)" />
+          <rect width="473" height="85" fill="var(--surface)" transform="translate(25 15)" />
         </clipPath>
       </defs>
     </svg>

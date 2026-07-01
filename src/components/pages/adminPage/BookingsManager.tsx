@@ -85,7 +85,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
 
   if (bookings.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 p-12 text-center">
         <p className="text-gray-500 text-sm">No bookings yet. They'll show up here as soon as someone books a demo.</p>
       </div>
     );
@@ -101,7 +101,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors capitalize ${
               filter === opt
                 ? "bg-ink text-white border-ink"
-                : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                : "bg-[var(--surface)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)]"
             }`}
           >
             {opt}
@@ -114,7 +114,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
+      <div className="bg-[var(--surface)] rounded-2xl border border-gray-100 overflow-x-auto">
         <table className="w-full min-w-[860px]">
           <thead>
             <tr className="border-b border-gray-100 text-left">

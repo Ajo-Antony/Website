@@ -37,7 +37,7 @@ export default function GalleryManager({ images }: { images: GalleryImage[] }) {
       <form
         ref={formRef}
         action={handleSubmit}
-        className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-wrap items-end gap-4 mb-8"
+        className="bg-[var(--surface)] rounded-2xl border border-gray-200 p-6 flex flex-wrap items-end gap-4 mb-8"
       >
         <div className="flex-1 min-w-[220px]">
           <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
