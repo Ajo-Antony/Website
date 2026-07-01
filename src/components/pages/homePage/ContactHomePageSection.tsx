@@ -47,7 +47,7 @@ export default function ContactHomePageSection({
   };
 
   return (
-    <section id="contact" style={{ background: "#F4F2FE", borderTop: "1px solid var(--divider)" }} className="py-20 sm:py-28">
+    <section id="contact" style={{ background: "var(--surface-alt)", borderTop: "1px solid var(--divider)" }} className="py-20 sm:py-28">
       <div style={{ maxWidth: 1280, margin: "0 auto" }} className="px-5 sm:px-8">
 
         <div style={{ textAlign: "center", marginBottom: "4.5rem" }}>

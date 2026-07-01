@@ -19,7 +19,7 @@
  */
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
@@ -86,6 +86,33 @@ export const PremiumHero = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rafRef     = useRef<number>(0);
   const mouseRef   = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 });
+
+  /* ── Side-arrow section navigation ──
+   * Walks through the homepage's main sections in order. The arrows
+   * scroll to the next/previous section instead of doing nothing,
+   * and each button's title/aria-label names the destination so
+   * it's clear where the click will take you. */
+  const SECTIONS: { id: string; label: string }[] = [
+    { id: "services",     label: "Features & Services" },
+    { id: "why",          label: "How it works" },
+    { id: "testimonials", label: "Customer stories" },
+    { id: "faq",          label: "FAQ" },
+    { id: "contact",      label: "Get in touch" },
+  ];
+  const [sectionIndex, setSectionIndex] = useState(-1); // -1 = hero itself
+
+  const goToSection = (dir: 1 | -1) => {
+    const nextIndex = Math.min(Math.max(sectionIndex + dir, -1), SECTIONS.length - 1);
+    setSectionIndex(nextIndex);
+    if (nextIndex === -1) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    document.getElementById(SECTIONS[nextIndex].id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const prevLabel = sectionIndex <= -1 ? "You're at the top" : sectionIndex === 0 ? "Back to top" : SECTIONS[sectionIndex - 1].label;
+  const nextLabel = sectionIndex >= SECTIONS.length - 1 ? "You're at the end" : SECTIONS[sectionIndex + 1].label;
 
   useEffect(() => {
     const canvas  = canvasRef.current;
@@ -347,9 +374,13 @@ export const PremiumHero = ({
         </div>
       </div>
 
-      {/* Side nav arrows */}
+      {/* Side nav arrows — walk through the homepage sections */}
       <button
-        aria-label="Previous"
+        type="button"
+        aria-label={`Previous: ${prevLabel}`}
+        title={prevLabel}
+        onClick={() => goToSection(-1)}
+        disabled={sectionIndex <= -1}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
         style={{
           background: "rgba(20,20,20,0.55)",
@@ -357,12 +388,18 @@ export const PremiumHero = ({
           backdropFilter: "blur(6px)",
           color: "#fff",
           fontSize: 20,
+          opacity: sectionIndex <= -1 ? 0.4 : 1,
+          cursor: sectionIndex <= -1 ? "default" : "pointer",
         }}
       >
         ‹
       </button>
       <button
-        aria-label="Next"
+        type="button"
+        aria-label={`Next: ${nextLabel}`}
+        title={nextLabel}
+        onClick={() => goToSection(1)}
+        disabled={sectionIndex >= SECTIONS.length - 1}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
         style={{
           background: "rgba(20,20,20,0.55)",
@@ -370,6 +407,8 @@ export const PremiumHero = ({
           backdropFilter: "blur(6px)",
           color: "#fff",
           fontSize: 20,
+          opacity: sectionIndex >= SECTIONS.length - 1 ? 0.4 : 1,
+          cursor: sectionIndex >= SECTIONS.length - 1 ? "default" : "pointer",
         }}
       >
         ›
