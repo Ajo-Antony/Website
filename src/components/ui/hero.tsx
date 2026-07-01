@@ -196,7 +196,7 @@ export const PremiumHero = ({
             transition={{ duration: 0.6, delay: 0.1 }}
             className="max-w-3xl text-[2.5rem] leading-[1.1] font-extrabold tracking-tight sm:text-5xl sm:leading-[1.08] sm:tracking-tighter md:text-7xl md:leading-[1.05]"
           >
-            <span {className="text-[var(--text)]"}>{headline} </span>
+            <span className="text-[var(--text)]">{headline} </span>
             <span className="bg-gradient-to-r from-[var(--accent-2)] via-[#8b7ffc] to-[var(--accent)] bg-clip-text text-transparent">
               {highlight}
             </span>
