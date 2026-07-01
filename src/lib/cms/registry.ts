@@ -551,12 +551,12 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   },
   "home.team": {
     eyebrow: "The team",
-    heading: "Built by people who\nobsess over your growth.",
+    heading: "Meet the builders.",
     members: [
-      { initials: "AK", name: "Antony Kuriakose", role: "Founder & CEO", bio: "AI systems architect with 10+ years in enterprise automation.", photo: "" },
-      { initials: "PS", name: "Priya Suresh", role: "Head of Product", bio: "Previously built growth tooling at Razorpay and Freshworks.", photo: "" },
-      { initials: "RK", name: "Rahul Krishnan", role: "Lead Engineer", bio: "Full-stack engineer specialising in AI inference pipelines.", photo: "" },
-      { initials: "AM", name: "Arjun Menon", role: "Head of Growth", bio: "Scaled 3 SaaS companies from zero to ₹10Cr ARR.", photo: "" },
+      { initials: "AS", name: "Antony Sebastian", role: "CEO & CTO", bio: "Automation Specialist", photo: "" },
+      { initials: "PS", name: "Mebin Abraham", role: "CFO", bio: "Financial strategist", photo: "" },
+      { initials: "AB", name: "Ashwin Baburaj", role: "Marketing Strategist & Designer", bio: "Social Media Handler", photo: "" },
+      { initials: "SS", name: "Sachin S Thomas", role: "Sales Executive", bio: "Lead Conversion Engineer", photo: "" },
     ],
   },
   "home.brand": {
@@ -649,10 +649,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     eyebrow: "The team",
     heading: "Meet the builders.",
     members: [
-      { initials: "AK", name: "Antony Kuriakose", role: "Founder & CEO", bio: "AI systems architect with 10+ years in enterprise automation.", photo: "" },
-      { initials: "PS", name: "Priya Suresh", role: "Head of Product", bio: "Previously built growth tooling at Razorpay and Freshworks.", photo: "" },
-      { initials: "RK", name: "Rahul Krishnan", role: "Lead Engineer", bio: "Full-stack engineer specialising in AI inference pipelines.", photo: "" },
-      { initials: "AM", name: "Arjun Menon", role: "Head of Growth", bio: "Scaled 3 SaaS companies from zero to ₹10Cr ARR.", photo: "" },
+      { initials: "AS", name: "Antony Sebastian", role: "CEO & CTO", bio: "Automation Specialist", photo: "" },
+      { initials: "PS", name: "Mebin Abraham", role: "CFO", bio: "Financial strategist", photo: "" },
+      { initials: "AB", name: "Ashwin Baburaj", role: "Marketing Strategist & Designer", bio: "Social Media Handler", photo: "" },
+      { initials: "SS", name: "Sachin S Thomas", role: "Sales Executive", bio: "Lead Conversion Engineer", photo: "" },
     ],
   },
 
