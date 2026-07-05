@@ -378,16 +378,29 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                 aria-label={`Go to slide ${i + 1}`}
                 aria-selected={i === slideIndex}
                 onClick={() => goTo(i, i > slideIndex ? 1 : -1)}
-                className="rounded-full transition-all duration-200"
+                className="flex items-center justify-center"
                 style={{
-                  width: i === slideIndex ? 22 : 8,
-                  height: 8,
-                  background: i === slideIndex ? "#fff" : "rgba(255,255,255,0.35)",
+                  width: 24,
+                  height: 24,
+                  background: "transparent",
                   border: "none",
                   cursor: "pointer",
                   padding: 0,
                 }}
-              />
+              >
+                {/* Visual pill — sits centered inside the larger invisible
+                    hit area above, so the touch target meets the ~24px
+                    minimum without changing how the dots look. */}
+                <span
+                  aria-hidden
+                  className="rounded-full transition-all duration-200 block"
+                  style={{
+                    width: i === slideIndex ? 22 : 8,
+                    height: 8,
+                    background: i === slideIndex ? "#fff" : "rgba(255,255,255,0.35)",
+                  }}
+                />
+              </button>
             ))}
           </div>
         )}

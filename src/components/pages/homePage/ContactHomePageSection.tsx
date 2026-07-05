@@ -129,7 +129,7 @@ export default function ContactHomePageSection({
                   <input style={inputBase} type="text" placeholder="Company name" value={form.company}
                     onChange={e => setForm({ ...form, company: e.target.value })}
                     onFocus={handleFocus} onBlur={handleBlur} />
-                  <select style={{ ...inputBase, cursor: "pointer" }} value={form.size}
+                  <select aria-label="Team size" style={{ ...inputBase, cursor: "pointer" }} value={form.size}
                     onChange={e => setForm({ ...form, size: e.target.value })}
                     onFocus={handleFocus} onBlur={handleBlur}>
                     <option value="">Team size</option>
