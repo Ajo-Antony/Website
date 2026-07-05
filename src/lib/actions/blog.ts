@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { slugify } from "@/lib/slugify";
+import { submitToIndexNow } from "@/lib/indexnow";
+
+const SITE_URL = "https://www.strixmind.com";
 
 async function uploadCoverIfProvided(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -51,6 +54,12 @@ export async function createBlogPost(formData: FormData) {
 
   revalidatePath("/admin/blog");
   revalidatePath("/work/blog");
+
+  if (published) {
+    const slug = slugInput ? slugify(slugInput) : slugify(title);
+    submitToIndexNow([`${SITE_URL}/work/blog`, `${SITE_URL}/work/blog/${slug}`]);
+  }
+
   redirect("/admin/blog");
 }
 
@@ -87,6 +96,12 @@ export async function updateBlogPost(id: string, formData: FormData) {
 
   revalidatePath("/admin/blog");
   revalidatePath("/work/blog");
+
+  if (published) {
+    const slug = slugInput ? slugify(slugInput) : slugify(title);
+    submitToIndexNow([`${SITE_URL}/work/blog`, `${SITE_URL}/work/blog/${slug}`]);
+  }
+
   redirect("/admin/blog");
 }
 

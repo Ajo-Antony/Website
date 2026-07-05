@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { slugify, parseResultLines } from "@/lib/slugify";
+import { submitToIndexNow } from "@/lib/indexnow";
+
+const SITE_URL = "https://www.strixmind.com";
 
 async function uploadCoverIfProvided(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -75,6 +78,12 @@ export async function createProject(formData: FormData) {
   revalidatePath("/admin/projects");
   revalidatePath("/work/projects");
   revalidatePath("/work");
+
+  if (f.published) {
+    const slug = f.slugInput ? slugify(f.slugInput) : slugify(f.title);
+    submitToIndexNow([`${SITE_URL}/work/projects`, `${SITE_URL}/work/projects/${slug}`, `${SITE_URL}/work`]);
+  }
+
   redirect("/admin/projects");
 }
 
@@ -115,6 +124,12 @@ export async function updateProject(id: string, formData: FormData) {
   revalidatePath("/admin/projects");
   revalidatePath("/work/projects");
   revalidatePath("/work");
+
+  if (f.published) {
+    const slug = f.slugInput ? slugify(f.slugInput) : slugify(f.title);
+    submitToIndexNow([`${SITE_URL}/work/projects`, `${SITE_URL}/work/projects/${slug}`, `${SITE_URL}/work`]);
+  }
+
   redirect("/admin/projects");
 }
 
