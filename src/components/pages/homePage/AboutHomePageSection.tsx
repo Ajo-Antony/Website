@@ -22,7 +22,7 @@ export default function AboutHomePageSection({
     <section style={{ borderTop: "1px solid var(--glass-bg)" }} className="py-20 md:py-32">
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10 md:gap-20" style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.25rem" }}>
         <div>
-          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Our story</div>
+          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Our story</div>
           <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", marginBottom: "1.5rem", whiteSpace: "pre-line" }}>
             {heading}
           </h2>
@@ -53,7 +53,7 @@ export default function AboutHomePageSection({
                 }} />
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.7rem", fontWeight: 700, color: "var(--accent)", marginBottom: "0.25rem", letterSpacing: "0.06em" }}>{item.year}</div>
+                <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.7rem", fontWeight: 700, color: "var(--accent-deep)", marginBottom: "0.25rem", letterSpacing: "0.06em" }}>{item.year}</div>
                 <div style={{ fontSize: "0.9rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.6 }}>{item.text}</div>
               </div>
             </div>

@@ -57,7 +57,7 @@ export default function UnderTheHoodHomePageSection({
                 <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text)", marginBottom: "0.4rem", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
                   {engine.title}
                 </h3>
-                <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--accent)", marginBottom: "0.9rem" }}>
+                <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--accent-deep)", marginBottom: "0.9rem" }}>
                   {engine.tagline}
                 </div>
                 <p style={{ fontSize: "0.92rem", color: "var(--text-muted)", lineHeight: 1.8 }}>

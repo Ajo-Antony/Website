@@ -44,7 +44,7 @@ export default function CtaBannerHomePageSection({
         </p>
 
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" as const }}>
-          <Link href={primaryCtaHref} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent)", background: "var(--surface)", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.18)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+          <Link href={primaryCtaHref} style={{ fontSize: "1rem", fontWeight: 700, color: "var(--accent-deep)", background: "var(--surface)", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none", boxShadow: "0 12px 36px rgba(0,0,0,0.18)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
             {primaryCtaLabel}
           </Link>
           <Link href={secondaryCtaHref} style={{ fontSize: "1rem", fontWeight: 600, color: "#fff", background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.4)", padding: "1rem 2.75rem", borderRadius: 100, textDecoration: "none" }}>

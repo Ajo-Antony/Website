@@ -28,6 +28,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.0",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.14",
     "lucide-react": "^1.21.0",
     "marked": "^18.0.5",
     "next": "^15.5.0",

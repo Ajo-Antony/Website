@@ -89,7 +89,7 @@ export default function BrandIdentitySection({
         {/* Symbolism + concept + palette */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: "2rem", marginBottom: "2rem" }}>
           <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.75rem", border: "1.5px solid var(--divider)" }}>
-            <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1rem" }}>Abstract Logo</div>
+            <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "1rem" }}>Abstract Logo</div>
             <h3 data-strix-slide-up style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text)", marginBottom: "0.75rem", letterSpacing: "-0.025em" }}>Connected Intelligence</h3>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.8, marginBottom: "2rem" }}>
               {conceptParagraph1}
@@ -105,14 +105,14 @@ export default function BrandIdentitySection({
 
           <div style={{ display: "flex", flexDirection: "column" as const, gap: "1.5rem" }}>
             <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid var(--divider)", flex: 1 }}>
-              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1rem" }}>Design Concept</div>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "1rem" }}>Design Concept</div>
               <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.85 }}>
                 {conceptParagraph2}
               </p>
             </div>
 
             <div style={{ background: "var(--surface)", borderRadius: 24, padding: "2.25rem", border: "1.5px solid var(--divider)" }}>
-              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "1.25rem" }}>Brand Colours</div>
+              <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "1.25rem" }}>Brand Colours</div>
               <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
                 {colors.map(c => (
                   <div key={c.hex} style={{ flex: 1 }}>

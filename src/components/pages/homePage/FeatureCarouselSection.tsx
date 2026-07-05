@@ -130,7 +130,7 @@ export function FeatureCarousel() {
 
         {/* Section header */}
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "var(--accent)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
+          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
             Why StrixMind
           </div>
           <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", maxWidth: 600, margin: "0 auto 1rem" }}>
@@ -183,11 +183,11 @@ export function FeatureCarousel() {
                         className={cn(
                           "relative flex items-center gap-4 px-6 md:px-10 lg:px-8 py-3.5 md:py-5 lg:py-4 rounded-full transition-all duration-700 text-left group border",
                           isActive
-                            ? "bg-[var(--surface)] text-[var(--accent)] border-[var(--border)] z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                            ? "bg-[var(--surface)] text-[var(--accent-deep)] border-[var(--border)] z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
                             : "bg-transparent text-white/70 border-white/20 hover:border-white/40 hover:text-white"
                         )}
                       >
-                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent)]" : "text-white/55")}>
+                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent-deep)]" : "text-white/55")}>
                           <Icon size={18} strokeWidth={2} />
                         </div>
                         <span className="font-semibold text-sm md:text-[15px] tracking-tight whitespace-nowrap">
@@ -242,7 +242,7 @@ export function FeatureCarousel() {
                             exit={{ opacity: 0, y: 10 }}
                             className="absolute inset-x-0 bottom-0 p-10 pt-32 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end pointer-events-none"
                           >
-                            <div className="bg-[var(--surface)] text-[var(--accent)] px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] w-fit shadow-lg mb-3 border border-[rgba(108,99,255,0.2)]">
+                            <div className="bg-[var(--surface)] text-[var(--accent-deep)] px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] w-fit shadow-lg mb-3 border border-[rgba(108,99,255,0.2)]">
                               {index + 1} • {feature.label}
                             </div>
                             <p className="text-white font-semibold text-xl md:text-2xl leading-tight drop-shadow-md tracking-tight">

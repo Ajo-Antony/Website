@@ -219,16 +219,49 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
     wrapper.addEventListener("mousemove", onMouse);
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) {
-      draw(0);
+
+    // Draw one static frame immediately (so the hero background isn't blank),
+    // then hand the *continuous* animation loop off to requestIdleCallback.
+    // Starting the forever-running rAF loop synchronously inside this effect
+    // means it competes with React's hydration work and any other mount-time
+    // scripts for the same main-thread slice, right when the browser is
+    // trying to finish painting and become interactive. Pushing the loop's
+    // first tick to idle time keeps the animation just as smooth (it's a
+    // slow ambient background, a few ms of delay is imperceptible) while
+    // giving hydration/paint priority.
+    draw(0);
+    let idleHandle: number | null = null;
+    const startLoop = () => {
+      if (!prefersReduced) rafRef.current = requestAnimationFrame(draw);
+    };
+    if ("requestIdleCallback" in window) {
+      idleHandle = (window as any).requestIdleCallback(startLoop, { timeout: 500 });
     } else {
-      rafRef.current = requestAnimationFrame(draw);
+      idleHandle = (window as any).setTimeout(startLoop, 0);
     }
+
+    // Pause the loop entirely while the tab isn't visible — an always-on
+    // background tab doing radial-gradient math dozens of times a second
+    // for no one to see is pure wasted CPU/battery.
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafRef.current);
+      } else if (!prefersReduced) {
+        lastFrameRef.current = 0;
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
+      if (idleHandle !== null) {
+        if ("cancelIdleCallback" in window) (window as any).cancelIdleCallback(idleHandle);
+        else clearTimeout(idleHandle);
+      }
       window.removeEventListener("resize", resize);
       wrapper.removeEventListener("mousemove", onMouse);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 

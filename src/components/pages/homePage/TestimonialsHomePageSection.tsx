@@ -168,7 +168,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
           </p>
           <button
             onClick={() => { setOpen(false); setDone(false); setName(""); setRole(""); setCompany(""); setQuote(""); setStars(5); }}
-            style={{ marginTop: "1.5rem", background: "var(--glass-bg)", color: "var(--accent)", border: "none", borderRadius: 100, padding: "0.6rem 1.5rem", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
+            style={{ marginTop: "1.5rem", background: "var(--glass-bg)", color: "var(--accent-deep)", border: "none", borderRadius: 100, padding: "0.6rem 1.5rem", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
           >
             Write another review
           </button>
@@ -178,7 +178,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
           {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
             <div>
-              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "0.35rem" }}>Share your experience</div>
+              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "0.35rem" }}>Share your experience</div>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--text)", margin: 0 }}>Write a Review</h3>
             </div>
             <button

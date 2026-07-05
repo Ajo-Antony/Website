@@ -27,7 +27,7 @@ export default function GalleryHomePageSection() {
     <section id="gallery" style={{ padding: "8rem 0", borderTop: "1px solid var(--glass-bg)" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
         <div style={{ marginBottom: "3.5rem" }}>
-          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Platform</div>
+          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Platform</div>
           <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)" }}>
             See it in action.
           </h2>

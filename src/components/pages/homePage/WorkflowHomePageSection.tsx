@@ -52,7 +52,7 @@ export default function WorkflowHomePageSection({
                 <Icon size={32} color={i === 0 ? "#fff" : "var(--accent)"} strokeWidth={1.6} />
               </div>
 
-              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "0.6rem" }}>
+              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "0.6rem" }}>
                 Step {String(i + 1).padStart(2, "0")}
               </div>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "var(--text)", marginBottom: "0.75rem", letterSpacing: "-0.025em", lineHeight: 1.2 }}>

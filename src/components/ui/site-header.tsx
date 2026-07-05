@@ -117,7 +117,7 @@ export function SiteHeader({
 									<div className="p-2">
 										<p className="text-[var(--text-muted)] text-sm">
 											Interested?{' '}
-											<a href="#contact" className="text-[var(--accent)] font-medium hover:underline">
+											<a href="#contact" className="text-[var(--accent-deep)] font-medium hover:underline">
 												Schedule a demo
 											</a>
 										</p>
@@ -144,7 +144,7 @@ export function SiteHeader({
 														href={item.href}
 														className="flex p-2 hover:bg-[var(--glass-bg)] flex-row rounded-lg items-center gap-x-2 transition-colors"
 													>
-														<item.icon className="text-[var(--accent)] size-4" />
+														<item.icon className="text-[var(--accent-deep)] size-4" />
 														<span className="font-medium text-sm text-[var(--text)]">{item.title}</span>
 													</NavigationMenuLink>
 												</li>
@@ -282,7 +282,7 @@ function ListItem({
 		>
 			<a href={href}>
 				<div className="bg-[var(--glass-bg)] flex aspect-square size-11 items-center justify-center rounded-lg border border-[var(--border)] shadow-sm flex-shrink-0">
-					<Icon className="text-[var(--accent)] size-5" />
+					<Icon className="text-[var(--accent-deep)] size-5" />
 				</div>
 				<div className="flex flex-col items-start justify-center">
 					<span className="font-semibold text-sm text-[var(--text)]">{title}</span>

@@ -49,7 +49,7 @@ export default function PricingHomePageSection({
                 </div>
               )}
 
-              <div style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "var(--accent)", marginBottom: "0.75rem" }}>{plan.name}</div>
+              <div style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "var(--accent-deep)", marginBottom: "0.75rem" }}>{plan.name}</div>
 
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.3rem", marginBottom: "0.4rem" }}>
                 <span style={{ fontSize: "2.75rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.04em", lineHeight: 1 }}>{plan.price}</span>
@@ -92,7 +92,7 @@ export default function PricingHomePageSection({
         </div>
 
         <p style={{ textAlign: "center", marginTop: "2.5rem", fontSize: "0.85rem", color: "var(--text-dim)" }}>
-          {note} <Link href="/#contact" style={{ color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>Talk to sales →</Link>
+          {note} <Link href="/#contact" style={{ color: "var(--accent-deep)", fontWeight: 600, textDecoration: "none" }}>Talk to sales →</Link>
         </p>
       </div>
     </section>

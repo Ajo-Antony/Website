@@ -25,33 +25,49 @@
 "use client";
 import { useEffect } from "react";
 
-declare global {
-  interface Window {
-    gsap: any;
-    ScrollTrigger: any;
-    Lenis: any;
-  }
+// ── Lightweight line splitter (no GSAP Club needed) ──────────────────────────
+// PERF NOTE: `el.innerText` forces a synchronous layout (it has to compute
+// rendered line boxes to know what's actually visible). Calling this and
+// then immediately writing to the DOM (el.innerHTML = "") for one element
+// at a time, in a loop across many headings, is textbook layout-thrashing —
+// each iteration invalidates the layout the next iteration's read has to
+// recompute. Lighthouse flags this as "Forced reflow". splitLines() now
+// only does the (unavoidable) layout read; all callers batch every read
+// across every matched element first, then perform every DOM write
+// afterwards — see batchSplitLines().
+function splitLines(el: HTMLElement): string[] {
+  return el.innerText.split(" ");
 }
 
-// ── Lightweight line splitter (no GSAP Club needed) ──────────────────────────
-function splitLines(el: HTMLElement): HTMLElement[] {
-  const text = el.innerText;
+function renderSplitWords(el: HTMLElement, wordList: string[]): HTMLElement[] {
   el.innerHTML = "";
-  const words = text.split(" ").map(word => {
+  const frag = document.createDocumentFragment();
+  const words = wordList.map(word => {
     const span = document.createElement("span");
-    span.textContent = word + " ";
     span.style.display = "inline-block";
     span.style.overflow = "hidden";
     span.style.verticalAlign = "bottom";
     const inner = document.createElement("span");
     inner.textContent = word + " ";
     inner.style.display = "inline-block";
-    span.innerHTML = "";
     span.appendChild(inner);
-    el.appendChild(span);
+    frag.appendChild(span);
     return inner;
   });
+  el.appendChild(frag);
   return words;
+}
+
+// Reads every element's text (layout reads only) before writing anything
+// back to the DOM, so the browser does one layout pass for the reads and
+// one for the writes instead of alternating read/write/read/write.
+function batchSplitLines(elements: HTMLElement[]): Map<HTMLElement, HTMLElement[]> {
+  const texts = elements.map(el => splitLines(el)); // all reads first
+  const result = new Map<HTMLElement, HTMLElement[]>();
+  elements.forEach((el, i) => {
+    result.set(el, renderSplitWords(el, texts[i])); // all writes after
+  });
+  return result;
 }
 
 // ── Reveal-all safety net ─────────────────────────────────────────────────
@@ -85,12 +101,11 @@ function revealAllStrixAnimatedElements() {
 
 export function useGsapAnimations() {
   useEffect(() => {
-    const ready = () => window.gsap && window.ScrollTrigger && window.Lenis;
+    let cancelled = false;
+    let cleanupScrollTrigger: (() => void) | null = null;
 
-    const run = () => {
-      const gsap = window.gsap;
-      const ScrollTrigger = window.ScrollTrigger;
-      const Lenis = window.Lenis;
+    const run = (gsap: any, ScrollTrigger: any, Lenis: any) => {
+      if (cancelled) return;
 
       gsap.registerPlugin(ScrollTrigger);
 
@@ -131,11 +146,22 @@ export function useGsapAnimations() {
         });
       }
 
-      // ── 4. Hero: stagger-in headline words ─────────────────────────────────
+      // ── 4 & 6. Split-word headlines (hero + section slide-ups) ─────────────
+      // Both used to call splitLines() one element at a time inside their own
+      // loop, each call reading layout (el.innerText) then immediately writing
+      // (el.innerHTML = "") before moving to the next element — alternating
+      // read/write/read/write across every heading on the page forces the
+      // browser to re-run layout on every iteration. Collecting every
+      // matching element first and running batchSplitLines() once does all
+      // the reads together, then all the writes together, cutting this down
+      // to two layout passes total instead of one per heading.
       const heroHeadline = document.querySelector<HTMLElement>("[data-strix-hero-headline]");
+      const slideUpEls = Array.from(document.querySelectorAll<HTMLElement>("[data-strix-slide-up]"));
+      const splitTargets = heroHeadline ? [heroHeadline, ...slideUpEls] : slideUpEls;
+      const splitResults = batchSplitLines(splitTargets);
+
       if (heroHeadline) {
-        const words = splitLines(heroHeadline);
-        gsap.fromTo(words,
+        gsap.fromTo(splitResults.get(heroHeadline),
           { y: "110%", opacity: 0 },
           { y: "0%", opacity: 1, duration: 1.1, ease: "power3.out", stagger: 0.06, delay: 0.3 }
         );
@@ -160,9 +186,8 @@ export function useGsapAnimations() {
       );
 
       // ── 6. Section headlines: slide-up on scroll ───────────────────────────
-      document.querySelectorAll<HTMLElement>("[data-strix-slide-up]").forEach(el => {
-        const words = splitLines(el);
-        gsap.fromTo(words,
+      slideUpEls.forEach(el => {
+        gsap.fromTo(splitResults.get(el),
           { y: "105%", opacity: 0 },
           {
             y: "0%", opacity: 1, duration: 0.9, ease: "power3.out", stagger: 0.04,
@@ -265,23 +290,38 @@ export function useGsapAnimations() {
 
       // ── 15. Dark section: reveal background panel (floating card) ──────────
       document.querySelectorAll<HTMLElement>("[data-strix-panel-reveal]").forEach(el => {
+        el.style.borderRadius = "1.5rem"; // final radius set once, not animated
         gsap.fromTo(el,
-          { y: 60, opacity: 0, borderRadius: "3rem" },
+          { y: 60, opacity: 0 },
           {
-            y: 0, opacity: 1, borderRadius: "1.5rem", duration: 1, ease: "power3.out",
+            // NOTE: previously animated `borderRadius` from 3rem to 1.5rem
+            // here. border-radius can't be composited — the browser has to
+            // repaint the element on every scroll tick this scrollTrigger
+            // fires on, which Lighthouse flags as a "non-composited
+            // animation". The radius is now set to its final value up
+            // front (a one-time, non-animated paint) and only y/opacity/
+            // scale — all compositable — actually animate, which reads as
+            // the same "settling into place" reveal.
+            y: 0, opacity: 1, duration: 1, ease: "power3.out",
             scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" },
           }
         );
       });
 
       // ── 16. Sticky catchphrase: word-by-word colour reveal ─────────────────
+      // NOTE: previously animated the `color` property directly, which (like
+      // border-radius) forces a main-thread repaint on every scroll tick for
+      // as long as the user is scrolling through this section. Animating
+      // `opacity` of the same white text instead produces the same
+      // dim-to-bright reveal but runs entirely on the compositor thread.
       document.querySelectorAll<HTMLElement>("[data-strix-catchphrase]").forEach(container => {
         const words = Array.from(container.querySelectorAll<HTMLElement>("[data-strix-catch-word]"));
         if (!words.length) return;
+        words.forEach(w => { w.style.color = "#fff"; });
         gsap.fromTo(words,
-          { color: "rgba(255,255,255,0.15)" },
+          { opacity: 0.15 },
           {
-            color: "rgba(255,255,255,1)",
+            opacity: 1,
             stagger: 0.04,
             ease: "none",
             scrollTrigger: {
@@ -375,47 +415,55 @@ export function useGsapAnimations() {
       // causing an already-passed trigger to never fire. Re-measure once
       // everything has actually finished loading, and once more shortly
       // after (covers webfont swap + late CMS images).
-      window.addEventListener("load", () => ScrollTrigger.refresh());
-      setTimeout(() => ScrollTrigger.refresh(), 1200);
-
-      // ── 20. Hard safety net ──────────────────────────────────────────────
-      // No matter what caused it — blocked CDN, a mistimed refresh, a
-      // ScrollTrigger start point that never gets crossed — no heading or
-      // paragraph should stay invisible forever. Force-reveal anything
-      // still sitting at opacity 0 a few seconds after mount.
-      setTimeout(revealAllStrixAnimatedElements, 3500);
+      const onLoad = () => ScrollTrigger.refresh();
+      window.addEventListener("load", onLoad);
+      const refreshTimeout = setTimeout(() => ScrollTrigger.refresh(), 1200);
 
       ScrollTrigger.refresh();
+      cleanupScrollTrigger = () => {
+        window.removeEventListener("load", onLoad);
+        clearTimeout(refreshTimeout);
+        ScrollTrigger.getAll().forEach((t: any) => t.kill());
+      };
     };
 
-    // Poll until GSAP is available (loaded via Script tags)
-    let attempts = 0;
-    const poll = setInterval(() => {
-      attempts++;
-      if (ready()) {
-        clearInterval(poll);
-        // Defer the actual setup to idle time. `run()` touches every
-        // animated element on the page in one synchronous pass (splitLines
-        // DOM rewrites + a ScrollTrigger.create per element, each forcing a
-        // layout read). Firing it immediately makes it count as main-thread
-        // blocking time during page load. requestIdleCallback pushes it
-        // past first paint / interactivity instead. setTimeout is the
-        // fallback for Safari, which has no requestIdleCallback.
-        if ("requestIdleCallback" in window) {
-          (window as any).requestIdleCallback(run, { timeout: 1000 });
-        } else {
-          setTimeout(run, 0);
-        }
-      }
-      if (attempts > 50) {
-        // GSAP/ScrollTrigger/Lenis never loaded (CDN blocked, offline, slow
-        // network). Content must not stay hidden just because the
-        // decorative entrance animation couldn't run — reveal it plainly.
-        clearInterval(poll);
-        revealAllStrixAnimatedElements();
-      }
-    }, 100);
+    // GSAP/ScrollTrigger/Lenis are dynamically imported (rather than bundled
+    // into the main chunk) so they don't add to the JS the browser has to
+    // parse/execute before the page becomes interactive — they're only
+    // fetched once the browser is idle. This replaces three separate
+    // cdn.jsdelivr.net <script> requests (each its own DNS+TLS round trip,
+    // parsed as globals via a setInterval poll) with a single self-hosted,
+    // tree-shaken, code-split chunk served from the same origin.
+    const load = () =>
+      Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+        import("lenis"),
+      ]).then(([gsapMod, scrollTriggerMod, lenisMod]) => {
+        if (cancelled) return;
+        run(gsapMod.gsap, scrollTriggerMod.ScrollTrigger, lenisMod.default);
+      });
 
-    return () => clearInterval(poll);
+    let idleHandle: number | null = null;
+    if ("requestIdleCallback" in window) {
+      idleHandle = (window as any).requestIdleCallback(load, { timeout: 1000 });
+    } else {
+      idleHandle = (window as any).setTimeout(load, 0);
+    }
+
+    // Hard safety net: if for any reason the animation setup never runs
+    // (chunk load failure, offline, etc.), no heading or paragraph should
+    // stay invisible forever.
+    const revealTimeout = setTimeout(revealAllStrixAnimatedElements, 3500);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(revealTimeout);
+      if (idleHandle !== null) {
+        if ("cancelIdleCallback" in window) (window as any).cancelIdleCallback(idleHandle);
+        else clearTimeout(idleHandle);
+      }
+      cleanupScrollTrigger?.();
+    };
   }, []);
 }
