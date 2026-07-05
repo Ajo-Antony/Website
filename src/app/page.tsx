@@ -27,8 +27,13 @@ import SectionWrapper from "@/components/pages/homePage/SectionWrapper";
 import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://strixmind.com" },
+};
 
 const KEYS = [
   "global.nav", "home.hero", "home.trustedBy", "home.services",
