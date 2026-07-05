@@ -37,7 +37,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://strixmind.in"),
+  metadataBase: new URL("https://strixmind.com"),
   title: {
     default: "StrixMind — AI-Powered Business Operating System",
     template: "%s | StrixMind",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     "India",
     "workflow automation",
   ],
-  authors: [{ name: "StrixMind", url: "https://strixmind.in" }],
+  authors: [{ name: "StrixMind", url: "https://strixmind.com" }],
   creator: "StrixMind",
   publisher: "StrixMind",
   robots: { index: true, follow: true },
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     description: "Automate Workflows. Scale Operations. Grow Without Limits.",
     siteName: "StrixMind",
     type: "website",
-    url: "https://strixmind.in",
+    url: "https://strixmind.com",
   },
   twitter: {
     card: "summary_large_image",
@@ -92,13 +92,13 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "StrixMind",
-  url: "https://strixmind.in",
-  logo: "https://strixmind.in/brand/strixmind-wordmark.svg",
+  url: "https://strixmind.com",
+  logo: "https://strixmind.com/brand/strixmind-wordmark.svg",
   sameAs: [],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer support",
-    url: "https://strixmind.in/contact",
+    url: "https://strixmind.com/contact",
   },
 };
 

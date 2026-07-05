@@ -27,11 +27,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: project.title,
     description: project.summary ?? undefined,
-    alternates: { canonical: `https://strixmind.in/work/projects/${slug}` },
+    alternates: { canonical: `https://strixmind.com/work/projects/${slug}` },
     openGraph: {
       title: project.title,
       description: project.summary ?? undefined,
-      url: `https://strixmind.in/work/projects/${slug}`,
+      url: `https://strixmind.com/work/projects/${slug}`,
       type: "website",
       images: project.cover_image ? [{ url: project.cover_image, width: 1200, height: 630 }] : undefined,
     },
@@ -56,7 +56,7 @@ export default async function WorkProjectDetailPage({ params }: { params: Promis
     "@type": "CreativeWork",
     name: project.title,
     description: project.summary ?? undefined,
-    url: `https://strixmind.in/work/projects/${slug}`,
+    url: `https://strixmind.com/work/projects/${slug}`,
     image: project.cover_image ?? undefined,
     creator: { "@type": "Organization", name: "StrixMind" },
   };

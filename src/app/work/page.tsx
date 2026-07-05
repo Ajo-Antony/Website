@@ -18,12 +18,12 @@ export const metadata: Metadata = {
   title: "Work",
   description:
     "Explore StrixMind's portfolio — client case studies, behind-the-scenes blog posts, and a gallery of finished work.",
-  alternates: { canonical: "https://strixmind.in/work" },
+  alternates: { canonical: "https://strixmind.com/work" },
   openGraph: {
     title: "Work — StrixMind",
     description:
       "Explore StrixMind's portfolio — client case studies, behind-the-scenes blog posts, and a gallery of finished work.",
-    url: "https://strixmind.in/work",
+    url: "https://strixmind.com/work",
     type: "website",
   },
 };
@@ -32,8 +32,8 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://strixmind.in" },
-    { "@type": "ListItem", position: 2, name: "Work", item: "https://strixmind.in/work" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://strixmind.com" },
+    { "@type": "ListItem", position: 2, name: "Work", item: "https://strixmind.com/work" },
   ],
 };
 

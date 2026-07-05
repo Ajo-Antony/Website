@@ -26,11 +26,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
-    alternates: { canonical: `https://strixmind.in/work/blog/${slug}` },
+    alternates: { canonical: `https://strixmind.com/work/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,
-      url: `https://strixmind.in/work/blog/${slug}`,
+      url: `https://strixmind.com/work/blog/${slug}`,
       type: "article",
       publishedTime: post.published_at ?? undefined,
       images: post.cover_image ? [{ url: post.cover_image, width: 1200, height: 630 }] : undefined,
@@ -56,14 +56,14 @@ export default async function WorkBlogPostPage({ params }: { params: Promise<{ s
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt ?? undefined,
-    url: `https://strixmind.in/work/blog/${slug}`,
+    url: `https://strixmind.com/work/blog/${slug}`,
     datePublished: post.published_at ?? undefined,
     image: post.cover_image ?? undefined,
     author: { "@type": "Organization", name: "StrixMind" },
     publisher: {
       "@type": "Organization",
       name: "StrixMind",
-      logo: { "@type": "ImageObject", url: "https://strixmind.in/brand/strixmind-wordmark.svg" },
+      logo: { "@type": "ImageObject", url: "https://strixmind.com/brand/strixmind-wordmark.svg" },
     },
   };
 

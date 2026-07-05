@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   title: "Services",
   description:
     "Explore StrixMind's full suite — WhatsApp CRM, AI lead qualification, multi-agent automation, RAG knowledge base, campaign analytics, and more.",
-  alternates: { canonical: "https://strixmind.in/services" },
+  alternates: { canonical: "https://strixmind.com/services" },
   openGraph: {
     title: "Services — StrixMind",
     description:
       "Explore StrixMind's full suite — WhatsApp CRM, AI lead qualification, multi-agent automation, RAG knowledge base, campaign analytics, and more.",
-    url: "https://strixmind.in/services",
+    url: "https://strixmind.com/services",
     type: "website",
   },
 };

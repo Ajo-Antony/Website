@@ -9,11 +9,11 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Gallery",
   description: "A visual snapshot of StrixMind's work — behind the scenes and finished projects.",
-  alternates: { canonical: "https://strixmind.in/work/gallery" },
+  alternates: { canonical: "https://strixmind.com/work/gallery" },
   openGraph: {
     title: "Gallery — StrixMind",
     description: "Snapshots from behind the scenes and finished work.",
-    url: "https://strixmind.in/work/gallery",
+    url: "https://strixmind.com/work/gallery",
     type: "website",
   },
 };

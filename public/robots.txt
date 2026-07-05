@@ -10,4 +10,4 @@ Disallow: /signup
 Disallow: /booking
 Disallow: /auth/
 
-Sitemap: https://strixmind.in/sitemap.xml
+Sitemap: https://strixmind.com/sitemap.xml

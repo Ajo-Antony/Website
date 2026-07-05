@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   title: "About Us",
   description:
     "Learn about StrixMind — our mission to build AI-powered tools that help Indian businesses automate, scale, and grow without limits.",
-  alternates: { canonical: "https://strixmind.in/about" },
+  alternates: { canonical: "https://strixmind.com/about" },
   openGraph: {
     title: "About StrixMind — AI-Powered Business Operating System",
     description:
       "Learn about StrixMind — our mission to build AI-powered tools that help Indian businesses automate, scale, and grow without limits.",
-    url: "https://strixmind.in/about",
+    url: "https://strixmind.com/about",
     type: "website",
   },
 };

@@ -40,11 +40,11 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "StrixMind",
-  url: "https://strixmind.in",
+  url: "https://strixmind.com",
   description: "AI-powered CRM, WhatsApp automation, lead management, multi-agent workflows, and revenue intelligence for Indian businesses.",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://strixmind.in/work/blog?q={search_term_string}",
+    target: "https://strixmind.com/work/blog?q={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };
