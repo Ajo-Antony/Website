@@ -77,6 +77,36 @@ function TestimonialCard({ initials, name, role, quote, stars, colorIndex }: {
   );
 }
 
+// ─── Honest empty state (no real reviews yet) ─────────────────
+function NoReviewsYet() {
+  return (
+    <div
+      style={{
+        textAlign: "center",
+        maxWidth: 480,
+        margin: "0 auto",
+        padding: "3rem 2rem",
+        borderRadius: 24,
+        border: "1.5px dashed var(--border)",
+        background: "var(--surface-alt)",
+      }}
+    >
+      <div style={{ display: "inline-flex", width: 48, height: 48, borderRadius: "50%", background: "var(--glass-bg)", alignItems: "center", justifyContent: "center", marginBottom: "1.25rem" }}>
+        <svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
+      </div>
+      <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text)", marginBottom: "0.6rem" }}>
+        We're just getting started
+      </h3>
+      <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.7 }}>
+        StrixMind launched recently, so we don&apos;t have customer reviews to show yet — we&apos;d rather leave this
+        empty than make any up. If you&apos;re one of our early users, be the first to share your experience below.
+      </p>
+    </div>
+  );
+}
+
 // ─── Review submission form ───────────────────────────────────
 function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
   const [open, setOpen] = useState(false);
@@ -278,7 +308,9 @@ export default function TestimonialsHomePageSection({
             {heading}
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", marginTop: "1rem", maxWidth: 480, margin: "1rem auto 0", lineHeight: 1.7 }}>
-            Real results from real businesses. Every review is verified before going live.
+            {dbReviews && dbReviews.length > 0
+              ? "Real results from real businesses. Every review is verified before going live."
+              : "Every review here will be a real one, verified before it goes live — starting with yours."}
           </p>
         </div>
 
@@ -295,6 +327,8 @@ export default function TestimonialsHomePageSection({
               </div>
             ))}
           </div>
+        ) : displayItems.length === 0 ? (
+          <NoReviewsYet />
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(310px, 1fr))", gap: "1.5rem" }}>
             {displayItems.map((t, i) => (

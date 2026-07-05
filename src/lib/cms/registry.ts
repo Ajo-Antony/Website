@@ -532,11 +532,10 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   "home.testimonials": {
     eyebrow: "Customer Stories",
     heading: "Trusted by teams\nwho move fast.",
-    items: [
-      { initials: "RK", name: "Rahul Krishnan", role: "Founder, UrbanScale Ventures", quote: "StrixMind cut our lead response time from 6 hours to under 30 seconds. Our close rate doubled within the first month. The WhatsApp bot alone paid for itself in week two.", stars: 5 },
-      { initials: "PS", name: "Priya Suresh", role: "Head of Growth, NovaBridge", quote: "The multi-agent workflow builder is unlike anything I've ever seen. We automated our entire onboarding sequence — lead to contract — in a single afternoon, with zero developers.", stars: 5 },
-      { initials: "AM", name: "Arjun Menon", role: "CTO, Tessera Labs", quote: "Finally a platform where the AI actually understands our business context. The knowledge base integration means our bots never give wrong answers. Our support CSAT went from 72% to 94%.", stars: 5 },
-    ],
+    // Intentionally empty by default — the component shows an honest
+    // "be one of our first reviews" state until real, verified reviews
+    // exist in the database. Do not seed this with fabricated names.
+    items: [],
   },
   "home.pricing": {
     eyebrow: "Pricing",

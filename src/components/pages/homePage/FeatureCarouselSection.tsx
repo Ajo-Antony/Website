@@ -15,77 +15,69 @@ import {
   Smartphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FeatureIllustration } from "./FeatureIllustration";
 
-// StrixMind product features
+// StrixMind product features — each paired with a custom vector scene
+// (see FeatureIllustration.tsx) instead of stock photography.
 const FEATURES = [
   {
     id: "workflow",
     label: "Workflow Automation",
     icon: Workflow,
-    image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?q=80&w=1200&auto=format&fit=crop",
     description: "Topological graph execution engine that automates complex business processes end-to-end.",
   },
   {
     id: "multi-agent",
     label: "Multi-Agent AI",
     icon: Brain,
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1200",
     description: "Six specialised AI agents with priority task queues handle your operations intelligently.",
   },
   {
     id: "whatsapp",
     label: "WhatsApp CRM",
     icon: MessageSquareText,
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200",
     description: "Session-aware messaging, lead pipelines and revenue forecasting — all in WhatsApp.",
   },
   {
     id: "analytics",
     label: "Real-time Analytics",
     icon: BarChart,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
     description: "Revenue intelligence and conversion insights updated live as your business moves.",
   },
   {
     id: "integrations",
     label: "Integrations",
     icon: PlugIcon,
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200",
     description: "Connect your existing tools — CRMs, ERPs, calendars — with zero-code connectors.",
   },
   {
     id: "security",
     label: "Enterprise Security",
     icon: Shield,
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200",
     description: "Bank-grade encryption and role-based access controls protect every data point.",
   },
   {
     id: "speed",
     label: "Lightning Fast",
     icon: Zap,
-    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200",
     description: "Sub-second response times across all agents, even during high-volume campaigns.",
   },
   {
     id: "global",
     label: "Global Ready",
     icon: Globe,
-    image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1200",
     description: "Multi-language support and localisation built for Indian and global markets alike.",
   },
   {
     id: "team",
     label: "Team Collaboration",
     icon: Users,
-    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200",
     description: "Shared inboxes, conversation routing and team performance dashboards in one place.",
   },
   {
     id: "mobile",
     label: "Mobile First",
     icon: Smartphone,
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200",
     description: "Full-featured mobile experience — manage leads, reply to chats, view analytics on the go.",
   },
 ];
@@ -228,17 +220,15 @@ export function FeatureCarousel() {
                       transition={{ type: "spring", stiffness: 260, damping: 25, mass: 0.8 }}
                       className="absolute inset-0 rounded-[2rem] md:rounded-[2.8rem] overflow-hidden border-4 md:border-8 border-[var(--border)] bg-[var(--surface)] origin-center shadow-[0_20px_60px_rgba(108,99,255,0.15)]"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={feature.image}
-                        alt={feature.label}
-                        loading={isActive ? "eager" : "lazy"}
-                        decoding="async"
+                      <div
                         className={cn(
-                          "w-full h-full object-cover transition-all duration-700",
-                          isActive ? "grayscale-0 blur-0" : "grayscale blur-[2px] brightness-75"
+                          "w-full h-full transition-all duration-700",
+                          isActive ? "opacity-100 blur-0" : "opacity-70 blur-[2px] brightness-75"
                         )}
-                      />
+                        aria-hidden="true"
+                      >
+                        <FeatureIllustration id={feature.id} />
+                      </div>
 
                       <AnimatePresence>
                         {isActive && (
