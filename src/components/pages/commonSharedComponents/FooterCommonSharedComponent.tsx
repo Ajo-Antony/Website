@@ -56,8 +56,8 @@ export default function FooterCommonSharedComponent({
             <Link href="/" className="inline-flex items-center no-underline mb-3">
               <StrixmindLogo size={28} variant="full" theme="dark" />
             </Link>
-            <p className="text-sm text-white/50 leading-[1.85] max-w-[320px]">{tagline}</p>
-            <div className="flex items-center gap-2 mt-3 text-xs text-white/40">
+            <p className="text-sm text-white/65 leading-[1.85] max-w-[320px]">{tagline}</p>
+            <div className="flex items-center gap-2 mt-3 text-xs text-white/60">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
               {statusLabel}
             </div>
@@ -83,7 +83,7 @@ export default function FooterCommonSharedComponent({
                   aria-expanded={isOpen}
                   className="w-full flex items-center justify-between py-5 sm:py-0 sm:pointer-events-none text-left"
                 >
-                  <span className="text-base sm:text-[0.7rem] font-bold sm:font-bold tracking-[0.02em] sm:tracking-[0.14em] sm:uppercase text-white sm:text-white/40 sm:mb-5">
+                  <span className="text-base sm:text-[0.7rem] font-bold sm:font-bold tracking-[0.02em] sm:tracking-[0.14em] sm:uppercase text-white sm:text-white/60 sm:mb-5">
                     {col.heading}
                   </span>
                   <span className="text-2xl leading-none text-white/70 sm:hidden">{isOpen ? "\u2212" : "+"}</span>
@@ -95,7 +95,7 @@ export default function FooterCommonSharedComponent({
                     <Link
                       key={item.label}
                       href={item.href}
-                      className="text-sm text-white/50 hover:text-accent transition-colors no-underline"
+                      className="text-sm text-white/65 hover:text-accent transition-colors no-underline"
                     >
                       {item.label}
                     </Link>
@@ -119,7 +119,7 @@ export default function FooterCommonSharedComponent({
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[0.8rem] text-white/50 hover:text-accent transition-colors no-underline"
+                className="text-[0.8rem] text-white/65 hover:text-accent transition-colors no-underline"
               >
                 {s.label}
               </a>
@@ -129,7 +129,7 @@ export default function FooterCommonSharedComponent({
 
         {/* Bottom legal bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4 py-6 border-t border-white/10 text-center">
-          <p className="text-[0.75rem] text-white/35 leading-relaxed">{bottomText}</p>
+          <p className="text-[0.75rem] text-white/60 leading-relaxed">{bottomText}</p>
         </div>
       </div>
     </footer>

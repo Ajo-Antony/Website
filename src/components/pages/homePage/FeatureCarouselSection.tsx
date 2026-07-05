@@ -167,7 +167,11 @@ export function FeatureCarousel() {
                       style={{ height: ITEM_HEIGHT, width: "fit-content" }}
                       animate={{
                         y: wrappedDistance * ITEM_HEIGHT,
-                        opacity: 1 - Math.abs(wrappedDistance) * 0.25,
+                        // Softened from *0.25 — the old falloff combined with
+                        // text-white/60 pushed off-center chips below WCAG
+                        // contrast thresholds. This keeps the fade effect
+                        // but keeps every position legible.
+                        opacity: 1 - Math.abs(wrappedDistance) * 0.15,
                       }}
                       transition={{ type: "spring", stiffness: 90, damping: 22, mass: 1 }}
                       className="absolute flex items-center justify-start"
@@ -180,10 +184,10 @@ export function FeatureCarousel() {
                           "relative flex items-center gap-4 px-6 md:px-10 lg:px-8 py-3.5 md:py-5 lg:py-4 rounded-full transition-all duration-700 text-left group border",
                           isActive
                             ? "bg-[var(--surface)] text-[var(--accent)] border-[var(--border)] z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
-                            : "bg-transparent text-white/60 border-white/20 hover:border-white/40 hover:text-white"
+                            : "bg-transparent text-white/70 border-white/20 hover:border-white/40 hover:text-white"
                         )}
                       >
-                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent)]" : "text-white/40")}>
+                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent)]" : "text-white/55")}>
                           <Icon size={18} strokeWidth={2} />
                         </div>
                         <span className="font-semibold text-sm md:text-[15px] tracking-tight whitespace-nowrap">

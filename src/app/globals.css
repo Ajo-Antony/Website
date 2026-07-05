@@ -111,7 +111,7 @@
   /* Text */
   --text:        #15140f;
   --text-muted:  rgba(21,20,15,0.68);
-  --text-dim:    rgba(21,20,15,0.45);
+  --text-dim:    rgba(21,20,15,0.62); /* was 0.45 — failed WCAG AA (~3:1) on white surface */
 
   /* Accent palette — same hues, tuned a touch deeper so they hold
      contrast on a light surface. */
