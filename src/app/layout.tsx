@@ -78,6 +78,11 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.json",
+  verification: {
+    other: {
+      "msvalidate.01": "51448BA749EC32AC4A21572C469FD1E6",
+    },
+  },
 };
 
 // Cache nav+footer content for 1 hour — no need to re-fetch on every page load.
