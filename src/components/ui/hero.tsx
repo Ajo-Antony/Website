@@ -266,7 +266,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
         className="relative z-10 flex flex-col items-start justify-center h-full"
         style={{ minHeight: "calc(100vh - 72px)", padding: "clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)" }}
       >
-        <AnimatePresence mode="wait" custom={direction}>
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
             key={slideIndex}
             custom={direction}
