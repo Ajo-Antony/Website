@@ -174,9 +174,6 @@ export function SiteHeader({
 				{/* Desktop CTAs */}
 				<div className="hidden items-center gap-3 md:flex">
 					<ThemeToggle />
-					<Button variant="outline" asChild>
-						<Link href="/login" className="no-underline">{signInLabel}</Link>
-					</Button>
 					<Button asChild>
 						<Link
 							href={ctaHref}
@@ -226,9 +223,6 @@ export function SiteHeader({
 					</div>
 				</NavigationMenu>
 				<div className="flex flex-col gap-2">
-					<Button variant="outline" className="w-full bg-transparent" asChild>
-						<Link href="/login" className="no-underline">{signInLabel}</Link>
-					</Button>
 					<Button className="w-full" asChild>
 						<Link href={ctaHref} className="no-underline">{ctaLabel}</Link>
 					</Button>
