@@ -112,6 +112,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rafRef     = useRef<number>(0);
+  const lastFrameRef = useRef<number>(0);
   const mouseRef   = useRef({ x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 });
 
   /* ── Slide carousel state ── */
@@ -147,6 +148,15 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
     };
 
     const draw = (ts: number) => {
+      // Cap to ~30fps. Blob motion is slow and gains nothing visually from
+      // 60fps, and this halves the per-second cost of what's still a fairly
+      // expensive draw (radial gradients + compositing across the full hero).
+      if (ts - lastFrameRef.current < 33) {
+        rafRef.current = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameRef.current = ts;
+
       const time = ts * 0.0001;
 
       /* ── pick blob colours based on active theme ── */
@@ -157,7 +167,13 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
       ctx.fillStyle = baseBg;
       ctx.fillRect(0, 0, w, h);
 
-      ctx.filter = "blur(60px)";
+      // NOTE: no ctx.filter blur here anymore — see comment below at the
+      // canvas element's CSS `filter`. Doing the blur as a per-pixel
+      // software convolution on every frame (the old approach) was the
+      // single biggest main-thread cost on this page: it ran continuously,
+      // forever, for as long as the hero was mounted (i.e. always). Letting
+      // the GPU compositor blur the whole canvas via CSS instead is visually
+      // identical and essentially free by comparison.
       ctx.globalCompositeOperation = isDark ? "lighten" : "multiply";
 
       blobs.forEach((b) => {
@@ -176,7 +192,6 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
       });
 
       ctx.globalCompositeOperation = "source-over";
-      ctx.filter = "none";
 
       /* subtle vignette */
       const vig = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.75);
@@ -223,11 +238,17 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
       className="relative w-full overflow-hidden"
       style={{ minHeight: "calc(100vh - 72px)" }}
     >
-      {/* ── Shader canvas ── */}
+      {/* ── Shader canvas ──
+          Blur is applied here via CSS `filter`, which the compositor runs
+          on the GPU, instead of inside the 2D context (ctx.filter), which
+          is a software per-pixel blur recomputed every frame forever. That
+          software blur was the single biggest main-thread cost on this
+          page — this is the same visual result for a fraction of the cost. */}
       <canvas
         ref={canvasRef}
         aria-hidden
         className="absolute inset-0 w-full h-full"
+        style={{ filter: "blur(60px)" }}
       />
 
       {/* ── Dark overlay for contrast ── */}
