@@ -2,6 +2,7 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import type { ContentValue } from "@/lib/cms/types";
 
@@ -55,7 +56,7 @@ function mergeContent(fallback: ContentValue, saved: ContentValue): ContentValue
 export async function getContent(key: string): Promise<ContentValue> {
   const fallback = CONTENT_DEFAULTS[key] ?? {};
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase.from("site_content").select("value").eq("key", key).maybeSingle();
     if (data?.value) return mergeContent(fallback, data.value as ContentValue);
   } catch {
@@ -69,7 +70,7 @@ export async function getContentMany(keys: string[]): Promise<Record<string, Con
   const result: Record<string, ContentValue> = {};
   for (const k of keys) result[k] = CONTENT_DEFAULTS[k] ?? {};
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const { data } = await supabase.from("site_content").select("key, value").in("key", keys);
     for (const row of data ?? []) {
       result[row.key] = mergeContent(result[row.key] ?? {}, row.value as ContentValue);
