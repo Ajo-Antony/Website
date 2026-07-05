@@ -80,11 +80,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-// Cache nav+footer content for 1 hour — no need to re-fetch on every page load
+// Cache nav+footer content for 1 hour — no need to re-fetch on every page load.
+// Tagged so admin saves can bust this cache immediately via revalidateTag.
 const getCachedNavFooter = unstable_cache(
   async () => getContentMany(["global.nav", "global.footer"]),
   ["global-nav-footer"],
-  { revalidate: 3600 }
+  { revalidate: 3600, tags: ["global-nav-footer"] }
 );
 
 const organizationJsonLd = {

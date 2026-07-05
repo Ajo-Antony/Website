@@ -113,7 +113,7 @@ export default function FooterCommonSharedComponent({
           </Link>
 
           <div className="flex flex-wrap items-center gap-5">
-            {socials.map((s) => (
+            {socials.filter((s) => s.href && s.href.trim() !== "").map((s) => (
               <a
                 key={s.label}
                 href={s.href}

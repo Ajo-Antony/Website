@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import type { ContentValue } from "@/lib/cms/types";
@@ -94,6 +94,14 @@ function revalidateForKey(key: string) {
   const prefix = key.split(".")[0];
   for (const p of REVALIDATE_PATHS[prefix] ?? []) revalidatePath(p);
   revalidatePath("/admin/content/" + key);
+
+  // The root layout caches global.nav / global.footer in a separate,
+  // long-lived data cache (unstable_cache) that revalidatePath alone
+  // cannot bust. Explicitly invalidate it here so header/footer edits
+  // show up immediately instead of waiting up to an hour.
+  if (key === "global.nav" || key === "global.footer") {
+    revalidateTag("global-nav-footer");
+  }
 }
 
 export async function updateContent(key: string, value: ContentValue): Promise<{ error?: string }> {
