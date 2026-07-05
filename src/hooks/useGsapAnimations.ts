@@ -392,7 +392,21 @@ export function useGsapAnimations() {
     let attempts = 0;
     const poll = setInterval(() => {
       attempts++;
-      if (ready()) { clearInterval(poll); run(); }
+      if (ready()) {
+        clearInterval(poll);
+        // Defer the actual setup to idle time. `run()` touches every
+        // animated element on the page in one synchronous pass (splitLines
+        // DOM rewrites + a ScrollTrigger.create per element, each forcing a
+        // layout read). Firing it immediately makes it count as main-thread
+        // blocking time during page load. requestIdleCallback pushes it
+        // past first paint / interactivity instead. setTimeout is the
+        // fallback for Safari, which has no requestIdleCallback.
+        if ("requestIdleCallback" in window) {
+          (window as any).requestIdleCallback(run, { timeout: 1000 });
+        } else {
+          setTimeout(run, 0);
+        }
+      }
       if (attempts > 50) {
         // GSAP/ScrollTrigger/Lenis never loaded (CDN blocked, offline, slow
         // network). Content must not stay hidden just because the
