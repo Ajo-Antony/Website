@@ -400,15 +400,36 @@ export function AnimatedBolt({ size = 22, color = "currentColor", style }: IconP
 
 /**
  * AnimatedShield — slow breathing glow.
+ *
+ * Previously animated the `filter: drop-shadow(...)` property directly,
+ * which the browser cannot run on the compositor thread — every frame
+ * had to be repainted on the main thread (this is what PageSpeed's
+ * "Avoid non-composited animations" audit flags). Instead we render a
+ * static, pre-blurred glow layer behind the icon and animate only its
+ * `opacity`/`transform` (via `scale`), both of which the compositor can
+ * run independently of the main thread.
  */
 export function AnimatedShield({ size = 22, color = "currentColor", style }: IconProps) {
   return (
-    <span style={{ display: "inline-flex", animation: "strix-shield-glow 3.5s ease-in-out infinite", ...style }}>
-      <IconShield size={size} color={color} />
+    <span style={{ position: "relative", display: "inline-flex", ...style }}>
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: -4,
+          borderRadius: "50%",
+          background: color,
+          filter: "blur(6px)",
+          opacity: 0,
+          animation: "strix-shield-glow 3.5s ease-in-out infinite",
+          pointerEvents: "none",
+        }}
+      />
+      <IconShield size={size} color={color} style={{ position: "relative" }} />
       <style>{`
         @keyframes strix-shield-glow {
-          0%, 100% { filter: drop-shadow(0 0 0px ${color}); }
-          50%       { filter: drop-shadow(0 0 6px ${color}88); }
+          0%, 100% { opacity: 0;   transform: scale(0.7); }
+          50%       { opacity: 0.55; transform: scale(1);   }
         }
       `}</style>
     </span>
