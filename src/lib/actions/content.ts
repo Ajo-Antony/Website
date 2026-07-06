@@ -3,6 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/staticClient";
+import { withTimeout } from "@/lib/withTimeout";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import type { ContentValue } from "@/lib/cms/types";
 
@@ -52,12 +53,14 @@ function mergeContent(fallback: ContentValue, saved: ContentValue): ContentValue
 }
 
 /** Reads one section's content, falling back to the built-in default if the
- *  row doesn't exist yet (e.g. fresh database) or Supabase is unreachable. */
+ *  row doesn't exist yet (e.g. fresh database), Supabase is unreachable, or
+ *  Supabase is slow to respond (public pages must never block on this). */
 export async function getContent(key: string): Promise<ContentValue> {
   const fallback = CONTENT_DEFAULTS[key] ?? {};
   try {
     const supabase = createStaticClient();
-    const { data } = await supabase.from("site_content").select("value").eq("key", key).maybeSingle();
+    const query = supabase.from("site_content").select("value").eq("key", key).maybeSingle();
+    const { data } = await withTimeout(query, 2500, { data: null } as any);
     if (data?.value) return mergeContent(fallback, data.value as ContentValue);
   } catch {
     // Network/config issue — fall through to defaults so the site still renders.
@@ -65,13 +68,16 @@ export async function getContent(key: string): Promise<ContentValue> {
   return fallback;
 }
 
-/** Reads several sections at once (one round trip). */
+/** Reads several sections at once (one round trip). Public pages await this
+ *  directly, so it must never hang — a slow/unresponsive Supabase falls
+ *  back to defaults after a short timeout instead of blocking the page. */
 export async function getContentMany(keys: string[]): Promise<Record<string, ContentValue>> {
   const result: Record<string, ContentValue> = {};
   for (const k of keys) result[k] = CONTENT_DEFAULTS[k] ?? {};
   try {
     const supabase = createStaticClient();
-    const { data } = await supabase.from("site_content").select("key, value").in("key", keys);
+    const query = supabase.from("site_content").select("key, value").in("key", keys);
+    const { data } = await withTimeout(query, 2500, { data: null } as any);
     for (const row of data ?? []) {
       result[row.key] = mergeContent(result[row.key] ?? {}, row.value as ContentValue);
     }

@@ -8,6 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { withTimeout } from "@/lib/withTimeout";
 import type { SectionDesign, SectionDesignUpdate, DesignSettings } from "@/lib/types/sectionDesigner";
 
 // Default fallback when Supabase has no row yet
@@ -18,16 +19,21 @@ function getPublicPath(page: string): string {
   return page === "home" ? "/" : `/${page}`;
 }
 
-/** Fetch all section designs for a given page, ordered by sort_order */
+/** Fetch all section designs for a given page, ordered by sort_order.
+ *  Public pages await this directly (alongside getContentMany), so a slow
+ *  or unresponsive Supabase must not block the page — it falls back to []
+ *  (meaning every section just renders with its default, un-customised
+ *  styling) after a short timeout. */
 export async function getSectionDesigns(page: string): Promise<SectionDesign[]> {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const query = supabase
       .from("section_designs")
       .select("*")
       .eq("page", page)
       .order("sort_order", { ascending: true });
 
+    const { data, error } = await withTimeout(query, 2500, { data: [], error: null } as any);
     if (error) throw error;
     return (data ?? []) as SectionDesign[];
   } catch {
