@@ -8,7 +8,15 @@ interface StaticTestimonial { initials: string; name: string; role: string; quot
 interface TestimonialsProps { eyebrow?: string; heading?: string; items?: StaticTestimonial[] }
 
 const D = CONTENT_DEFAULTS["home.testimonials"] as Required<TestimonialsProps>;
-const AVATAR_COLORS = ["var(--accent)", "var(--accent-teal)", "#f59e0b", "#f472b6", "#22c55e", "#8b5cf6"];
+// NOTE: previously ["var(--accent)", "var(--accent-teal)", "#f59e0b", "#f472b6",
+// "#22c55e", "#8b5cf6"] with white "#fff" initials text on top. Every one of
+// those colors is a bright/light accent hue tuned to work as *text on a dark
+// or light background* — none of them are dark enough for *white text on
+// top of them* to hit WCAG AA's 4.5:1 ratio (the real numbers ranged
+// 2.15:1–4.23:1). This palette is a fixed, theme-independent set of darker
+// versions of the same hues, each re-tuned so white text sits at ~4.5:1+
+// regardless of whether the site is in light or dark mode.
+const AVATAR_COLORS = ["#0b8177", "#0b7caf", "#a36907", "#df117d", "#178841", "#8452f5"];
 
 // ─── Star picker ──────────────────────────────────────────────
 function StarPicker({ value, onChange }: { value: number; onChange: (n: number) => void }) {

@@ -180,17 +180,50 @@ export function FeatureCarousel() {
                         onClick={() => handleChipClick(index)}
                         onMouseEnter={() => setIsPaused(true)}
                         onMouseLeave={() => setIsPaused(false)}
-                        className={cn(
-                          "relative flex items-center gap-4 px-6 md:px-10 lg:px-8 py-3.5 md:py-5 lg:py-4 rounded-full transition-all duration-700 text-left group border",
-                          isActive
-                            ? "bg-[var(--surface)] text-[var(--accent-deep)] border-[var(--border)] z-10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
-                            : "bg-transparent text-white/70 border-white/20 hover:border-white/40 hover:text-white"
-                        )}
+                        className="relative flex items-center gap-4 px-6 md:px-10 lg:px-8 py-3.5 md:py-5 lg:py-4 rounded-full text-left group border border-white/20 hover:border-white/40"
                       >
-                        <div className={cn("flex items-center justify-center transition-colors duration-500", isActive ? "text-[var(--accent-deep)]" : "text-white/55")}>
+                        {/*
+                          This carousel auto-advances every 3.2s, forever, for
+                          as long as the section is mounted — so whatever
+                          style change happens here on every "active" swap
+                          runs continuously in the background the whole time
+                          a visitor is on the page. It used to be a single
+                          `transition-all duration-700` on the button itself,
+                          smoothing background/border-color/box-shadow/color
+                          all at once — every one of those is a property the
+                          GPU compositor can't handle, so the browser had to
+                          repaint the button (and, via `currentColor`, its
+                          SVG icon) on every animation frame, every 3.2s,
+                          indefinitely. Lighthouse's "non-composited
+                          animations" audit flagged this button by name.
+
+                          Fix: the surface/border/shadow now live on a
+                          separate absolutely-positioned layer that only
+                          animates `opacity` (fully compositable) to fade
+                          in/out. Text/icon colour just snaps instantly
+                          instead of cross-fading — a very small visual
+                          trade-off for removing a recurring main-thread
+                          repaint that runs for as long as the page is open.
+                        */}
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 rounded-full transition-opacity duration-500 pointer-events-none"
+                          style={{
+                            opacity: isActive ? 1 : 0,
+                            background: "var(--surface)",
+                            boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+                          }}
+                        />
+                        <div
+                          className="relative z-10 flex items-center justify-center"
+                          style={{ color: isActive ? "var(--accent-deep)" : "rgba(255,255,255,0.55)" }}
+                        >
                           <Icon size={18} strokeWidth={2} />
                         </div>
-                        <span className="font-semibold text-sm md:text-[15px] tracking-tight whitespace-nowrap">
+                        <span
+                          className="relative z-10 font-semibold text-sm md:text-[15px] tracking-tight whitespace-nowrap"
+                          style={{ color: isActive ? "var(--accent-deep)" : "rgba(255,255,255,0.70)" }}
+                        >
                           {feature.label}
                         </span>
                       </button>
