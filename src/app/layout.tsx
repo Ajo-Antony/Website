@@ -98,7 +98,10 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "StrixMind",
   url: "https://strixmind.com",
-  logo: "https://strixmind.com/brand/strixmind-wordmark.svg",
+  // Google's Logo structured data does not support SVG — it must be a
+  // raster image (PNG/JPG), roughly square, on a plain/white background.
+  // See: https://developers.google.com/search/docs/appearance/structured-data/logo
+  logo: "https://strixmind.com/brand/strixmind-logo.png",
   sameAs: [],
   contactPoint: {
     "@type": "ContactPoint",
