@@ -52,14 +52,23 @@ function ImageField({ field, value, onChange }: { field: FieldDef; value: string
   async function handleFile(file: File) {
     setBusy(true);
     setError(null);
-    const fd = new FormData();
-    fd.set("file", file);
-    const res = await uploadContentImage(fd);
-    setBusy(false);
-    if (res.url) {
-      onChange(res.url);
-    } else if (res.error) {
-      setError(res.error);
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      const res = await uploadContentImage(fd);
+      if (res.url) {
+        onChange(res.url);
+      } else {
+        setError(res.error ?? "Upload failed. Please try again.");
+      }
+    } catch {
+      // Network error, timeout, or expired session — the server action
+      // threw instead of returning {error}. Without this catch, `busy`
+      // would stay true forever and the button would be stuck on
+      // "Uploading…" with no feedback.
+      setError("Upload failed — check your connection and try again.");
+    } finally {
+      setBusy(false);
     }
   }
 

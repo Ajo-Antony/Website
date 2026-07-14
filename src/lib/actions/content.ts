@@ -130,17 +130,38 @@ export async function resetContent(key: string): Promise<{ error?: string }> {
   return {};
 }
 
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"]);
+
 export async function uploadContentImage(formData: FormData): Promise<{ url?: string; error?: string }> {
-  const file = formData.get("file") as File | null;
-  if (!file || file.size === 0) return { error: "Choose an image file first." };
+  try {
+    const file = formData.get("file") as File | null;
+    if (!file || file.size === 0) return { error: "Choose an image file first." };
+    if (file.size > MAX_UPLOAD_BYTES) return { error: "Image is too large (max 5MB)." };
+    if (file.type && !ALLOWED_TYPES.has(file.type)) return { error: "Unsupported file type. Use PNG, JPG, WEBP, GIF, or SVG." };
 
-  const supabase = await createClient();
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `content/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const supabase = await createClient();
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `content/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-  const { error } = await supabase.storage.from("media").upload(path, file);
-  if (error) return { error: error.message };
+    // Guard against a hung/slow network call to Storage so this action
+    // always resolves — never leaves the caller awaiting forever.
+    const uploadPromise = supabase.storage.from("media").upload(path, file, {
+      contentType: file.type || undefined,
+      upsert: false,
+    });
+    const { error } = await withTimeout(
+      uploadPromise,
+      15000,
+      { error: { message: "Upload timed out. Check your connection and try again." } } as any
+    );
+    if (error) return { error: error.message };
 
-  const { data } = supabase.storage.from("media").getPublicUrl(path);
-  return { url: data.publicUrl };
+    const { data } = supabase.storage.from("media").getPublicUrl(path);
+    return { url: data.publicUrl };
+  } catch (err) {
+    // Never let this action throw — a rejected promise here is exactly
+    // what causes the client's "Uploading…" button to hang forever.
+    return { error: err instanceof Error ? err.message : "Upload failed unexpectedly." };
+  }
 }
