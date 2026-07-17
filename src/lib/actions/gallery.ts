@@ -5,8 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function uploadGalleryImage(formData: FormData) {
   const file = formData.get("file") as File | null;
+  const title = String(formData.get("title") ?? "").trim();
   const caption = String(formData.get("caption") ?? "").trim();
+  const tagsRaw = String(formData.get("tags") ?? "").trim();
   const show_on_home = formData.get("show_on_home") === "true";
+  
+  const tags = tagsRaw 
+    ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean)
+    : [];
 
   if (!file || file.size === 0) {
     return { error: "Choose an image or video file first." };
@@ -35,8 +41,10 @@ export async function uploadGalleryImage(formData: FormData) {
   const { error: insertError } = await supabase.from("gallery_images").insert({
     url: urlData.publicUrl,
     storage_path: path,
+    title: title || null,
     caption: caption || null,
-    alt: caption || file.name,
+    tags,
+    alt: title || caption || file.name,
     media_type,
     show_on_home,
   });

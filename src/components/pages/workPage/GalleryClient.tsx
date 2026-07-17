@@ -130,9 +130,6 @@ export default function GalleryClient({ images }: { images: GalleryImage[] }) {
       {/* Dynamic Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {images.map((img, index) => {
-          const isTall = index % 3 === 1;
-          const isWide = index % 5 === 0 && index !== 0;
-
           return (
             <motion.div
               key={img.id}
@@ -140,16 +137,10 @@ export default function GalleryClient({ images }: { images: GalleryImage[] }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.4) }}
               onClick={() => setActiveIndex(index)}
-              className={`group relative cursor-pointer overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-alt)] transition-all duration-300 hover:border-[var(--accent)]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.04)] ${
-                isTall 
-                  ? "aspect-[3/4]" 
-                  : isWide
-                    ? "sm:col-span-2 aspect-[16/9]"
-                    : "aspect-square"
-              }`}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-alt)] transition-all duration-300 hover:border-[var(--accent)]/30 hover:shadow-[0_12px_36px_rgba(0,0,0,0.04)] aspect-square"
             >
               {/* Premium overlay shadow */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
 
               {img.media_type === "video" ? (
                 <div className="relative w-full h-full">
@@ -185,15 +176,29 @@ export default function GalleryClient({ images }: { images: GalleryImage[] }) {
               </div>
 
               {/* Text caption content on hover */}
-              <div className="absolute inset-x-0 bottom-0 p-6 z-20 transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                {img.caption ? (
-                  <p className="text-white text-sm font-medium tracking-wide drop-shadow-sm">
+              <div className="absolute inset-x-0 bottom-0 p-5 z-20 transform translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 space-y-1.5 text-left">
+                {img.title ? (
+                  <h3 className="text-white text-sm font-bold tracking-tight drop-shadow-md truncate">
+                    {img.title}
+                  </h3>
+                ) : (
+                  <h3 className="text-white text-sm font-bold tracking-tight drop-shadow-md truncate">
+                    Strixmind Build Snapshot
+                  </h3>
+                )}
+                {img.caption && (
+                  <p className="text-white/80 text-xs drop-shadow-sm line-clamp-2">
                     {img.caption}
                   </p>
-                ) : (
-                  <p className="text-white/80 text-xs font-mono tracking-wider uppercase">
-                    Strixmind Build Snapshot
-                  </p>
+                )}
+                {img.tags && img.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1.5">
+                    {img.tags.map((tag) => (
+                      <span key={tag} className="text-[9px] font-mono bg-white/15 border border-white/10 text-white/95 px-1.5 py-0.5 rounded-md">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
             </motion.div>
@@ -310,13 +315,35 @@ export default function GalleryClient({ images }: { images: GalleryImage[] }) {
                 {/* Main Content Area (Caption text + scrollable comments list) */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent">
                   {/* Item Description / Caption */}
-                  <div className="pb-4 border-b border-white/5">
-                    <p className="text-xs text-white/50 font-mono mb-1">CAPTION</p>
-                    <p className="text-sm font-medium leading-relaxed text-white/90">
-                      {images[activeIndex].caption || "A premium snapshot showcasing a build highlight of StrixMind."}
-                    </p>
-                    {images[activeIndex].alt && (
-                      <p className="text-[10px] text-white/35 font-mono mt-1">Tags: {images[activeIndex].alt}</p>
+                  <div className="pb-4 border-b border-white/5 space-y-3">
+                    {images[activeIndex].title && (
+                      <div>
+                        <p className="text-[10px] text-white/45 font-mono mb-0.5 uppercase tracking-wider">TITLE</p>
+                        <h4 className="text-sm font-bold text-white tracking-tight leading-snug">
+                          {images[activeIndex].title}
+                        </h4>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-[10px] text-white/45 font-mono mb-0.5 uppercase tracking-wider">CAPTION</p>
+                      <p className="text-xs text-white/80 leading-relaxed font-light">
+                        {images[activeIndex].caption || "A premium snapshot showcasing a build highlight of StrixMind."}
+                      </p>
+                    </div>
+                    {images[activeIndex].tags && images[activeIndex].tags.length > 0 && (
+                      <div>
+                        <p className="text-[10px] text-white/45 font-mono mb-1 uppercase tracking-wider">TAGS</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {images[activeIndex].tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-[9px] font-mono bg-white/5 border border-white/10 text-white/70 px-2 py-0.5 rounded-md"
+                            >
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     )}
                   </div>
 

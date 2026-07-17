@@ -34,9 +34,6 @@ export default function GalleryHomePageSection({ items }: GalleryHomePageSection
         {/* Masonry-style Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.map((img, index) => {
-            const isTall = index % 3 === 1;
-            const isWide = index % 5 === 0 && index !== 0;
-
             return (
               <motion.div
                 key={img.id}
@@ -44,17 +41,11 @@ export default function GalleryHomePageSection({ items }: GalleryHomePageSection
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.3) }}
-                className={`group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-alt)] transition-all duration-300 hover:border-accent/30 hover:shadow-lg ${
-                  isTall 
-                    ? "aspect-[3/4]" 
-                    : isWide
-                      ? "sm:col-span-2 aspect-[16/9]"
-                      : "aspect-square"
-                }`}
+                className="group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-alt)] transition-all duration-300 hover:border-accent/30 hover:shadow-lg aspect-square"
               >
                 <Link href="/work/gallery" className="block w-full h-full relative">
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-between p-6" />
+                  <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-between p-5" />
 
                   {img.media_type === "video" ? (
                     <video
@@ -77,23 +68,41 @@ export default function GalleryHomePageSection({ items }: GalleryHomePageSection
                   )}
 
                   {/* Icon details on hover */}
-                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="flex items-center gap-1.5 text-white text-sm font-bold bg-black/40 px-4 py-2 rounded-full border border-white/15 backdrop-blur-sm">
-                      <Heart size={16} className="fill-rose-500 text-rose-500" />
-                      View Comments
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 text-center">
+                    <span className="flex items-center gap-1.5 text-white text-[11px] font-bold bg-white/10 px-3 py-1.5 rounded-full border border-white/15 backdrop-blur-sm shadow-sm">
+                      <Heart size={14} className="fill-rose-500 text-rose-500" />
+                      View Snap Highlights
                     </span>
                   </div>
 
-                  {/* Caption */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 z-20 bg-gradient-to-t from-black/80 to-transparent pt-12 text-left">
-                    <p className="text-white text-xs font-semibold truncate">
-                      {img.caption || "StrixMind Build Snapshot"}
-                    </p>
-                    {img.media_type === "video" && (
-                      <span className="inline-block mt-1 text-[8px] uppercase tracking-wider font-mono text-teal-400 bg-teal-950/80 px-1.5 py-0.5 rounded border border-teal-500/20">
-                        Video
-                      </span>
+                  {/* Caption & Title */}
+                  <div className="absolute inset-x-0 bottom-0 p-5 z-20 bg-gradient-to-t from-black/90 to-transparent pt-12 text-left space-y-1">
+                    <h3 className="text-white text-xs font-bold truncate leading-tight">
+                      {img.title || "StrixMind Build Snapshot"}
+                    </h3>
+                    {img.caption && (
+                      <p className="text-white/70 text-[10px] truncate leading-normal">
+                        {img.caption}
+                      </p>
                     )}
+                    <div className="flex items-center justify-between gap-2 pt-0.5">
+                      {img.tags && img.tags.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {img.tags.slice(0, 2).map((tag) => (
+                            <span key={tag} className="text-[8px] font-mono text-white/50 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div />
+                      )}
+                      {img.media_type === "video" && (
+                        <span className="text-[8px] uppercase tracking-wider font-mono text-teal-400 bg-teal-950/80 px-1.5 py-0.5 rounded border border-teal-500/20">
+                          Video
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </Link>
               </motion.div>

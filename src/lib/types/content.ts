@@ -9,6 +9,8 @@ export interface GalleryImage {
   media_type: "image" | "video";
   show_on_home: boolean;
   created_at: string;
+  title: string | null;
+  tags: string[];
 }
 
 export type BookingStatus = "new" | "contacted" | "scheduled" | "closed";
