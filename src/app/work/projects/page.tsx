@@ -24,20 +24,31 @@ export default async function WorkProjectsListPage() {
   const projects = (data ?? []) as Project[];
 
   return (
-    <>
-      <section className="px-6 py-20 pt-32" style={{ background: "var(--hero-bg)" }}>
-        <div className="max-w-5xl mx-auto text-center">
-          <Link href="/work" className="text-ink-dim text-sm font-medium hover:text-accent transition-colors">← Back to Work</Link>
-          <h1 className="text-4xl sm:text-5xl font-bold mt-4 text-ink" style={{ letterSpacing: "-0.04em" }}>Projects</h1>
-          <p className="text-ink-soft mt-3">The problem, the build, and the outcome — for every client we&apos;ve worked with.</p>
+    <div className="min-h-screen bg-[var(--surface)] text-[var(--text)]">
+      {/* Editorial Header */}
+      <section className="relative px-6 pt-36 pb-20 border-b border-[var(--border)] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--surface-alt)] to-transparent opacity-60 pointer-events-none" />
+        <div className="max-w-5xl mx-auto text-center relative z-10 space-y-4">
+          <Link 
+            href="/work" 
+            className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors group mb-2"
+          >
+            <span className="inline-block transition-transform group-hover:-translate-x-1">←</span> Back to Work
+          </Link>
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[var(--text)]">
+            Case <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">Studies</span>
+          </h1>
+          <p className="text-[var(--text-muted)] max-w-xl mx-auto text-base sm:text-lg font-light leading-relaxed">
+            Real problems. Technical builds. High-impact business outcomes for forward-thinking brands.
+          </p>
         </div>
       </section>
 
-      <section className="px-6 py-16 bg-[var(--surface)] border-t border-line">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-6 py-16">
+        <div className="max-w-7xl mx-auto">
           <ProjectsCategoryFilter projects={projects} />
         </div>
       </section>
-    </>
+    </div>
   );
 }

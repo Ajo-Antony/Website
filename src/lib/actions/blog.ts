@@ -111,3 +111,122 @@ export async function deleteBlogPost(id: string) {
   revalidatePath("/admin/blog");
   revalidatePath("/work/blog");
 }
+
+// ── BLOG LIKES ──
+export async function getBlogLikesAndComments(blog_id: string) {
+  const supabase = await createClient();
+  
+  const { data: likes, error: likesError } = await supabase
+    .from("blog_likes")
+    .select("session_id, user_id")
+    .eq("blog_id", blog_id);
+
+  let { data: comments, error: commentsError } = await supabase
+    .from("blog_comments")
+    .select("*")
+    .eq("blog_id", blog_id)
+    .eq("approved", true)
+    .eq("hidden", false)
+    .order("created_at", { ascending: true });
+
+  if (commentsError && (commentsError.message.includes("column") || commentsError.code === "PGRST204")) {
+    const fallbackRes = await supabase
+      .from("blog_comments")
+      .select("*")
+      .eq("blog_id", blog_id)
+      .order("created_at", { ascending: true });
+    comments = fallbackRes.data;
+    commentsError = fallbackRes.error;
+  }
+
+  return {
+    likes: likes ?? [],
+    comments: comments ?? [],
+    likesCount: likes?.length ?? 0,
+    error: likesError?.message || commentsError?.message || null
+  };
+}
+
+export async function likeBlogPost(blog_id: string, session_id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { error } = await supabase.from("blog_likes").insert({
+    blog_id,
+    session_id,
+    user_id: user?.id || null
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/work/blog");
+  return { success: true };
+}
+
+export async function unlikeBlogPost(blog_id: string, session_id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let query = supabase.from("blog_likes").delete().eq("blog_id", blog_id);
+
+  if (user) {
+    query = query.or(`user_id.eq.${user.id},session_id.eq.${session_id}`);
+  } else {
+    query = query.eq("session_id", session_id);
+  }
+
+  const { error } = await query;
+  if (error) return { error: error.message };
+
+  revalidatePath("/work/blog");
+  return { success: true };
+}
+
+// ── BLOG COMMENTS ──
+export async function addBlogComment(blog_id: string, author_name: string, content: string) {
+  const trimmedName = author_name.trim();
+  const trimmedContent = content.trim();
+
+  if (!trimmedName || !trimmedContent) {
+    return { error: "Name and comment content are required." };
+  }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { error } = await supabase.from("blog_comments").insert({
+    blog_id,
+    author_name: trimmedName,
+    content: trimmedContent,
+    user_id: user?.id || null
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/work/blog");
+  return { success: true };
+}
+
+export async function getAdminBlogComments(blog_id?: string) {
+  const supabase = await createClient();
+  let query = supabase.from("blog_comments").select("*").order("created_at", { ascending: false });
+  if (blog_id) {
+    query = query.eq("blog_id", blog_id);
+  }
+  const { data, error } = await query;
+  return { comments: data ?? [], error: error?.message || null };
+}
+
+export async function updateBlogCommentStatus(id: string, approved: boolean, hidden: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("blog_comments").update({ approved, hidden }).eq("id", id);
+  revalidatePath("/work/blog");
+  return { success: !error, error: error?.message || null };
+}
+
+export async function deleteBlogComment(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("blog_comments").delete().eq("id", id);
+  revalidatePath("/work/blog");
+  return { success: !error, error: error?.message || null };
+}

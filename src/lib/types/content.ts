@@ -6,6 +6,8 @@ export interface GalleryImage {
   alt: string | null;
   sort_order: number;
   published: boolean;
+  media_type: "image" | "video";
+  show_on_home: boolean;
   created_at: string;
 }
 

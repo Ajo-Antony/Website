@@ -1,52 +1,104 @@
 "use client";
-import { IconGallery } from "@/components/ui/SvgIcons";
 
-// ── IMAGE GUIDE ─────────────────────────────────────────────────
-// Gallery images: /public/images/gallery/gallery-1.jpg  (800×600)
-// Drop images there and replace the placeholder divs with <Image>.
-// ────────────────────────────────────────────────────────────────
+import Image from "next/image";
+import { motion } from "framer-motion";
+import type { GalleryImage } from "@/lib/types/content";
+import { Heart } from "lucide-react";
+import Link from "next/link";
 
-const GALLERY_ITEMS = [
-  { label: "Agent Builder", span: 2 },
-  { label: "CRM Dashboard", span: 1 },
-  { label: "WhatsApp Bot", span: 1 },
-  { label: "Campaign Analytics", span: 1 },
-  { label: "Knowledge Base", span: 2 },
-] as const;
+interface GalleryHomePageSectionProps {
+  items: GalleryImage[];
+}
 
-const GRAD_COLORS = [
-  "linear-gradient(135deg,rgba(108,99,255,0.15),rgba(167,139,250,0.08))",
-  "linear-gradient(135deg,rgba(14,165,233,0.15),rgba(56,189,248,0.08))",
-  "linear-gradient(135deg,rgba(244,114,182,0.15),rgba(251,113,133,0.08))",
-  "linear-gradient(135deg,rgba(245,158,11,0.15),rgba(251,191,36,0.08))",
-  "linear-gradient(135deg,var(--border),rgba(14,165,233,0.10))",
-];
+export default function GalleryHomePageSection({ items }: GalleryHomePageSectionProps) {
+  if (items.length === 0) return null;
 
-export default function GalleryHomePageSection() {
   return (
-    <section id="gallery" style={{ padding: "8rem 0", borderTop: "1px solid var(--glass-bg)" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
-        <div style={{ marginBottom: "3.5rem" }}>
-          <div style={{ display: "inline-flex", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Platform</div>
-          <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)" }}>
-            See it in action.
+    <section id="featured-gallery" className="relative py-24 border-t border-[var(--border)] overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--surface-alt)] to-transparent opacity-40 pointer-events-none" />
+      <div className="max-w-[1280px] mx-auto px-6 relative z-10">
+        
+        {/* Header */}
+        <div className="text-center mb-16 space-y-3">
+          <div className="inline-flex text-[10px] font-mono tracking-widest uppercase text-accent bg-accent/10 border border-accent/20 px-3 py-1 rounded-full">
+            Featured Gallery
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[var(--text)]">
+            Our Build <span className="italic font-normal text-accent font-serif">Highlights</span>
           </h2>
+          <p className="text-[var(--text-muted)] max-w-lg mx-auto text-sm sm:text-base font-light">
+            Behind the scenes and finished products. Click to see details and interact in the gallery.
+          </p>
         </div>
 
-        {/* Masonry-style grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.25rem" }}>
-          {GALLERY_ITEMS.map((item, i) => (
-            <div key={item.label}
-              style={{ gridColumn: `span ${item.span}`, height: item.span === 2 ? 260 : 200, borderRadius: 20, background: GRAD_COLORS[i % GRAD_COLORS.length], border: "1px solid rgba(255,255,255,0.85)", backdropFilter: "blur(12px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.75rem", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: "0 4px 24px var(--shadow)" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "scale(1.02)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 12px 40px rgba(99,88,210,0.18)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ""; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 24px var(--shadow)"; }}
-            >
-              {/* Replace with <Image src={`/images/gallery/gallery-${i+1}.jpg`} ... /> */}
-              <IconGallery size={32} color="var(--accent)" strokeWidth={1.4} style={{ opacity: 0.55 }} />
-              <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)" }}>{item.label}</div>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", fontWeight: 300 }}>Drop image → /public/images/gallery/</div>
-            </div>
-          ))}
+        {/* Masonry-style Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {items.map((img, index) => {
+            const isTall = index % 3 === 1;
+            const isWide = index % 5 === 0 && index !== 0;
+
+            return (
+              <motion.div
+                key={img.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.3) }}
+                className={`group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-alt)] transition-all duration-300 hover:border-accent/30 hover:shadow-lg ${
+                  isTall 
+                    ? "aspect-[3/4]" 
+                    : isWide
+                      ? "sm:col-span-2 aspect-[16/9]"
+                      : "aspect-square"
+                }`}
+              >
+                <Link href="/work/gallery" className="block w-full h-full relative">
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col justify-between p-6" />
+
+                  {img.media_type === "video" ? (
+                    <video
+                      src={img.url}
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
+                    />
+                  ) : (
+                    <Image
+                      src={img.url}
+                      alt={img.alt ?? ""}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-103"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
+
+                  {/* Icon details on hover */}
+                  <div className="absolute inset-0 z-20 flex items-center justify-center gap-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="flex items-center gap-1.5 text-white text-sm font-bold bg-black/40 px-4 py-2 rounded-full border border-white/15 backdrop-blur-sm">
+                      <Heart size={16} className="fill-rose-500 text-rose-500" />
+                      View Comments
+                    </span>
+                  </div>
+
+                  {/* Caption */}
+                  <div className="absolute inset-x-0 bottom-0 p-4 z-20 bg-gradient-to-t from-black/80 to-transparent pt-12 text-left">
+                    <p className="text-white text-xs font-semibold truncate">
+                      {img.caption || "StrixMind Build Snapshot"}
+                    </p>
+                    {img.media_type === "video" && (
+                      <span className="inline-block mt-1 text-[8px] uppercase tracking-wider font-mono text-teal-400 bg-teal-950/80 px-1.5 py-0.5 rounded border border-teal-500/20">
+                        Video
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

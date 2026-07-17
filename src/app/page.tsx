@@ -28,6 +28,9 @@ import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import type { GalleryImage } from "@/lib/types/content";
+import GalleryHomePageSection from "@/components/pages/homePage/GalleryHomePageSection";
 
 export const revalidate = 60;
 
@@ -55,10 +58,14 @@ const websiteJsonLd = {
 };
 
 export default async function HomePage() {
-  const [c, rawSections] = await Promise.all([
+  const supabase = await createClient();
+  const [c, rawSections, galleryRes] = await Promise.all([
     getContentMany(KEYS),
     getSectionDesigns("home"),
+    supabase.from("gallery_images").select("*").eq("published", true).eq("show_on_home", true).order("sort_order", { ascending: true }).order("created_at", { ascending: false }),
   ]);
+
+  const homeGalleryItems = (galleryRes.data ?? []) as GalleryImage[];
 
   // Build visibility map
   const visMap = new Map<string, SectionDesign>();
@@ -116,17 +123,13 @@ export default async function HomePage() {
         </SectionWrapper>
       )}
 
+      {/* Featured Gallery Highlights Showcase — visible only if allowed by admin */}
+      <GalleryHomePageSection items={homeGalleryItems} />
+
       {/* 7. FAQ */}
       {isVisible("home.faq") && (
         <SectionWrapper sectionKey="home.faq" design={designOf("home.faq")} isVisible>
           <FaqHomePageSection {...(c["home.faq"] as any)} />
-        </SectionWrapper>
-      )}
-
-      {/* 8. CTA Banner */}
-      {isVisible("home.cta") && (
-        <SectionWrapper sectionKey="home.cta" design={designOf("home.cta")} isVisible>
-          <CtaBannerHomePageSection {...(c["home.cta"] as any)} />
         </SectionWrapper>
       )}
 

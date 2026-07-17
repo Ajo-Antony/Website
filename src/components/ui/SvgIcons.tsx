@@ -435,3 +435,12 @@ export function AnimatedShield({ size = 22, color = "currentColor", style }: Ico
     </span>
   );
 }
+
+// IconMessage  → replaces 💬  (Comments / Chat)
+export const IconMessage = (p: IconProps) =>
+  svg(
+    <>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
+    </>,
+    p
+  );

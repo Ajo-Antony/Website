@@ -17,7 +17,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminShell from "@/components/pages/adminPage/AdminShell";
-import { IconGallery, IconEdit, IconBriefcase, IconClock, IconInbox } from "@/components/ui/SvgIcons";
+import { IconGallery, IconEdit, IconBriefcase, IconClock, IconInbox, IconMessage } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
 interface StatCard {
@@ -34,17 +34,30 @@ export default async function AdminOverviewPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/admin/login");
 
-  const [{ count: galleryCount }, { count: blogCount }, { count: projectCount }, { count: bookingCount }, { count: reviewCount }] = await Promise.all([
+  const [
+    { count: galleryCount },
+    { count: blogCount },
+    { count: projectCount },
+    { count: bookingCount },
+    { count: reviewCount },
+    blogCommentsRes,
+    galleryCommentsRes
+  ] = await Promise.all([
     supabase.from("gallery_images").select("*", { count: "exact", head: true }),
     supabase.from("blog_posts").select("*", { count: "exact", head: true }),
     supabase.from("projects").select("*", { count: "exact", head: true }),
     supabase.from("bookings").select("*", { count: "exact", head: true }),
     supabase.from("reviews").select("*", { count: "exact", head: true }).eq("status", "pending"),
+    supabase.from("blog_comments").select("*", { count: "exact", head: true }).eq("approved", false).eq("hidden", false),
+    supabase.from("gallery_comments").select("*", { count: "exact", head: true }).eq("approved", false).eq("hidden", false),
   ]);
+
+  const pendingCommentsCount = (blogCommentsRes.count ?? 0) + (galleryCommentsRes.count ?? 0);
 
   const cards: StatCard[] = [
     { label: "Bookings",          count: bookingCount ?? 0, Icon: IconClock,     href: "/admin/bookings" },
     { label: "Reviews (pending)", count: reviewCount  ?? 0, Icon: IconInbox,     href: "/admin/reviews"  },
+    { label: "Comments (pending)", count: pendingCommentsCount, Icon: IconMessage, href: "/admin/comments" },
     { label: "Gallery images",    count: galleryCount ?? 0, href: "/admin/gallery", Icon: IconGallery },
     { label: "Blog posts",        count: blogCount    ?? 0, href: "/admin/blog",    Icon: IconEdit },
     { label: "Projects",          count: projectCount ?? 0, href: "/admin/projects",Icon: IconBriefcase },
@@ -55,7 +68,7 @@ export default async function AdminOverviewPage() {
       <h1 className="text-2xl font-extrabold text-ink mb-1">Overview</h1>
       <p className="text-sm text-[var(--text-muted)] mb-8">Manage everything that shows up on strixmind.ai/work.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
         {cards.map((c) => (
           <Link
             key={c.href}

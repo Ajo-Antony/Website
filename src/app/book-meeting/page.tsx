@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { createBooking, getPublicBookedSlots } from "@/lib/actions/bookings";
 import { ChapterScrubber } from "@/components/ui/chapter-scrubber";
+import { useTheme } from "@/components/Theme/ThemeProvider";
+import confetti from "canvas-confetti";
 
 const BOOKING_STEPS_CHAPTERS = [
   {
@@ -143,6 +145,43 @@ const TIME_SLOTS = [
   "05:00 PM IST",
 ];
 
+const TIMEZONES = [
+  { name: "IST (India) UTC+5:30", id: "IST", offset: 5.5 },
+  { name: "SGT (Singapore) UTC+8:00", id: "SGT", offset: 8.0 },
+  { name: "GST (Dubai) UTC+4:00", id: "GST", offset: 4.0 },
+  { name: "CET (Paris/Berlin) UTC+1:00", id: "CET", offset: 1.0 },
+  { name: "GMT/UTC (London) UTC+0:00", id: "UTC", offset: 0.0 },
+  { name: "EST (New York) UTC-5:00", id: "EST", offset: -5.0 },
+  { name: "PST (San Francisco) UTC-8:00", id: "PST", offset: -8.0 },
+];
+
+function convertIstToTimezone(timeStr: string, timezoneId: string) {
+  if (!timeStr) return "";
+  const cleanTime = timeStr.replace(" IST", "").trim();
+  const [time, modifier] = cleanTime.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+  
+  if (modifier === "PM" && hours < 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+  
+  const tz = TIMEZONES.find(t => t.id === timezoneId) || TIMEZONES[0];
+  const diffHours = tz.offset - 5.5;
+  
+  const totalIstMinutes = hours * 60 + minutes;
+  const totalTargetMinutes = Math.round(totalIstMinutes + diffHours * 60);
+  const normalizedMinutes = (totalTargetMinutes % 1440 + 1440) % 1440;
+  
+  const targetHours = Math.floor(normalizedMinutes / 60);
+  const targetMins = normalizedMinutes % 60;
+  
+  const ampm = targetHours >= 12 ? "PM" : "AM";
+  const displayHours = targetHours % 12 === 0 ? 12 : targetHours % 12;
+  const displayMinutes = String(targetMins).padStart(2, "0");
+  const displayHoursStr = String(displayHours).padStart(2, "0");
+  
+  return `${displayHoursStr}:${displayMinutes} ${ampm} ${tz.id}`;
+}
+
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS_FULL = [
   "January", "February", "March", "April", "May", "June", 
@@ -169,12 +208,14 @@ export default function BookMeetingPage() {
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [selectedTimezone, setSelectedTimezone] = useState<string>("IST");
   
   // Accordion state for FAQs
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   // Custom states for theme switching and capabilities flow
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const [activeCapIndex, setActiveCapIndex] = useState<number>(0);
 
   // Calendar navigation state
@@ -250,6 +291,17 @@ export default function BookMeetingPage() {
     return bookedSlots.includes(slotString);
   };
 
+  const getSlotsLeft = (dayNum: number) => {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    let leftCount = 0;
+    TIME_SLOTS.forEach(slot => {
+      if (!isSlotBooked(dateStr, slot)) {
+        leftCount++;
+      }
+    });
+    return leftCount;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.selectedDate || !formData.selectedTime) {
@@ -275,6 +327,13 @@ export default function BookMeetingPage() {
 
       if (result.ok) {
         setSuccess(true);
+        // Trigger celebratory lightweight confetti animation
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ["#5eead4", "#a78bfa", "#f59e6b", "#0d9488", "#7c3aed"]
+        });
       } else {
         setErrorMsg(result.error || "Something went wrong while booking. Please try again.");
       }
@@ -332,6 +391,10 @@ export default function BookMeetingPage() {
     }
     // Disable Sunday (0)
     if (dateObj.getDay() === 0) {
+      return true;
+    }
+    // Disable if all slots are booked
+    if (getSlotsLeft(dayNum) === 0) {
       return true;
     }
     return false;
@@ -406,34 +469,25 @@ export default function BookMeetingPage() {
 
         {/* 1. HERO HEADER SECTION */}
         <div className="text-center max-w-4xl mx-auto mb-16 md:mb-24">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-bold tracking-wider uppercase mb-6 shadow-sm backdrop-blur-sm ${
-              isDarkMode 
-                ? "bg-emerald-950/20 border-emerald-500/30 text-[#5eead4]" 
-                : "bg-teal-50 border-teal-200 text-[#0d9488]"
-            }`}
-          >
-            <Sparkles className={`w-3.5 h-3.5 animate-pulse ${isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}`} />
-            StrixMind Consulting & Enterprise
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className={`text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight font-sans ${
-              isDarkMode ? "text-white" : "text-slate-900"
-            }`}
+            className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6 leading-none font-sans`}
           >
-            Co-Engineer Your{" "}
-            <span className={`bg-gradient-to-r bg-clip-text text-transparent ${
-              isDarkMode 
-                ? "from-[#5eead4] via-[#a78bfa] to-[#f59e6b]" 
-                : "from-[#0d9488] via-[#7c3aed] to-[#f59e6b]"
+            <span className={`font-black uppercase tracking-tight block sm:inline ${
+              isDarkMode ? "text-white" : "text-slate-900"
             }`}>
+              Co-Engineer Your{" "}
+            </span>
+            <span 
+              style={{ fontFamily: "var(--font-accent)" }} 
+              className={`italic font-normal tracking-wide block sm:inline-block sm:mt-1 ${
+                isDarkMode 
+                  ? "text-[#5eead4] drop-shadow-[0_2px_10px_rgba(94,234,212,0.15)]" 
+                  : "text-[#0d9488]"
+              }`}
+            >
               AI Future
             </span>
           </motion.h1>
@@ -442,8 +496,8 @@ export default function BookMeetingPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className={`text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto ${
-              isDarkMode ? "text-slate-400" : "text-slate-600"
+            className={`text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl mx-auto font-sans font-light tracking-wide ${
+              isDarkMode ? "text-slate-300" : "text-slate-600"
             }`}
           >
             Book a dedicated strategic mapping call with our elite AI solution architects. No sales pitches — just deep system engineering, workflow audits, and custom scaling models built for your company.
@@ -456,12 +510,15 @@ export default function BookMeetingPage() {
           {/* Left Column: Interactive Capabilities Flow Effect */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             <div>
-              <h3 className={`text-xs font-extrabold uppercase tracking-widest mb-1 ${
-                isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"
-              }`}>
+              <h3 
+                style={{ fontFamily: "var(--font-accent)" }} 
+                className={`text-xl sm:text-2xl font-normal italic tracking-wide mb-1 ${
+                  isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"
+                }`}
+              >
                 Our Enterprise Capabilities
               </h3>
-              <h2 className={`text-2xl font-bold tracking-tight ${
+              <h2 className={`text-2xl sm:text-3xl font-black tracking-tight ${
                 isDarkMode ? "text-white" : "text-slate-900"
               }`}>
                 StrixMind Core Architecture
@@ -746,7 +803,7 @@ export default function BookMeetingPage() {
                       <span className="text-slate-500">Scheduled For</span>
                       <strong className={`flex items-center gap-1 ${isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}`}>
                         <CalendarIcon className="w-3.5 h-3.5" />
-                        {getFormattedDateStr(formData.selectedDate)} @ {formData.selectedTime}
+                        {getFormattedDateStr(formData.selectedDate)} @ {convertIstToTimezone(formData.selectedTime, selectedTimezone)}
                       </strong>
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -1025,163 +1082,226 @@ export default function BookMeetingPage() {
                           Pick meeting date & time
                         </h4>
                         <p className={`text-xs ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
-                          Select a date below to see available slots. Booked slots are blocked to prevent overlaps.
+                          Select an available date below to view open consulting slots. Fully booked dates are marked and blocked automatically.
                         </p>
                       </div>
 
-                      {/* Interactive Custom Calendar Grid */}
-                      <div className={`p-4 rounded-2xl border backdrop-blur-md ${
-                        isDarkMode ? "bg-slate-900/50 border-white/5" : "bg-slate-50/50 border-slate-200"
-                      }`}>
-                        {/* Calendar Header */}
-                        <div className="flex items-center justify-between mb-4">
-                          <h5 className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-white" : "text-slate-900"}`}>
-                            {MONTHS_FULL[month]} {year}
-                          </h5>
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={handlePrevMonth}
-                              className={`p-1.5 rounded-lg border transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
-                                isDarkMode 
-                                  ? "border-white/10 hover:bg-white/5 text-slate-400 hover:text-white" 
-                                  : "border-slate-300 hover:bg-slate-100 text-slate-600 hover:text-slate-900"
-                              }`}
-                              disabled={year === new Date().getFullYear() && month <= new Date().getMonth()}
-                            >
-                              <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={handleNextMonth}
-                              className={`p-1.5 rounded-lg border transition-all ${
-                                isDarkMode 
-                                  ? "border-white/10 hover:bg-white/5 text-slate-400 hover:text-white" 
-                                  : "border-slate-300 hover:bg-slate-100 text-slate-600 hover:text-slate-900"
-                              }`}
-                            >
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Calendar Day Labels */}
-                        <div className="grid grid-cols-7 gap-1 text-center mb-1">
-                          {DAYS_OF_WEEK.map(d => (
-                            <span key={d} className={`text-[10px] font-bold uppercase py-1 ${isDarkMode ? "text-slate-500" : "text-slate-400"}`}>{d}</span>
-                          ))}
-                        </div>
-
-                        {/* Calendar Cells */}
-                        <div className="grid grid-cols-7 gap-1">
-                          {allCells.map((dayNum, cellIdx) => {
-                            const disabled = isDayDisabled(dayNum);
-                            const cellDateStr = dayNum 
-                              ? `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}` 
-                              : "";
-                            const isSelected = formData.selectedDate === cellDateStr;
-
-                            return (
-                              <div key={cellIdx} className="aspect-square flex items-center justify-center">
-                                {dayNum !== null ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDaySelect(dayNum)}
-                                    disabled={disabled}
-                                    className={`w-full h-full rounded-xl text-xs font-bold flex flex-col items-center justify-center transition-all ${
-                                      isSelected
-                                        ? isDarkMode 
-                                          ? "bg-gradient-to-r from-[#5eead4] to-[#a78bfa] text-black shadow-[0_0_12px_rgba(94,234,212,0.45)] scale-105 border border-[#5eead4]/30"
-                                          : "bg-gradient-to-r from-[#0d9488] to-[#7c3aed] text-white shadow-[0_0_12px_rgba(13,148,136,0.35)] scale-105 border border-[#0d9488]/30"
-                                        : disabled
-                                          ? isDarkMode 
-                                            ? "text-slate-700 cursor-not-allowed opacity-35" 
-                                            : "text-slate-300 cursor-not-allowed opacity-40"
-                                          : isDarkMode
-                                            ? "bg-slate-900/40 border border-white/5 hover:border-[#5eead4]/30 text-slate-200 hover:text-[#5eead4]"
-                                            : "bg-white border border-slate-200 hover:border-[#0d9488]/30 text-slate-700 hover:text-[#0d9488]"
-                                    }`}
-                                  >
-                                    <span>{dayNum}</span>
-                                    {/* Subtle indicator dot if the day has active slots */}
-                                    {!disabled && !isSelected && (
-                                      <span className={`w-1 h-1 rounded-full mt-0.5 ${isDarkMode ? "bg-[#5eead4]/50" : "bg-[#0d9488]/50"}`} />
-                                    )}
-                                  </button>
-                                ) : (
-                                  <div className="w-full h-full" />
-                                )}
+                      {/* Side-by-side Grid layout on Desktop (same as Admin Bookings view) */}
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        {/* Left Side: Calendar picker (7-cols) */}
+                        <div className="lg:col-span-7 space-y-4">
+                          <div className={`p-5 rounded-2xl border backdrop-blur-md shadow-lg ${
+                            isDarkMode ? "bg-[#101014]/80 border-white/5 text-white" : "bg-white border-slate-200 text-slate-900"
+                          }`}>
+                            {/* Calendar Header */}
+                            <div className="flex items-center justify-between mb-4 pb-3 border-b border-[var(--border)]">
+                              <h5 className={`text-sm font-extrabold tracking-wide ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                                {MONTHS_FULL[month]} {year}
+                              </h5>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={handlePrevMonth}
+                                  className={`p-1.5 rounded-lg border transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+                                    isDarkMode 
+                                      ? "border-white/10 hover:bg-white/5 text-slate-400 hover:text-white" 
+                                      : "border-slate-300 hover:bg-slate-100 text-slate-600 hover:text-slate-900"
+                                  }`}
+                                  disabled={year === new Date().getFullYear() && month <= new Date().getMonth()}
+                                >
+                                  <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleNextMonth}
+                                  className={`p-1.5 rounded-lg border transition-all ${
+                                    isDarkMode 
+                                      ? "border-white/10 hover:bg-white/5 text-slate-400 hover:text-white" 
+                                      : "border-slate-300 hover:bg-slate-100 text-slate-600 hover:text-slate-900"
+                                  }`}
+                                >
+                                  <ChevronRight className="w-4 h-4" />
+                                </button>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Time Slots Grid */}
-                      <AnimatePresence mode="wait">
-                        {formData.selectedDate && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="space-y-3 pt-2"
-                          >
-                            <div className="flex items-center justify-between">
-                              <label className={`block text-xs font-bold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
-                                Select an Available Time Slot for <span className={isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}>{getFormattedDateStr(formData.selectedDate)}</span>
-                              </label>
-                              <span className={`text-[10px] flex items-center gap-1 px-2 py-0.5 rounded-md ${
-                                isDarkMode ? "text-slate-500 bg-slate-900" : "text-slate-500 bg-slate-100"
-                              }`}>
-                                <Clock className="w-3 h-3" /> All times in IST
-                              </span>
                             </div>
-                            
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              {TIME_SLOTS.map(t => {
-                                const booked = isSlotBooked(formData.selectedDate, t);
-                                const isTimeSelected = formData.selectedTime === t;
+
+                            {/* Calendar Day Labels */}
+                            <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                              {DAYS_OF_WEEK.map(d => (
+                                <span key={d} className={`text-[10px] font-bold uppercase py-1 ${isDarkMode ? "text-slate-500" : "text-slate-400"}`}>{d}</span>
+                              ))}
+                            </div>
+
+                            {/* Calendar Cells */}
+                            <div className="grid grid-cols-7 gap-1.5">
+                              {allCells.map((dayNum, cellIdx) => {
+                                const disabled = isDayDisabled(dayNum);
+                                const cellDateStr = dayNum 
+                                  ? `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}` 
+                                  : "";
+                                const isSelected = formData.selectedDate === cellDateStr;
+                                const slotsLeft = dayNum ? getSlotsLeft(dayNum) : 0;
 
                                 return (
-                                  <button
-                                    key={t}
-                                    type="button"
-                                    onClick={() => !booked && handleSelectOption("selectedTime", t)}
-                                    disabled={booked}
-                                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl border transition-all text-xs font-semibold ${
-                                      isTimeSelected 
-                                        ? isDarkMode 
-                                          ? "bg-[#5eead4]/10 border-[#5eead4] text-[#5eead4] font-bold" 
-                                          : "bg-[#0d9488]/10 border-[#0d9488] text-[#0d9488] font-bold"
-                                        : booked
-                                          ? isDarkMode 
-                                            ? "bg-slate-950/40 border-white/5 text-slate-700 line-through cursor-not-allowed opacity-50" 
-                                            : "bg-slate-100 border-slate-200 text-slate-300 line-through cursor-not-allowed opacity-60"
-                                          : isDarkMode 
-                                            ? "bg-slate-900/60 border-white/5 hover:border-[#5eead4]/20 text-slate-300 hover:text-[#5eead4]" 
-                                            : "bg-white border-slate-200 hover:border-[#0d9488]/20 text-slate-700 hover:text-[#0d9488]"
-                                    }`}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                                      <span>{t}</span>
-                                    </div>
-                                    {isTimeSelected ? (
-                                      <CheckCircle className={`w-3.5 h-3.5 ${isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}`} />
-                                    ) : booked ? (
-                                      <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${
-                                        isDarkMode 
-                                          ? "text-red-400 bg-red-950/40 border-red-500/10" 
-                                          : "text-red-600 bg-red-50 border-red-200"
-                                      }`}>Booked</span>
-                                    ) : null}
-                                  </button>
+                                  <div key={cellIdx} className="aspect-square flex items-center justify-center">
+                                    {dayNum !== null ? (
+                                      (() => {
+                                        const dateObj = new Date(year, month, dayNum);
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+                                        dateObj.setHours(0, 0, 0, 0);
+                                        const isSunday = dateObj.getDay() === 0;
+                                        const isPastOrToday = dateObj.getTime() <= today.getTime();
+                                        const isFullyBooked = !isPastOrToday && !isSunday && slotsLeft === 0;
+
+                                        return (
+                                          <button
+                                            type="button"
+                                            onClick={() => handleDaySelect(dayNum)}
+                                            disabled={disabled}
+                                            className={`w-full h-full rounded-xl text-xs font-bold flex flex-col items-center justify-center p-1 border transition-all ${
+                                              isSelected
+                                                ? isDarkMode 
+                                                  ? "bg-gradient-to-r from-[#5eead4] to-[#a78bfa] text-black shadow-[0_0_12px_rgba(94,234,212,0.45)] scale-105 border border-[#5eead4]/30"
+                                                  : "bg-gradient-to-r from-[#0d9488] to-[#7c3aed] text-white shadow-[0_0_12px_rgba(13,148,136,0.35)] scale-105 border border-[#0d9488]/30"
+                                                : isFullyBooked
+                                                  ? isDarkMode 
+                                                    ? "text-rose-400/60 bg-rose-950/10 border-rose-900/30 cursor-not-allowed" 
+                                                    : "text-rose-400 bg-rose-50 border-rose-100 cursor-not-allowed"
+                                                  : disabled
+                                                    ? isDarkMode 
+                                                      ? "text-slate-700 cursor-not-allowed opacity-35 bg-slate-950/20" 
+                                                      : "text-slate-300 cursor-not-allowed opacity-40 bg-slate-100"
+                                                    : isDarkMode
+                                                      ? "bg-slate-900/40 border border-white/5 hover:border-[#5eead4]/30 text-slate-200 hover:text-[#5eead4]"
+                                                      : "bg-white border border-slate-200 hover:border-[#0d9488]/30 text-slate-700 hover:text-[#0d9488]"
+                                            }`}
+                                          >
+                                            <span className="text-[13px] font-extrabold">{dayNum}</span>
+                                            {/* Subtle indicator dot if the day has active slots, or a clear badge if fully booked */}
+                                            {isFullyBooked ? (
+                                              <span className="text-[7px] font-black text-rose-500 uppercase tracking-wider mt-0.5 leading-none">Full</span>
+                                            ) : !disabled && (
+                                              <span className={`w-1 h-1 rounded-full mt-1 transition-colors ${
+                                                isSelected
+                                                  ? isDarkMode ? "bg-black" : "bg-white"
+                                                  : isDarkMode ? "bg-[#5eead4]" : "bg-[#0d9488]"
+                                              }`} />
+                                            )}
+                                          </button>
+                                        );
+                                      })()
+                                    ) : (
+                                      <div className="w-full h-full" />
+                                    )}
+                                  </div>
                                 );
                               })}
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                          </div>
+                        </div>
+
+                        {/* Right Side: Available Timeslots list (5-cols) */}
+                        <div className="lg:col-span-5 flex flex-col justify-start">
+                          <AnimatePresence mode="wait">
+                            {formData.selectedDate ? (
+                              <motion.div 
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                className="space-y-3"
+                              >
+                                <div className="flex flex-col gap-2 mb-2">
+                                  <div className="flex items-center justify-between">
+                                    <label className={`block text-xs font-bold ${isDarkMode ? "text-slate-300" : "text-slate-700"}`}>
+                                      Select Time Slot for <span className={isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}>{getFormattedDateStr(formData.selectedDate)}</span>
+                                    </label>
+                                  </div>
+                                  <div className="flex items-center gap-2 justify-between">
+                                    <span className={`text-[10px] uppercase font-bold tracking-widest flex items-center gap-1.5 ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                                      <Clock className="w-3.5 h-3.5" /> Time Zone
+                                    </span>
+                                    <select
+                                      value={selectedTimezone}
+                                      onChange={(e) => setSelectedTimezone(e.target.value)}
+                                      className={`text-xs px-2.5 py-1 rounded-lg border font-semibold outline-none transition-all cursor-pointer ${
+                                        isDarkMode
+                                          ? "bg-slate-900 border-white/10 text-slate-200 hover:border-[#5eead4]/40"
+                                          : "bg-white border-slate-200 text-slate-800 hover:border-[#0d9488]/40"
+                                      }`}
+                                    >
+                                      {TIMEZONES.map((tz) => (
+                                        <option key={tz.id} value={tz.id} className={isDarkMode ? "bg-slate-950 text-white" : "bg-white text-slate-900"}>
+                                          {tz.name}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-1">
+                                  {TIME_SLOTS.map(t => {
+                                    const booked = isSlotBooked(formData.selectedDate, t);
+                                    const isTimeSelected = formData.selectedTime === t;
+                                    const convertedTime = convertIstToTimezone(t, selectedTimezone);
+
+                                    return (
+                                      <button
+                                        key={t}
+                                        type="button"
+                                        onClick={() => !booked && handleSelectOption("selectedTime", t)}
+                                        disabled={booked}
+                                        className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-xs font-semibold ${
+                                          isTimeSelected 
+                                            ? isDarkMode 
+                                              ? "bg-[#5eead4]/10 border-[#5eead4] text-[#5eead4] font-bold" 
+                                              : "bg-[#0d9488]/10 border-[#0d9488] text-[#0d9488] font-bold"
+                                            : booked
+                                              ? isDarkMode 
+                                                ? "bg-slate-950/40 border-white/5 text-slate-700 line-through cursor-not-allowed opacity-50" 
+                                                : "bg-slate-100 border-slate-200 text-slate-300 line-through cursor-not-allowed opacity-60"
+                                              : isDarkMode 
+                                                ? "bg-slate-900/60 border-white/5 hover:border-[#5eead4]/20 text-slate-300 hover:text-[#5eead4]" 
+                                                : "bg-white border-slate-200 hover:border-[#0d9488]/20 text-slate-700 hover:text-[#0d9488]"
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                          <span>{convertedTime}</span>
+                                          {selectedTimezone !== "IST" && (
+                                            <span className="text-[9px] font-mono opacity-55">({t})</span>
+                                          )}
+                                        </div>
+                                        {isTimeSelected ? (
+                                          <CheckCircle className={`w-3.5 h-3.5 ${isDarkMode ? "text-[#5eead4]" : "text-[#0d9488]"}`} />
+                                        ) : booked ? (
+                                          <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${
+                                            isDarkMode 
+                                              ? "text-red-400 bg-red-950/40 border-red-500/10" 
+                                              : "text-red-600 bg-red-50 border-red-200"
+                                          }`}>Booked</span>
+                                        ) : null}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </motion.div>
+                            ) : (
+                              <div className={`flex flex-col items-center justify-center p-8 rounded-2xl border border-dashed text-center min-h-[220px] ${
+                                isDarkMode ? "bg-slate-900/20 border-white/10 text-slate-500" : "bg-slate-50 border-slate-200 text-slate-400"
+                              }`}>
+                                <CalendarIcon className="w-8 h-8 mb-2 opacity-60 animate-pulse" />
+                                <h5 className="text-xs font-bold mb-1">No Date Selected</h5>
+                                <p className="text-[11px] leading-relaxed max-w-[200px]">
+                                  Please select an available date from the calendar to explore consulting slots.
+                                </p>
+                              </div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+
+                      </div>
 
                       <div className={`grid grid-cols-2 gap-4 pt-4 border-t ${isDarkMode ? "border-white/5" : "border-slate-100"}`}>
                         <button

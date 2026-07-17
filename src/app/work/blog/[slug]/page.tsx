@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { renderMarkdown } from "@/lib/markdown";
 import type { BlogPost } from "@/lib/types/content";
+import BlogLikesComments from "@/components/pages/workPage/BlogLikesComments";
+import { blurDataURL } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -92,6 +94,8 @@ export default async function WorkBlogPostPage({ params }: { params: Promise<{ s
               sizes="(max-width: 768px) 100vw, 896px"
               className="object-cover"
               priority
+              placeholder="blur"
+              blurDataURL={blurDataURL}
             />
           </div>
         </div>
@@ -102,6 +106,7 @@ export default async function WorkBlogPostPage({ params }: { params: Promise<{ s
           className="max-w-3xl mx-auto prose prose-lg prose-headings:font-bold prose-headings:text-ink prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl"
           dangerouslySetInnerHTML={{ __html: html }}
         />
+        <BlogLikesComments blogId={post.id} />
       </article>
     </>
   );

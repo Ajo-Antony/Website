@@ -50,18 +50,18 @@ function BookingRow({ booking, onStatusUpdate }: { booking: Booking, onStatusUpd
   });
 
   return (
-    <tr className="border-b border-[var(--border)] last:border-0 align-top hover:bg-slate-50/50 transition-colors">
+    <tr className="border-b border-[var(--border)] last:border-0 align-top hover:bg-[var(--surface-alt)]/50 transition-colors">
       <td className="py-4 px-4">
         <div className="font-semibold text-[var(--text)] text-sm">{booking.name}</div>
         <a href={`mailto:${booking.email}`} className="text-xs text-indigo-500 hover:underline">
           {booking.email}
         </a>
       </td>
-      <td className="py-4 px-4 text-sm font-semibold text-slate-800">{booking.slot}</td>
+      <td className="py-4 px-4 text-sm font-semibold text-[var(--text)]">{booking.slot}</td>
       <td className="py-4 px-4 text-sm text-[var(--text-muted)]">{booking.company || "—"}</td>
       <td className="py-4 px-4 text-sm text-[var(--text-muted)]">{booking.size || "—"}</td>
       <td className="py-4 px-4 text-sm text-[var(--text-muted)] max-w-[240px]">
-        <span className="block text-xs line-clamp-3 bg-slate-50 p-2 rounded border border-slate-100 whitespace-pre-line">{booking.goal || "—"}</span>
+        <span className="block text-xs line-clamp-3 bg-[var(--surface-alt)] p-2 rounded border border-[var(--border)] text-[var(--text-muted)] whitespace-pre-line">{booking.goal || "—"}</span>
       </td>
       <td className="py-4 px-4 text-xs text-[var(--text-dim)] whitespace-nowrap">{createdAt}</td>
       <td className="py-4 px-4">
@@ -172,7 +172,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
   return (
     <div className="space-y-6">
       {/* Upper Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-[var(--border)] shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-[var(--surface)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
         
         {/* Filter Badges */}
         <div className="flex flex-wrap items-center gap-1.5">
@@ -182,14 +182,14 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
               onClick={() => setFilter(opt)}
               className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all capitalize ${
                 filter === opt
-                  ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                  : "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-100"
+                  ? "bg-[var(--text)] text-[var(--surface)] border-[var(--text)] shadow-sm"
+                  : "bg-[var(--surface-alt)] text-[var(--text-muted)] border-[var(--border)] hover:border-[var(--accent)] hover:bg-[var(--glass-bg)]"
               }`}
             >
               {opt}
               {opt !== "all" && (
                 <span className={`ml-1 px-1.5 py-0.2 text-[10px] rounded-full font-extrabold ${
-                  filter === opt ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"
+                  filter === opt ? "bg-[var(--surface)]/20 text-[var(--surface)]" : "bg-[var(--border)] text-[var(--text-muted)]"
                 }`}>
                   {bookings.filter((b) => b.status === opt).length}
                 </span>
@@ -203,19 +203,19 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
           {selectedCalendarDayStr && (
             <button
               onClick={() => setSelectedCalendarDayStr(null)}
-              className="inline-flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl border border-red-200 transition-all"
+              className="inline-flex items-center gap-1 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl border border-red-200 transition-all dark:bg-red-950/40 dark:text-red-400 dark:border-red-500/25"
             >
               <X className="w-3.5 h-3.5" /> Clear Date Filter ({selectedCalendarDayStr})
             </button>
           )}
 
-          <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+          <div className="inline-flex rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] p-1">
             <button
               onClick={() => setViewMode("calendar")}
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === "calendar" 
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-100" 
-                  : "text-slate-500 hover:text-slate-800"
+                  ? "bg-[var(--surface)] text-[var(--text)] shadow-sm border border-[var(--border)]" 
+                  : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
             >
               <CalendarIcon className="w-3.5 h-3.5" /> Calendar View
@@ -224,8 +224,8 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
               onClick={() => setViewMode("list")}
               className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 viewMode === "list" 
-                  ? "bg-white text-slate-900 shadow-sm border border-slate-100" 
-                  : "text-slate-500 hover:text-slate-800"
+                  ? "bg-[var(--surface)] text-[var(--text)] shadow-sm border border-[var(--border)]" 
+                  : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
             >
               <List className="w-3.5 h-3.5" /> List View
@@ -239,24 +239,24 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Calendar Grid Box (Left 7-columns) */}
-          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div className="lg:col-span-7 bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-5 shadow-sm">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[var(--divider)]">
               <div className="flex items-center gap-2">
                 <CalendarIcon className="w-5 h-5 text-indigo-500" />
-                <h3 className="font-extrabold text-slate-800 tracking-tight text-base">
+                <h3 className="font-extrabold text-[var(--text)] tracking-tight text-base">
                   {MONTHS_FULL[month]} {year}
                 </h3>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={handlePrevMonth}
-                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+                  className="p-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNextMonth}
-                  className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+                  className="p-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -266,7 +266,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
             {/* Week Labels */}
             <div className="grid grid-cols-7 gap-2 text-center mb-2">
               {DAYS_OF_WEEK.map(d => (
-                <span key={d} className="text-xs font-bold text-slate-400 py-1 uppercase">{d}</span>
+                <span key={d} className="text-xs font-bold text-[var(--text-dim)] py-1 uppercase">{d}</span>
               ))}
             </div>
 
@@ -277,8 +277,8 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
                 
                 // Fetch bookings matching this day
                 const dayBookings = dayNum 
-                  ? bookings.filter(b => b.slot && b.slot.includes(dayMatchStr)) 
-                  : [];
+                    ? bookings.filter(b => b.slot && b.slot.includes(dayMatchStr)) 
+                    : [];
                   
                 const isSelected = selectedCalendarDayStr === dayMatchStr;
                 const hasBookings = dayBookings.length > 0;
@@ -291,13 +291,13 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
                         onClick={() => handleDayClick(dayNum)}
                         className={`w-full h-full rounded-xl flex flex-col items-center justify-between p-1.5 border transition-all text-left ${
                           isSelected
-                            ? "bg-indigo-50 border-indigo-400 text-indigo-900 ring-2 ring-indigo-200"
+                            ? "bg-indigo-50 border-indigo-400 text-indigo-900 ring-2 ring-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-500/50 dark:text-indigo-200"
                             : hasBookings
-                              ? "bg-slate-50 border-indigo-200 text-slate-800 hover:bg-indigo-50/40"
-                              : "bg-white border-slate-100 text-slate-700 hover:border-slate-200 hover:bg-slate-50"
+                              ? "bg-[var(--surface-alt)] border-indigo-200 text-[var(--text)] hover:bg-indigo-50/40 dark:border-indigo-500/20"
+                              : "bg-[var(--surface)] border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--accent)] hover:bg-[var(--surface-alt)]"
                         }`}
                       >
-                        <span className={`text-xs font-extrabold ${isSelected ? "text-indigo-600" : "text-slate-800"}`}>
+                        <span className={`text-xs font-extrabold ${isSelected ? "text-indigo-600 dark:text-indigo-400" : "text-[var(--text)]"}`}>
                           {dayNum}
                         </span>
                         
@@ -305,14 +305,14 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
                           <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md text-center w-full leading-none truncate ${
                             isSelected 
                               ? "bg-indigo-600 text-white" 
-                              : "bg-indigo-50 text-indigo-600 border border-indigo-100"
+                              : "bg-indigo-50 text-indigo-600 border border-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-500/20"
                           }`}>
                             {dayBookings.length} {dayBookings.length === 1 ? "call" : "calls"}
                           </span>
                         )}
                       </button>
                     ) : (
-                      <div className="w-full h-full bg-slate-50/30 rounded-xl" />
+                      <div className="w-full h-full bg-[var(--surface-alt)]/30 rounded-xl" />
                     )}
                   </div>
                 );
@@ -331,34 +331,34 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex-1 flex flex-col justify-between">
+            <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-5 shadow-sm flex-1 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 mb-3 border-b border-slate-100 pb-3">
-                  <Clock className="w-4 h-4 text-slate-400" />
-                  <h4 className="font-bold text-slate-800 text-sm">
+                <div className="flex items-center gap-1.5 mb-3 border-b border-[var(--divider)] pb-3">
+                  <Clock className="w-4 h-4 text-[var(--text-dim)]" />
+                  <h4 className="font-bold text-[var(--text)] text-sm">
                     {selectedCalendarDayStr ? `Bookings for ${selectedCalendarDayStr}` : "All Active Bookings"}
                   </h4>
                 </div>
                 
                 {filtered.length === 0 ? (
-                  <p className="text-slate-400 text-xs py-8 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-100">
+                  <p className="text-[var(--text-dim)] text-xs py-8 text-center bg-[var(--surface-alt)]/50 rounded-xl border border-dashed border-[var(--border)]">
                     No bookings found matching this selection.
                   </p>
                 ) : (
                   <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
                     {filtered.slice(0, 5).map((b) => (
-                      <div key={b.id} className="p-2.5 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between text-xs hover:border-slate-200 transition-colors">
+                      <div key={b.id} className="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-alt)] flex items-center justify-between text-xs hover:border-[var(--accent)] transition-colors">
                         <div>
-                          <strong className="block text-slate-800">{b.name}</strong>
-                          <span className="text-slate-500 block truncate max-w-[180px]">{b.company || "No Company"}</span>
+                          <strong className="block text-[var(--text)]">{b.name}</strong>
+                          <span className="text-[var(--text-muted)] block truncate max-w-[180px]">{b.company || "No Company"}</span>
                         </div>
-                        <span className="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100 shrink-0 text-[10px]">
+                        <span className="font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 dark:text-indigo-400 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-500/20 shrink-0 text-[10px]">
                           {b.slot.split(" @ ")[1]}
                         </span>
                       </div>
                     ))}
                     {filtered.length > 5 && (
-                      <p className="text-[10px] text-center text-slate-400 font-bold">and {filtered.length - 5} more...</p>
+                      <p className="text-[10px] text-center text-[var(--text-dim)] font-bold">and {filtered.length - 5} more...</p>
                     )}
                   </div>
                 )}
@@ -367,7 +367,7 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
               {selectedCalendarDayStr && (
                 <button
                   onClick={() => setSelectedCalendarDayStr(null)}
-                  className="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 border border-slate-200 py-2.5 rounded-xl transition-all mt-4"
+                  className="w-full text-center text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] bg-[var(--surface-alt)] hover:bg-[var(--glass-bg)] border border-[var(--border)] py-2.5 rounded-xl transition-all mt-4"
                 >
                   Show All Dates
                 </button>
@@ -379,30 +379,30 @@ export default function BookingsManager({ bookings }: { bookings: Booking[] }) {
       )}
 
       {/* BOOKINGS TABLE LIST */}
-      <div className="bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
-        <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-          <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+      <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
+        <div className="p-4 bg-[var(--surface-alt)] border-b border-[var(--border)] flex items-center justify-between">
+          <h4 className="font-bold text-[var(--text)] text-xs uppercase tracking-wider">
             {selectedCalendarDayStr ? `Filtered Slots: ${selectedCalendarDayStr}` : "All Records"} ({filtered.length})
           </h4>
-          <span className="text-slate-400 text-xs font-semibold">Indian Standard Time</span>
+          <span className="text-[var(--text-dim)] text-xs font-semibold">Indian Standard Time</span>
         </div>
         
         {filtered.length === 0 ? (
-          <div className="p-12 text-center bg-white">
+          <div className="p-12 text-center bg-[var(--surface)]">
             <p className="text-[var(--text-muted)] text-sm">No bookings match the filter criteria.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[860px]">
               <thead>
-                <tr className="border-b border-[var(--border)] text-left bg-slate-50/40">
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Contact</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Slot</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Company</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Size</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Goal</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Booked</th>
-                  <th className="py-3.5 px-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                <tr className="border-b border-[var(--border)] text-left bg-[var(--surface-alt)]/40">
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Contact</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Slot</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Company</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Size</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Goal</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Booked</th>
+                  <th className="py-3.5 px-4 text-xs font-bold text-[var(--text-dim)] uppercase tracking-wider">Status</th>
                   <th className="py-3.5 px-4"></th>
                 </tr>
               </thead>
