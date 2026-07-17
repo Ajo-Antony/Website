@@ -172,14 +172,14 @@ export function SiteHeader({
 				</div>
 
 				{/* Desktop CTAs */}
-				<div className="hidden items-center gap-3 md:flex">
+				<div className="hidden items-center gap-4 md:flex">
 					<ThemeToggle />
 					<Button asChild>
 						<Link
-							href={ctaHref}
-							className="no-underline bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] shadow-[0_8px_24px_var(--shadow-strong)] hover:shadow-[0_10px_32px_var(--shadow-strong)]"
+							href="/book-meeting"
+							className="no-underline bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)] shadow-[0_8px_24px_var(--shadow-strong)] hover:shadow-[0_10px_32px_var(--shadow-strong)] text-white font-semibold"
 						>
-							{ctaLabel}
+							Book a Meeting
 						</Link>
 					</Button>
 				</div>
@@ -222,9 +222,9 @@ export function SiteHeader({
 						))}
 					</div>
 				</NavigationMenu>
-				<div className="flex flex-col gap-2">
-					<Button className="w-full" asChild>
-						<Link href={ctaHref} className="no-underline">{ctaLabel}</Link>
+				<div className="flex flex-col gap-2 pt-2 border-t border-[var(--border)] mt-4">
+					<Button className="w-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)]" asChild>
+						<Link href="/book-meeting" className="no-underline text-white font-semibold">Book a Meeting</Link>
 					</Button>
 				</div>
 			</MobileMenu>

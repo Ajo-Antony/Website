@@ -76,7 +76,7 @@ export default function DemoHomePageSection() {
             ))}
           </div>
 
-          <Link href="/booking" style={{ fontSize: "1rem", fontWeight: 700, padding: "0.95rem 2.5rem", background: "#0063E5", color: "#fff", borderRadius: 100, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 8px 32px rgba(0,99,229,0.25)" }}>
+          <Link href="/book-meeting" style={{ fontSize: "1rem", fontWeight: 700, padding: "0.95rem 2.5rem", background: "#0063E5", color: "#fff", borderRadius: 100, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "0.5rem", boxShadow: "0 8px 32px rgba(0,99,229,0.25)" }}>
             Book a live demo →
           </Link>
         </div>

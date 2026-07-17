@@ -4,12 +4,22 @@ import { createClient } from "@/lib/supabase/server";
 const BASE_URL = "https://strixmind.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
+  let posts: any[] = [];
+  let projects: any[] = [];
 
-  const [{ data: posts }, { data: projects }] = await Promise.all([
-    supabase.from("blog_posts").select("slug, published_at").eq("published", true),
-    supabase.from("projects").select("slug, created_at").eq("published", true),
-  ]);
+  try {
+    const supabase = await createClient();
+
+    const [{ data: postsData }, { data: projectsData }] = await Promise.all([
+      supabase.from("blog_posts").select("slug, published_at").eq("published", true),
+      supabase.from("projects").select("slug, created_at").eq("published", true),
+    ]);
+    
+    posts = postsData ?? [];
+    projects = projectsData ?? [];
+  } catch (e) {
+    console.warn("Skipping dynamic sitemap routes because Supabase is not configured or offline:", e);
+  }
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL,                  lastModified: new Date(), changeFrequency: "weekly",  priority: 1.0 },
@@ -22,14 +32,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/work/gallery`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
   ];
 
-  const blogRoutes: MetadataRoute.Sitemap = (posts ?? []).map((post) => ({
+  const blogRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BASE_URL}/work/blog/${post.slug}`,
     lastModified: post.published_at ? new Date(post.published_at) : new Date(),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
-  const projectRoutes: MetadataRoute.Sitemap = (projects ?? []).map((project) => ({
+  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
     url: `${BASE_URL}/work/projects/${project.slug}`,
     lastModified: project.created_at ? new Date(project.created_at) : new Date(),
     changeFrequency: "monthly",

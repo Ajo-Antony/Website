@@ -26,7 +26,7 @@ const HERO_QUICK_LINKS: { href: string; label: string; desc: string; Icon: Eleme
   { href: "/services", label: "What we automate", desc: "WhatsApp CRM, workflows & multi-agent AI", Icon: IconRobot },
   { href: "/work",     label: "See it in action",  desc: "Case studies & projects we've shipped",   Icon: IconBriefcase },
   { href: "/about",    label: "Why StrixMind",     desc: "Our values and what drives the product",  Icon: IconSprout },
-  { href: "/booking",  label: "Book a demo",       desc: "Get a walkthrough tailored to your team", Icon: IconRocket },
+  { href: "/book-meeting", label: "Book a demo",       desc: "Get a walkthrough tailored to your team", Icon: IconRocket },
 ];
 
 export default function HeroHomePageSection({

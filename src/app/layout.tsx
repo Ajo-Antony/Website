@@ -119,7 +119,7 @@ export default async function RootLayout({
   const nav = content["global.nav"] as any;
 
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`} suppressHydrationWarning>
       <head>
         <GsapScripts />
         {/* No-flash theme script — runs before paint, reads localStorage

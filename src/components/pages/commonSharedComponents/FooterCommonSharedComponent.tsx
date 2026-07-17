@@ -74,6 +74,14 @@ export default function FooterCommonSharedComponent({
         <div className="py-2 sm:py-8 divide-y divide-white/10 sm:divide-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-8">
           {columns.map((col) => {
             const isOpen = !!openSections[col.heading];
+            // Process links to replace Book a Demo with Book a Meeting
+            const processedLinks = col.links.map((link) => {
+              if (link.label === "Book a Demo") {
+                return { label: "Book a Meeting", href: "/book-meeting" };
+              }
+              return link;
+            });
+
             return (
               <div key={col.heading} className="sm:!block">
                 {/* Mobile accordion header */}
@@ -91,7 +99,7 @@ export default function FooterCommonSharedComponent({
 
                 {/* Links — collapsible on mobile, always visible on desktop */}
                 <div className={`${isOpen ? "flex" : "hidden"} sm:flex flex-col gap-3 pb-5 sm:pb-0 sm:mt-4`}>
-                  {col.links.map((item) => (
+                  {processedLinks.map((item) => (
                     <Link
                       key={item.label}
                       href={item.href}

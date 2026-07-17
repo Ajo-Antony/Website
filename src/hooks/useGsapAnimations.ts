@@ -24,6 +24,9 @@
  */
 "use client";
 import { useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
 
 // ── Lightweight line splitter (no GSAP Club needed) ──────────────────────────
 // PERF NOTE: `el.innerText` forces a synchronous layout (it has to compute
@@ -427,29 +430,9 @@ export function useGsapAnimations() {
       };
     };
 
-    // GSAP/ScrollTrigger/Lenis are dynamically imported (rather than bundled
-    // into the main chunk) so they don't add to the JS the browser has to
-    // parse/execute before the page becomes interactive — they're only
-    // fetched once the browser is idle. This replaces three separate
-    // cdn.jsdelivr.net <script> requests (each its own DNS+TLS round trip,
-    // parsed as globals via a setInterval poll) with a single self-hosted,
-    // tree-shaken, code-split chunk served from the same origin.
-    const load = () =>
-      Promise.all([
-        import("gsap"),
-        import("gsap/ScrollTrigger"),
-        import("lenis"),
-      ]).then(([gsapMod, scrollTriggerMod, lenisMod]) => {
-        if (cancelled) return;
-        run(gsapMod.gsap, scrollTriggerMod.ScrollTrigger, lenisMod.default);
-      });
-
-    let idleHandle: number | null = null;
-    if ("requestIdleCallback" in window) {
-      idleHandle = (window as any).requestIdleCallback(load, { timeout: 1000 });
-    } else {
-      idleHandle = (window as any).setTimeout(load, 0);
-    }
+    // Execute GSAP and Lenis animations directly on client mount to guarantee 
+    // smooth scrolling and avoid dynamic chunk loading issues.
+    run(gsap, ScrollTrigger, Lenis);
 
     // Hard safety net: if for any reason the animation setup never runs
     // (chunk load failure, offline, etc.), no heading or paragraph should
@@ -459,10 +442,6 @@ export function useGsapAnimations() {
     return () => {
       cancelled = true;
       clearTimeout(revealTimeout);
-      if (idleHandle !== null) {
-        if ("cancelIdleCallback" in window) (window as any).cancelIdleCallback(idleHandle);
-        else clearTimeout(idleHandle);
-      }
       cleanupScrollTrigger?.();
     };
   }, []);

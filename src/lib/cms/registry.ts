@@ -428,13 +428,13 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
       { label: "Contact", href: "/#contact" },
     ],
     signInLabel: "Sign in",
-    ctaLabel: "Start Free Trial",
-    ctaHref: "/booking",
+    ctaLabel: "Book a Meeting",
+    ctaHref: "/book-meeting",
   },
   "global.footer": {
     tagline: "AI-powered business automation for Indian businesses. Scale without limits.",
-    ctaLabel: "Start Free Trial →",
-    ctaHref: "/booking",
+    ctaLabel: "Book a Meeting →",
+    ctaHref: "/book-meeting",
     statusLabel: "All systems operational",
     columns: [
       { heading: "Product", links: [
@@ -457,7 +457,7 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
       ]},
       { heading: "Support", links: [
         { label: "FAQ", href: "/#faq" },
-        { label: "Book a Demo", href: "/booking" },
+        { label: "Book a Meeting", href: "/book-meeting" },
       ]},
     ],
     socials: [
@@ -466,17 +466,17 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
       { label: "GitHub", href: "https://github.com/strixmind" },
       { label: "YouTube", href: "https://youtube.com/@strixmind" },
     ],
-    bottomText: `© ${new Date().getFullYear()} StrixMind Technologies Pvt. Ltd. · Made with ❤️ in Kerala, India`,
+    bottomText: `© ${new Date().getFullYear()} StrixMind LLP · Made in Kerala, India`,
   },
 
   "home.hero": {
     badge: "AI-Powered Business Operating System",
     headline: "Automate Workflows. Scale Operations. Grow Without Limits.",
     subheadline: "AI-powered CRM, WhatsApp automation, lead management, multi-agent workflows, and revenue intelligence — built for Indian businesses.",
-    primaryCtaLabel: "Start Free Trial →",
-    primaryCtaHref: "/booking",
-    secondaryCtaLabel: "Book a Demo",
-    secondaryCtaHref: "#why",
+    primaryCtaLabel: "Book a Meeting →",
+    primaryCtaHref: "/book-meeting",
+    secondaryCtaLabel: "Platform Demo",
+    secondaryCtaHref: "/#demo",
   },
   "home.trustedBy": {
     heading: "We're just getting started — and looking for founding partners",
@@ -540,12 +540,12 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   "home.pricing": {
     eyebrow: "Pricing",
     heading: "Simple, transparent pricing.",
-    subheading: "No credit card required. 14-day free trial on all plans. Cancel any time.",
+    subheading: "Flexible plans for teams of all sizes. Book a strategic meeting to find your solution.",
     note: "All prices in INR. GST applicable. Annual plans available at 20% discount.",
     plans: [
-      { name: "Starter", price: "₹4,999", period: "/month", billing: "Billed monthly", popular: false, desc: "Perfect for solo founders and small teams just getting started with AI automation.", features: ["1,000 leads/month", "WhatsApp bot (500 messages)", "Basic CRM + pipeline", "Email campaign module", "2 workflow automations", "Email support"], cta: "Start free trial", ctaHref: "/booking" },
-      { name: "Growth", price: "₹14,999", period: "/month", billing: "Save 20% annually", popular: true, desc: "Full AI power for scaling teams ready to automate sales, support, and operations.", features: ["10,000 leads/month", "Unlimited WhatsApp messages", "AI CRM + lead scoring", "Multi-channel campaigns", "5 multi-agent workflows", "Real-time analytics dashboard", "Priority support (4hr SLA)"], cta: "Start free trial", ctaHref: "/booking" },
-      { name: "Enterprise", price: "Custom", period: "", billing: "Volume pricing available", popular: false, desc: "Full-platform access with dedicated infrastructure, custom AI models, and white-glove onboarding.", features: ["Unlimited leads", "Custom AI model routing", "Dedicated agent cluster", "SSO + SAML authentication", "Self-hosted deployment option", "99.99% SLA guarantee", "Dedicated success manager"], cta: "Book a call", ctaHref: "/#contact" },
+      { name: "Starter", price: "₹4,999", period: "/month", billing: "Billed monthly", popular: false, desc: "Perfect for solo founders and small teams just getting started with AI automation.", features: ["1,000 leads/month", "WhatsApp bot (500 messages)", "Basic CRM + pipeline", "Email campaign module", "2 workflow automations", "Email support"], cta: "Book a Meeting", ctaHref: "/book-meeting" },
+      { name: "Growth", price: "₹14,999", period: "/month", billing: "Save 20% annually", popular: true, desc: "Full AI power for scaling teams ready to automate sales, support, and operations.", features: ["10,000 leads/month", "Unlimited WhatsApp messages", "AI CRM + lead scoring", "Multi-channel campaigns", "5 multi-agent workflows", "Real-time analytics dashboard", "Priority support (4hr SLA)"], cta: "Book a Meeting", ctaHref: "/book-meeting" },
+      { name: "Enterprise", price: "Custom", period: "", billing: "Volume pricing available", popular: false, desc: "Full-platform access with dedicated infrastructure, custom AI models, and white-glove onboarding.", features: ["Unlimited leads", "Custom AI model routing", "Dedicated agent cluster", "SSO + SAML authentication", "Self-hosted deployment option", "99.99% SLA guarantee", "Dedicated success manager"], cta: "Book a Meeting", ctaHref: "/book-meeting" },
     ],
   },
   "home.team": {
@@ -601,8 +601,8 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
     subheading: "Automate WhatsApp, email, and lead management with StrixMind — and start generating more leads, closing more deals, and growing without limits.",
     primaryCtaLabel: "Start Free Trial →",
     primaryCtaHref: "/booking",
-    secondaryCtaLabel: "Book a Demo",
-    secondaryCtaHref: "/booking",
+    secondaryCtaLabel: "Book a Meeting",
+    secondaryCtaHref: "/book-meeting",
   },
   "home.contact": {
     eyebrow: "Get In Touch",
@@ -674,8 +674,8 @@ export const CONTENT_DEFAULTS: Record<string, ContentValue> = {
   "services.cta": {
     heading: "Ready to automate your growth?",
     paragraph: "Start your 14-day free trial. No credit card required.",
-    primaryCtaLabel: "Book a demo →",
-    primaryCtaHref: "/booking",
+    primaryCtaLabel: "Book a meeting →",
+    primaryCtaHref: "/book-meeting",
     secondaryCtaLabel: "Ask a question",
     secondaryCtaHref: "/#contact",
   },

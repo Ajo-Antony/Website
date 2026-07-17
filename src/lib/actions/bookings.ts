@@ -80,6 +80,25 @@ export async function getBookings() {
 }
 
 /**
+ * Fetches only the slots of existing bookings.
+ * Since RLS might restrict select on bookings for anonymous users, we handle errors gracefully.
+ * Note: If admins want this to work fully on the client side, they can add a policy:
+ * CREATE POLICY "public_read_bookings_slots" ON bookings FOR SELECT USING (true);
+ */
+export async function getPublicBookedSlots(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("slot");
+
+  if (error) {
+    console.warn("Public select on bookings failed or was blocked by RLS:", error.message);
+    return [];
+  }
+  return (data ?? []).map((b: { slot: string }) => b.slot);
+}
+
+/**
  * Updates a booking's status (new | contacted | scheduled | closed).
  */
 export async function updateBookingStatus(id: string, status: string) {
