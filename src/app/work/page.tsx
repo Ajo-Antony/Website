@@ -79,7 +79,7 @@ export default async function WorkHubPage() {
           </span>
           <h1 className="text-4xl sm:text-6xl font-bold leading-tight mb-6 text-work-dark">
             {hub.heading}<br />
-            <span className="bg-gradient-to-r from-accent to-teal bg-clip-text text-transparent">{hub.headingAccent}</span>
+            <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">{hub.headingAccent}</span>
           </h1>
           <p className="text-ink-soft text-lg max-w-xl mx-auto mb-10">
             {hub.paragraph}

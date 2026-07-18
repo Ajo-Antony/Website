@@ -62,6 +62,8 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "JetBrains Mono", "monospace"],
+        accent: ["var(--font-instrument-serif)", "Instrument Serif", "serif"],
+        serif: ["var(--font-instrument-serif)", "Instrument Serif", "serif"],
         work: ["var(--font-jetbrains-mono)", "monospace"],
       },
       borderRadius: {

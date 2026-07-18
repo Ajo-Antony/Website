@@ -41,10 +41,10 @@ export default function PricingHomePageSection({
                 transition: "all 0.35s ease",
               }}
             >
-              {plan.popular && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, var(--accent), var(--accent-amber))" }} />}
+              {plan.popular && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "linear-gradient(90deg, var(--accent), var(--accent-2))" }} />}
 
               {plan.popular && (
-                <div style={{ position: "absolute", top: "1.4rem", right: "1.4rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#fff", background: "linear-gradient(90deg, var(--accent), var(--accent-amber))", padding: "0.28rem 0.75rem", borderRadius: 100 }}>
+                <div style={{ position: "absolute", top: "1.4rem", right: "1.4rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#fff", background: "linear-gradient(135deg,var(--accent),var(--accent-2))", padding: "0.28rem 0.75rem", borderRadius: 100 }}>
                   Most Popular
                 </div>
               )}
@@ -58,11 +58,11 @@ export default function PricingHomePageSection({
               <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginBottom: "1.25rem", fontWeight: 500 }}>{plan.billing}</div>
 
               <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", marginBottom: "1.5rem", lineHeight: 1.65 }}>{plan.desc}</p>
-              <div style={{ height: "1px", background: "var(--border)", marginBottom: "1.5rem" }} />
+              <div style={{ height: "1px", background: "#F1EFFE", marginBottom: "1.5rem" }} />
 
               <ul style={{ listStyle: "none", display: "flex", flexDirection: "column" as const, gap: "0.75rem", marginBottom: "2.25rem", padding: 0 }}>
                 {plan.features.map(feat => (
-                  <li key={feat} style={{ display: "flex", alignItems: "flex-start", gap: "0.65rem", fontSize: "0.875rem", color: "var(--text-muted)" }}>
+                  <li key={feat} style={{ display: "flex", alignItems: "flex-start", gap: "0.65rem", fontSize: "0.875rem", color: "#3a3458" }}>
                     <svg width={15} height={15} viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "0.1rem" }} aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
                     {feat}
                   </li>
@@ -81,8 +81,8 @@ export default function PricingHomePageSection({
                   textDecoration: "none",
                   transition: "all 0.3s ease",
                   ...(plan.popular
-                    ? { background: "linear-gradient(90deg, var(--accent), var(--accent-amber))", color: "#fff", boxShadow: "0 8px 24px var(--shadow-strong)" }
-                    : { background: "rgba(255,255,255,0.08)", color: "var(--text)", border: "1.5px solid var(--border)" }),
+                    ? { background: "linear-gradient(135deg,var(--accent),var(--accent-2))", color: "#fff", boxShadow: "0 8px 24px var(--shadow-strong)" }
+                    : { background: "#F4F2FE", color: "var(--accent-deep)", border: "1.5px solid var(--glass-bg)" }),
                 }}
               >
                 {plan.cta}

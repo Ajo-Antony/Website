@@ -14,7 +14,7 @@ import {
   Users,
   Smartphone,
 } from "lucide-react";
-import { cn, renderHeadingWithSerif } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/Theme/ThemeProvider";
 import { FeatureIllustration } from "./FeatureIllustration";
 
@@ -137,7 +137,7 @@ export function FeatureCarousel() {
             Why StrixMind
           </div>
           <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", maxWidth: 600, margin: "0 auto 1rem" }}>
-            {renderHeadingWithSerif("Everything your business needs, in one intelligent platform")}
+            Everything your business needs, in one intelligent platform
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
             From lead capture to deal closure, StrixMind automates every step so your team can focus on what matters most.

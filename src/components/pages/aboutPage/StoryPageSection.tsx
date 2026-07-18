@@ -37,14 +37,14 @@ export default function StoryPageSection({
                 }} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: "0.75rem", color: "var(--accent-deep)", fontFamily: "var(--font-body)", letterSpacing: "0.06em", marginBottom: "0.2rem" }}>{item.year}</div>
+                <div style={{ fontWeight: 800, fontSize: "0.75rem", color: "var(--accent-deep)", fontFamily: "var(--font-mono, monospace)", letterSpacing: "0.06em", marginBottom: "0.2rem" }}>{item.year}</div>
                 <div style={{ fontSize: "0.9rem", color: "var(--text)", fontWeight: 400 }}>{item.text}</div>
               </div>
             </div>
           ))}
           <div style={{ marginTop: "1.25rem", paddingTop: "1rem", borderTop: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />
-            <span style={{ fontFamily: "var(--font-body)", fontSize: "0.65rem", color: "var(--text-dim)", letterSpacing: "0.08em" }}>Just getting started · Built in Kerala 🇮🇳</span>
+            <span style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", color: "var(--text-dim)", letterSpacing: "0.08em" }}>Just getting started · Built in Kerala 🇮🇳</span>
           </div>
         </div>
       </div>

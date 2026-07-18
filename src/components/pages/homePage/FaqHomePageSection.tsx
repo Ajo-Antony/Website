@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface Faq { q: string; a: string }
 interface FaqProps { eyebrow?: string; heading?: string; subheading?: string; ctaLabel?: string; items?: Faq[] }
@@ -22,8 +21,8 @@ export default function FaqHomePageSection({
             <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "var(--glass-bg)", border: "1px solid var(--border)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
               {eyebrow}
             </div>
-            <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,3.5vw,3rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, marginBottom: "1.25rem" }}>
-              {renderHeadingWithSerif(heading)}
+            <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,3.5vw,3rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, marginBottom: "1.25rem", whiteSpace: "pre-line" }}>
+              {heading}
             </h2>
             <p style={{ fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: 1.75, marginBottom: "2rem" }}>
               {subheading}

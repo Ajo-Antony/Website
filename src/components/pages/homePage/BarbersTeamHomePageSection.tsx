@@ -1,6 +1,5 @@
 "use client";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface Member { initials: string; name: string; role: string; bio: string; photo?: string }
 interface TeamProps { eyebrow?: string; heading?: string; members?: Member[] }
@@ -14,8 +13,8 @@ export default function BarbersTeamHomePageSection({ eyebrow = D.eyebrow, headin
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem" }}>
         <div style={{ marginBottom: "3.5rem" }}>
           <div style={{ display: "inline-flex", fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>{eyebrow}</div>
-          <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)" }}>
-            {renderHeadingWithSerif(heading)}
+          <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", whiteSpace: "pre-line" }}>
+            {heading}
           </h2>
         </div>
 

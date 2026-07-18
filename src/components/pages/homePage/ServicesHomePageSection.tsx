@@ -27,8 +27,6 @@ import {
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 import { useRef } from "react";
-import { renderHeadingWithSerif } from "@/lib/utils";
-import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface Item { title: string; desc: string }
 interface ServicesProps { eyebrow?: string; heading?: string; items?: Item[] }
@@ -75,8 +73,8 @@ export default function ServicesHomePageSection({
             <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
               {eyebrow}
             </div>
-            <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)" }}>
-              {renderHeadingWithSerif(heading)}
+            <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", whiteSpace: "pre-line" }}>
+              {heading}
             </h2>
           </div>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.7 }}>
