@@ -4,6 +4,7 @@ import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import { IconMail, IconMapPin, IconClock, IconCheckCircle } from "@/components/ui/SvgIcons";
 import { createBooking } from "@/lib/actions/bookings";
 import type { ElementType } from "react";
+import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface InfoItem { icon: string; label: string; value: string }
 interface ContactProps { eyebrow?: string; heading?: string; subheading?: string; infoItems?: InfoItem[] }
@@ -75,8 +76,8 @@ export default function ContactHomePageSection({
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "var(--glass-bg)", border: "1px solid var(--border)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             {eyebrow}
           </div>
-          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, whiteSpace: "pre-line" }}>
-            {heading}
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1 }}>
+            {renderHeadingWithSerif(heading)}
           </h2>
         </div>
 
@@ -159,8 +160,8 @@ export default function ContactHomePageSection({
                   onClick={handleSubmit}
                   disabled={loading || !form.name || !form.email}
                   style={{
-                    width: "100%", padding: "1.05rem", background: form.name && form.email ? "linear-gradient(135deg,var(--accent),var(--accent-2))" : "#D8D4F5",
-                    color: "#fff", border: "none", borderRadius: 100, fontSize: "0.95rem", fontWeight: 700,
+                    width: "100%", padding: "1.05rem", background: form.name && form.email ? "linear-gradient(90deg, var(--accent), var(--accent-amber))" : "rgba(255,255,255,0.08)",
+                    color: form.name && form.email ? "#fff" : "var(--text-dim)", border: "none", borderRadius: 100, fontSize: "0.95rem", fontWeight: 700,
                     cursor: form.name && form.email ? "pointer" : "not-allowed",
                     boxShadow: form.name && form.email ? "0 8px 24px var(--shadow-strong)" : "none",
                     fontFamily: "inherit", transition: "all 0.3s ease",

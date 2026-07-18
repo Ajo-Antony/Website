@@ -13,7 +13,7 @@ export default function TrustedByHomePageSection({ heading = D.heading, logos = 
   const track = [...logos, ...logos];
 
   return (
-    <section style={{ background: "rgba(255,255,255,0.5)", padding: "3rem 0", borderTop: "1px solid var(--divider)", borderBottom: "1px solid var(--divider)", overflow: "hidden" }}>
+    <section style={{ background: "var(--surface-alt)", padding: "3rem 0", borderTop: "1px solid var(--divider)", borderBottom: "1px solid var(--divider)", overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 2rem" }}>
         <div style={{ textAlign: "center", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase" as const, color: "var(--text-dim)", marginBottom: "2rem" }}>
           {heading}

@@ -49,7 +49,7 @@ export default function GalleryHomePageSection({ items }: GalleryHomePageSection
               Interactive Snapshots
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[var(--text)]">
-              Our Build <span className="italic font-normal text-accent font-serif">Highlights</span>
+              Our Build <span className="italic font-normal text-accent" style={{ fontFamily: "var(--font-accent)" }}>Highlights</span>
             </h2>
             <p className="text-[var(--text-muted)] max-w-lg text-sm sm:text-base font-light">
               Behind the scenes and finished products. Click to view full highlights, join the discussion, and leave reviews.

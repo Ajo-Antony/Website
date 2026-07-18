@@ -41,3 +41,71 @@ const toBase64 = (str: string) =>
     : window.btoa(str);
 
 export const blurDataURL = `data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`;
+
+import React from "react";
+
+/**
+ * Renders a heading string with the very last word styled in the beautiful
+ * Instrument Serif italic font with the primary accent color.
+ * Preserves newlines as <br /> tags.
+ */
+export function renderHeadingWithSerif(text: string): React.ReactNode {
+  if (!text) return "";
+  const lines = text.split("\n");
+  return React.createElement(
+    React.Fragment,
+    null,
+    lines.map((line, lineIdx) => {
+      const isLastLine = lineIdx === lines.length - 1;
+      if (!isLastLine) {
+        return React.createElement(
+          React.Fragment,
+          { key: lineIdx },
+          line,
+          React.createElement("br", null)
+        );
+      }
+
+      const words = line.trim().split(/\s+/);
+      if (words.length === 0) return null;
+      if (words.length === 1) {
+        return React.createElement(
+          "span",
+          {
+            key: lineIdx,
+            style: {
+              fontFamily: "var(--font-accent)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "var(--accent)",
+            },
+          },
+          words[0]
+        );
+      }
+
+      const lastWord = words[words.length - 1];
+      const initialWords = words.slice(0, words.length - 1).join(" ");
+
+      return React.createElement(
+        React.Fragment,
+        { key: lineIdx },
+        initialWords,
+        " ",
+        React.createElement(
+          "span",
+          {
+            style: {
+              fontFamily: "var(--font-accent)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "var(--accent)",
+            },
+          },
+          lastWord
+        )
+      );
+    })
+  );
+}
+

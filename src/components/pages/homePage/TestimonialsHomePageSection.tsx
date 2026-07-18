@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import { getApprovedReviews, submitReview } from "@/lib/actions/reviews";
 import type { Review } from "@/lib/actions/reviews";
+import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface StaticTestimonial { initials: string; name: string; role: string; quote: string; stars: number }
 interface TestimonialsProps { eyebrow?: string; heading?: string; items?: StaticTestimonial[] }
@@ -149,7 +150,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
           onClick={() => setOpen(true)}
           style={{
             display: "inline-flex", alignItems: "center", gap: "0.5rem",
-            background: "linear-gradient(135deg,var(--accent),var(--accent-2))", color: "#fff",
+            background: "linear-gradient(90deg, var(--accent), var(--accent-amber))", color: "#fff",
             border: "none", borderRadius: 100, padding: "0.75rem 2rem",
             fontSize: "0.9rem", fontWeight: 700, cursor: "pointer",
             boxShadow: "0 4px 20px var(--shadow-strong)", transition: "all 0.2s ease",
@@ -198,13 +199,13 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
 
           {/* Star rating */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3458", display: "block", marginBottom: "0.5rem" }}>Your rating *</label>
+            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.5rem" }}>Your rating *</label>
             <StarPicker value={stars} onChange={setStars} />
           </div>
 
           {/* Name */}
           <div style={{ marginBottom: "1rem" }}>
-            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3458", display: "block", marginBottom: "0.4rem" }}>Your name *</label>
+            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.4rem" }}>Your name *</label>
             <input
               value={name}
               onChange={e => setName(e.target.value)}
@@ -216,7 +217,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
           {/* Role + Company */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
             <div>
-              <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3458", display: "block", marginBottom: "0.4rem" }}>Role <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>(optional)</span></label>
+              <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.4rem" }}>Role <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>(optional)</span></label>
               <input
                 value={role}
                 onChange={e => setRole(e.target.value)}
@@ -225,7 +226,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
               />
             </div>
             <div>
-              <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3458", display: "block", marginBottom: "0.4rem" }}>Company <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>(optional)</span></label>
+              <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.4rem" }}>Company <span style={{ color: "var(--text-dim)", fontWeight: 400 }}>(optional)</span></label>
               <input
                 value={company}
                 onChange={e => setCompany(e.target.value)}
@@ -237,7 +238,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
 
           {/* Review text */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "#3a3458", display: "block", marginBottom: "0.4rem" }}>Your review *</label>
+            <label style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: "0.4rem" }}>Your review *</label>
             <textarea
               value={quote}
               onChange={e => setQuote(e.target.value)}
@@ -265,7 +266,7 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
             onClick={handleSubmit}
             disabled={busy}
             style={{
-              width: "100%", background: busy ? "rgba(108,99,255,0.5)" : "linear-gradient(135deg,var(--accent),var(--accent-2))",
+              width: "100%", background: busy ? "rgba(108,99,255,0.5)" : "linear-gradient(90deg, var(--accent), var(--accent-amber))",
               color: "#fff", border: "none", borderRadius: 12, padding: "0.875rem",
               fontSize: "0.95rem", fontWeight: 700, cursor: busy ? "not-allowed" : "pointer",
               boxShadow: busy ? "none" : "0 4px 16px var(--shadow-strong)", transition: "all 0.2s ease",
@@ -312,8 +313,8 @@ export default function TestimonialsHomePageSection({
           <div style={{ display: "inline-flex", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "var(--glass-bg)", border: "1px solid var(--border)", padding: "0.35rem 1rem", borderRadius: 100, marginBottom: "1.5rem" }}>
             {eyebrow}
           </div>
-          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, whiteSpace: "pre-line" }}>
-            {heading}
+          <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1 }}>
+            {renderHeadingWithSerif(heading)}
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", marginTop: "1rem", maxWidth: 480, margin: "1rem auto 0", lineHeight: 1.7 }}>
             {dbReviews && dbReviews.length > 0

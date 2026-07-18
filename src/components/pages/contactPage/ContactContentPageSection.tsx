@@ -76,7 +76,7 @@ export default function ContactContentPageSection({ items = D.items }: ContactCo
               {error && (
                 <div style={{ marginBottom:"1rem", padding:"0.75rem 1rem", borderRadius:12, background:"rgba(239,68,68,0.1)", border:"1px solid rgba(239,68,68,0.3)", color:"#ef4444", fontSize:"0.85rem" }}>{error}</div>
               )}
-              <button onClick={handleSubmit} disabled={loading || !form.name || !form.email} style={{ width:"100%", padding:"1rem", background:"linear-gradient(135deg,var(--accent),var(--accent-2))", color:"#fff", border:"none", borderRadius:100, fontSize:"0.95rem", fontWeight:700, cursor: loading || !form.name || !form.email ? "not-allowed" : "pointer", fontFamily:"Inter,sans-serif", boxShadow:"0 8px 24px var(--shadow-strong)", opacity: loading ? 0.7 : 1 }}>{loading ? "Sending..." : "Send message →"}</button>
+              <button onClick={handleSubmit} disabled={loading || !form.name || !form.email} style={{ width:"100%", padding:"1rem", background: loading || !form.name || !form.email ? "rgba(255,255,255,0.08)" : "linear-gradient(90deg,var(--accent),var(--accent-amber))", color: loading || !form.name || !form.email ? "var(--text-dim)" : "#fff", border:"none", borderRadius:100, fontSize:"0.95rem", fontWeight:700, cursor: loading || !form.name || !form.email ? "not-allowed" : "pointer", fontFamily:"var(--font-body)", boxShadow: loading || !form.name || !form.email ? "none" : "0 8px 24px var(--shadow-strong)", opacity: loading ? 0.7 : 1 }}>{loading ? "Sending..." : "Send message →"}</button>
             </>
           )}
         </div>

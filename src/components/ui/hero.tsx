@@ -27,6 +27,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 
 /* ── Blob config — matches the shader-hero reference exactly ── */
 interface Blob {
@@ -109,6 +110,8 @@ export interface PremiumHeroProps {
 }
 
 export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const rafRef     = useRef<number>(0);
@@ -126,6 +129,15 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
   };
   const goPrev = () => goTo(slideIndex - 1, -1);
   const goNext = () => goTo(slideIndex + 1, 1);
+
+  // Auto-play interval for smooth carousel transitions
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDirection(1);
+      setSlideIndex((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slideIndex, slides.length]);
 
   useEffect(() => {
     const canvas  = canvasRef.current;
@@ -174,7 +186,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
       // forever, for as long as the hero was mounted (i.e. always). Letting
       // the GPU compositor blur the whole canvas via CSS instead is visually
       // identical and essentially free by comparison.
-      ctx.globalCompositeOperation = isDark ? "lighten" : "multiply";
+      ctx.globalCompositeOperation = isDark ? "lighten" : "source-over";
 
       blobs.forEach((b) => {
         const x = (b.baseX + Math.sin(time * b.speed + b.phase) * b.sx) * w;
@@ -289,8 +301,9 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
         aria-hidden
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.42) 100%)",
+          background: isDark
+            ? "linear-gradient(180deg, rgba(10,10,10,0.1) 0%, rgba(10,10,10,0.3) 100%)"
+            : "linear-gradient(180deg, rgba(250,248,244,0.1) 0%, rgba(250,248,244,0.3) 100%)",
         }}
       />
 
@@ -317,7 +330,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                   fontFamily: "var(--font-body)",
                   fontWeight: 300,
                   fontSize: "clamp(2.4rem, 5.2vw, 4rem)",
-                  color: "#5eead4",
+                  color: "var(--accent)",
                   letterSpacing: "-0.03em",
                   lineHeight: 1.05,
                 }}
@@ -331,7 +344,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                   fontFamily: "var(--font-body)",
                   fontWeight: 900,
                   fontSize: "clamp(3.2rem, 7.5vw, 5.75rem)",
-                  color: "#f5f5f5",
+                  color: "var(--text)",
                   letterSpacing: "-0.045em",
                   lineHeight: 1.0,
                 }}
@@ -346,7 +359,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                   fontStyle: "italic",
                   fontWeight: 400,
                   fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
-                  color: "rgba(255,255,255,0.82)",
+                  color: "var(--text-muted)",
                   letterSpacing: "-0.025em",
                   lineHeight: 1.05,
                   marginTop: "0.05em",
@@ -359,7 +372,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
             {/* Subheadline */}
             <p
               className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed md:text-center md:mx-auto"
-              style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }}
+              style={{ color: "var(--text-muted)", fontWeight: 400 }}
             >
               {slide.subheadline}
             </p>
@@ -371,12 +384,16 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                 href={slide.secondaryCtaHref}
                 className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold no-underline transition-all duration-200 hover:-translate-y-0.5"
                 style={{
-                  background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(255,255,255,0.35)",
-                  color: "#fff",
+                  background: isDark ? "rgba(255,255,255,0.08)" : "rgba(21,20,15,0.05)",
+                  border: isDark ? "1px solid rgba(255,255,255,0.35)" : "1px solid rgba(21,20,15,0.25)",
+                  color: "var(--text)",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.16)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.16)" : "rgba(21,20,15,0.1)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.08)" : "rgba(21,20,15,0.05)";
+                }}
               >
                 <Calendar className="w-4 h-4" />
                 {slide.secondaryCtaLabel}
@@ -387,11 +404,21 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                 href={slide.primaryCtaHref}
                 className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white no-underline transition-all duration-200 hover:-translate-y-0.5"
                 style={{
-                  background: "linear-gradient(90deg, #38bdf8, #f97316)",
-                  boxShadow: "0 8px 24px -8px rgba(249,115,22,0.5)",
+                  background: "linear-gradient(90deg, var(--accent), var(--accent-amber))",
+                  boxShadow: isDark 
+                    ? "0 8px 24px -8px rgba(249,115,22,0.4)" 
+                    : "0 8px 24px -8px rgba(234,124,60,0.3)",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 12px 30px -8px rgba(249,115,22,0.65)")}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 8px 24px -8px rgba(249,115,22,0.5)")}
+                onMouseEnter={e => {
+                  e.currentTarget.style.boxShadow = isDark 
+                    ? "0 12px 30px -8px rgba(249,115,22,0.55)" 
+                    : "0 12px 30px -8px rgba(234,124,60,0.45)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.boxShadow = isDark 
+                    ? "0 8px 24px -8px rgba(249,115,22,0.4)" 
+                    : "0 8px 24px -8px rgba(234,124,60,0.3)";
+                }}
               >
                 {slide.primaryCtaLabel}
                 <ArrowRight className="w-4 h-4" />
@@ -430,7 +457,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
                   style={{
                     width: i === slideIndex ? 22 : 8,
                     height: 8,
-                    background: i === slideIndex ? "#fff" : "rgba(255,255,255,0.35)",
+                    background: i === slideIndex ? "var(--text)" : "var(--border)",
                   }}
                 />
               </button>
@@ -438,42 +465,6 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
           </div>
         )}
 
-        {/* Spinning corner badge */}
-        <div
-          className="absolute bottom-6 right-6 z-10 hidden sm:flex items-center justify-center"
-          aria-hidden
-        >
-          <div
-            style={{
-              width: 56, height: 56,
-              borderRadius: "50%",
-              background: "conic-gradient(from 90deg, #38bdf8, #a78bfa, #f97316, #38bdf8)",
-              animation: "spin 6s linear infinite",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                inset: 5,
-                borderRadius: "50%",
-                background: "#0e0e0e",
-              }}
-            />
-          </div>
-          <span
-            style={{
-              position: "absolute",
-              fontSize: 9,
-              fontWeight: 600,
-              color: "#fff",
-              opacity: 0.85,
-              fontFamily: "var(--font-body)",
-            }}
-          >
-            StrixMind
-          </span>
-        </div>
       </div>
 
       {/* Side nav arrows — move to the next/previous slide */}
@@ -485,10 +476,10 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
             onClick={goPrev}
             className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
             style={{
-              background: "rgba(20,20,20,0.55)",
-              border: "1px solid rgba(255,255,255,0.18)",
+              background: "var(--glass-bg-strong)",
+              border: "1px solid var(--border)",
               backdropFilter: "blur(6px)",
-              color: "#fff",
+              color: "var(--text)",
               fontSize: 20,
             }}
           >
@@ -500,10 +491,10 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
             onClick={goNext}
             className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200"
             style={{
-              background: "rgba(20,20,20,0.55)",
-              border: "1px solid rgba(255,255,255,0.18)",
+              background: "var(--glass-bg-strong)",
+              border: "1px solid var(--border)",
               backdropFilter: "blur(6px)",
-              color: "#fff",
+              color: "var(--text)",
               fontSize: 20,
             }}
           >

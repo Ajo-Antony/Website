@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 import { useRef } from "react";
+import { renderHeadingWithSerif } from "@/lib/utils";
+import { renderHeadingWithSerif } from "@/lib/utils";
 
 interface Item { title: string; desc: string }
 interface ServicesProps { eyebrow?: string; heading?: string; items?: Item[] }
@@ -70,11 +72,11 @@ export default function ServicesHomePageSection({
 
         <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-6 md:gap-16 mb-12 md:mb-14">
           <div>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
               {eyebrow}
             </div>
-            <h2 style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", whiteSpace: "pre-line" }}>
-              {heading}
+            <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)" }}>
+              {renderHeadingWithSerif(heading)}
             </h2>
           </div>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.7 }}>
@@ -116,7 +118,7 @@ export default function ServicesHomePageSection({
                   data-strix-grid-item
                   style={{ flex: "0 0 320px", scrollSnapAlign: "start", padding: "2.5rem", borderRadius: 24, background: "var(--glass-bg)", border: "1px solid var(--glass-border)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", boxShadow: "0 8px 32px var(--shadow)", cursor: "default", position: "relative", overflow: "hidden" }}
                 >
-                  <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.15em", color: "var(--text-dim)", marginBottom: "1rem" }}>{String(i + 1).padStart(2, "0")}</div>
+                  <div style={{ fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.15em", color: "var(--text-dim)", marginBottom: "1rem" }}>{String(i + 1).padStart(2, "0")}</div>
                   {/* SVG icon replaces emoji */}
                   <div
                     className="strix-svc-icon"
@@ -124,7 +126,7 @@ export default function ServicesHomePageSection({
                   >
                     <Icon size={22} color="var(--accent)" />
                   </div>
-                  <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.6rem", color: "var(--text)" }}>{s.title}</div>
+                  <div style={{ fontFamily: "var(--font-body)", fontSize: "1rem", fontWeight: 700, marginBottom: "0.6rem", color: "var(--text)" }}>{s.title}</div>
                   <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.7 }}>{s.desc}</p>
                 </div>
               );
