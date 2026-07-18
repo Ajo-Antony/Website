@@ -136,8 +136,8 @@ export function FeatureCarousel() {
           <div style={{ display: "inline-flex", fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>
             Why StrixMind
           </div>
-          <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", maxWidth: 600, margin: "0 auto 1rem" }}>
-            Everything your business needs, in one intelligent platform
+          <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", maxWidth: 640, margin: "0 auto 1rem" }}>
+            Everything your business needs, in one intelligent <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">platform</span>
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", maxWidth: 520, margin: "0 auto", lineHeight: 1.75 }}>
             From lead capture to deal closure, StrixMind automates every step so your team can focus on what matters most.

@@ -23,9 +23,13 @@
 "use client";
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
 import {
-  IconTarget, IconWhatsapp, IconUsers, IconRocket, IconPuzzle, IconChart,
-} from "@/components/ui/SvgIcons";
-import type { ElementType } from "react";
+  MousePointerClick,
+  Bot,
+  Users,
+  Zap,
+  Puzzle,
+  TrendingUp,
+} from "lucide-react";
 import { useRef } from "react";
 
 interface Item { title: string; desc: string }
@@ -33,10 +37,41 @@ interface ServicesProps { eyebrow?: string; heading?: string; items?: Item[] }
 
 const D = CONTENT_DEFAULTS["home.services"] as Required<ServicesProps>;
 
-// SVG icons indexed to match the original emoji array order
-const ICONS: ElementType<{ size?: number; color?: string }>[] = [
-  IconTarget, IconWhatsapp, IconUsers, IconRocket, IconPuzzle, IconChart,
-];
+function getServiceIcon(title: string) {
+  const t = title.toLowerCase();
+  if (t.includes("crm")) return Users;
+  if (t.includes("whatsapp")) return Bot;
+  if (t.includes("campaign") || t.includes("outreach")) return Zap;
+  if (t.includes("lead") || t.includes("prospect")) return MousePointerClick;
+  if (t.includes("workflow") || t.includes("agent")) return Puzzle;
+  return TrendingUp;
+}
+
+function formatHeadingWithAccent(text: string) {
+  if (!text) return "";
+  const t = text.trim();
+  
+  if (t.includes("one system.")) {
+    return (
+      <>
+        Every growth lever,<br />in one <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">system.</span>
+      </>
+    );
+  }
+  
+  const words = t.split(/\s+/);
+  if (words.length <= 1) return text;
+  const lastWord = words[words.length - 1];
+  const rest = words.slice(0, words.length - 1).join(" ");
+  return (
+    <>
+      {rest}{" "}
+      <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">
+        {lastWord}
+      </span>
+    </>
+  );
+}
 
 export default function ServicesHomePageSection({
   eyebrow = D.eyebrow,
@@ -74,7 +109,7 @@ export default function ServicesHomePageSection({
               {eyebrow}
             </div>
             <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", whiteSpace: "pre-line" }}>
-              {heading}
+              {formatHeadingWithAccent(heading)}
             </h2>
           </div>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.7 }}>
@@ -108,7 +143,7 @@ export default function ServicesHomePageSection({
             style={{ display: "flex", gap: "1.5rem", overflowX: "auto", scrollBehavior: "smooth", padding: "0.5rem 0.25rem" }}
           >
             {items.map((s, i) => {
-              const Icon = ICONS[i % ICONS.length];
+              const Icon = getServiceIcon(s.title);
               return (
                 <div
                   key={s.title}

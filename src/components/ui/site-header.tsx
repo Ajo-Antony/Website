@@ -35,6 +35,10 @@ import {
 	Brain,
 	Image as ImageIcon,
 	Newspaper,
+	MousePointerClick,
+	Bot,
+	Puzzle,
+	TrendingUp,
 } from 'lucide-react';
 import StrixmindLogo from '@/components/ui/StrixmindLogo';
 import ThemeToggle from '@/components/Theme/ThemeToggle';
@@ -272,40 +276,40 @@ function ListItem({
 
 export const productLinks: LinkItem[] = [
 	{
-		title: 'AI Workflow Engine',
-		href: '/#workflow',
-		description: 'Automate complex processes end-to-end',
-		icon: Workflow,
-	},
-	{
-		title: 'Multi-Agent AI',
+		title: 'Lead Generation',
 		href: '/#services',
-		description: 'Six specialised agents, priority task queue',
-		icon: Brain,
+		description: 'AI-powered prospecting and contact enrichment',
+		icon: MousePointerClick,
 	},
 	{
-		title: 'WhatsApp CRM',
+		title: 'WhatsApp Automation',
 		href: '/#services',
-		description: 'Session-aware messaging and pipelines',
-		icon: MessageSquareText,
+		description: 'Intelligent booking and support bots 24/7',
+		icon: Bot,
 	},
 	{
-		title: 'Analytics',
-		href: '/#why',
-		description: 'Track and forecast revenue in real-time',
-		icon: BarChart,
-	},
-	{
-		title: 'Integrations',
+		title: 'Intelligent CRM',
 		href: '/#services',
-		description: 'Connect your existing apps and services',
-		icon: PlugIcon,
+		description: 'Updates itself and scores pipeline deals',
+		icon: Users,
 	},
 	{
-		title: 'API Access',
-		href: '/#contact',
-		description: 'Build custom integrations with our API',
-		icon: CodeIcon,
+		title: 'Campaign Outreach',
+		href: '/#services',
+		description: 'Multi-channel email, SMS, and social campaigns',
+		icon: Zap,
+	},
+	{
+		title: 'Multi-Agent Workflows',
+		href: '/#services',
+		description: 'No-code builder for autonomous agent chains',
+		icon: Puzzle,
+	},
+	{
+		title: 'Revenue Analytics',
+		href: '/#services',
+		description: 'Unified dashboard with AI revenue forecasts',
+		icon: TrendingUp,
 	},
 ];
 

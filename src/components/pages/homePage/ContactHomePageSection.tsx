@@ -15,6 +15,32 @@ const INFO_ICONS: ElementType<{ size?: number; color?: string }>[] = [
   IconMail, IconMapPin, IconClock, IconClock,
 ];
 
+function formatHeadingWithAccent(text: string) {
+  if (!text) return "";
+  const t = text.trim();
+  
+  if (t.includes("your growth.")) {
+    return (
+      <>
+        Let's talk about<br />your <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">growth.</span>
+      </>
+    );
+  }
+  
+  const words = t.split(/\s+/);
+  if (words.length <= 1) return text;
+  const lastWord = words[words.length - 1];
+  const rest = words.slice(0, words.length - 1).join(" ");
+  return (
+    <>
+      {rest}{" "}
+      <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">
+        {lastWord}
+      </span>
+    </>
+  );
+}
+
 export default function ContactHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, subheading = D.subheading, infoItems = D.infoItems,
 }: ContactProps) {
@@ -76,7 +102,7 @@ export default function ContactHomePageSection({
             {eyebrow}
           </div>
           <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, whiteSpace: "pre-line" }}>
-            {heading}
+            {formatHeadingWithAccent(heading)}
           </h2>
         </div>
 

@@ -1,15 +1,26 @@
 import { CONTENT_DEFAULTS } from "@/lib/cms/registry";
-import { IconRobot, IconBolt, IconUsers, IconWhatsapp, IconChart, IconRocket } from "@/components/ui/SvgIcons";
-import type { ElementType } from "react";
+import {
+  MousePointerClick,
+  Bot,
+  Users,
+  Zap,
+  Puzzle,
+  TrendingUp,
+} from "lucide-react";
 
 interface ServiceItem { icon: string; title: string; desc: string; image?: string }
 interface ServicesListProps { items?: ServiceItem[] }
 const D = CONTENT_DEFAULTS["services.list"] as Required<ServicesListProps>;
 
-// SVG icons indexed to match the original emoji order: 🤖 ⚡ 👥 💬 📊 🚀
-const ICONS: ElementType<{ size?: number; color?: string }>[] = [
-  IconRobot, IconBolt, IconUsers, IconWhatsapp, IconChart, IconRocket,
-];
+function getServiceIcon(title: string) {
+  const t = title.toLowerCase();
+  if (t.includes("crm")) return Users;
+  if (t.includes("whatsapp") || t.includes("chat")) return Bot;
+  if (t.includes("campaign") || t.includes("outreach")) return Zap;
+  if (t.includes("lead") || t.includes("prospect")) return MousePointerClick;
+  if (t.includes("workflow") || t.includes("agent")) return Puzzle;
+  return TrendingUp;
+}
 
 // Inline SVG illustrations for each service (shown when no image URL is set)
 function ServiceIllustration({ index }: { index: number }) {
@@ -167,7 +178,7 @@ export default function ServicesListSectionPage({ items = D.items }: ServicesLis
     <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }} className="py-16 sm:py-24">
       <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", flexDirection: "column" as const, gap: "3rem" }} className="px-5 sm:px-8 sm:gap-16">
         {items.map((s, i) => {
-          const Icon = ICONS[i % ICONS.length];
+          const Icon = getServiceIcon(s.title);
           const reversed = i % 2 !== 0;
           return (
           <div

@@ -7,6 +7,32 @@ interface FaqProps { eyebrow?: string; heading?: string; subheading?: string; ct
 
 const D = CONTENT_DEFAULTS["home.faq"] as Required<FaqProps>;
 
+function formatHeadingWithAccent(text: string) {
+  if (!text) return "";
+  const t = text.trim();
+  
+  if (t.includes("answers.")) {
+    return (
+      <>
+        Got questions?<br />We've got <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">answers.</span>
+      </>
+    );
+  }
+  
+  const words = t.split(/\s+/);
+  if (words.length <= 1) return text;
+  const lastWord = words[words.length - 1];
+  const rest = words.slice(0, words.length - 1).join(" ");
+  return (
+    <>
+      {rest}{" "}
+      <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">
+        {lastWord}
+      </span>
+    </>
+  );
+}
+
 export default function FaqHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, subheading = D.subheading, ctaLabel = D.ctaLabel, items = D.items,
 }: FaqProps) {
@@ -22,7 +48,7 @@ export default function FaqHomePageSection({
               {eyebrow}
             </div>
             <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,3.5vw,3rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, marginBottom: "1.25rem", whiteSpace: "pre-line" }}>
-              {heading}
+              {formatHeadingWithAccent(heading)}
             </h2>
             <p style={{ fontSize: "0.95rem", color: "var(--text-muted)", lineHeight: 1.75, marginBottom: "2rem" }}>
               {subheading}

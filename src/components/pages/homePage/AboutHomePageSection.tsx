@@ -12,6 +12,32 @@ const CORRECT_TIMELINE: Milestone[] = [
   { year: "Now", text: "Actively growing — building with early clients" },
 ];
 
+function formatHeadingWithAccent(text: string) {
+  if (!text) return "";
+  const t = text.trim();
+  
+  if (t.includes("every business.")) {
+    return (
+      <>
+        We make AI<br />accessible to every <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">business.</span>
+      </>
+    );
+  }
+  
+  const words = t.split(/\s+/);
+  if (words.length <= 1) return text;
+  const lastWord = words[words.length - 1];
+  const rest = words.slice(0, words.length - 1).join(" ");
+  return (
+    <>
+      {rest}{" "}
+      <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">
+        {lastWord}
+      </span>
+    </>
+  );
+}
+
 export default function AboutHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, paragraph1 = D.paragraph1, paragraph2 = D.paragraph2,
 }: MissionProps) {
@@ -24,7 +50,7 @@ export default function AboutHomePageSection({
         <div>
           <div style={{ display: "inline-flex", fontFamily: "var(--font-body)", fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--accent-deep)", background: "rgba(108,99,255,0.07)", border: "1px solid var(--glass-bg)", padding: "0.3rem 0.8rem", borderRadius: 100, marginBottom: "1.25rem" }}>Our story</div>
           <h2 style={{ fontFamily: "var(--font-body)", fontSize: "clamp(1.7rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.1, color: "var(--text)", marginBottom: "1.5rem", whiteSpace: "pre-line" }}>
-            {heading}
+            {formatHeadingWithAccent(heading)}
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", fontWeight: 300, lineHeight: 1.8, marginBottom: "1.25rem" }}>
             {paragraph1}

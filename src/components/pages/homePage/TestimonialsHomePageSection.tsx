@@ -279,6 +279,32 @@ function WriteReviewForm({ onSubmitted }: { onSubmitted: () => void }) {
   );
 }
 
+function formatHeadingWithAccent(text: string) {
+  if (!text) return "";
+  const t = text.trim();
+  
+  if (t.includes("who move fast.")) {
+    return (
+      <>
+        Trusted by teams<br />who move <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">fast.</span>
+      </>
+    );
+  }
+  
+  const words = t.split(/\s+/);
+  if (words.length <= 1) return text;
+  const lastWord = words[words.length - 1];
+  const rest = words.slice(0, words.length - 1).join(" ");
+  return (
+    <>
+      {rest}{" "}
+      <span style={{ fontFamily: "var(--font-accent)" }} className="italic font-normal text-[var(--accent)]">
+        {lastWord}
+      </span>
+    </>
+  );
+}
+
 // ─── Main section ─────────────────────────────────────────────
 export default function TestimonialsHomePageSection({
   eyebrow = D.eyebrow, heading = D.heading, items = D.items,
@@ -313,7 +339,7 @@ export default function TestimonialsHomePageSection({
             {eyebrow}
           </div>
           <h2 data-strix-slide-up style={{ fontSize: "clamp(2rem,4vw,3.25rem)", fontWeight: 800, letterSpacing: "-0.035em", color: "var(--text)", lineHeight: 1.1, whiteSpace: "pre-line" }}>
-            {heading}
+            {formatHeadingWithAccent(heading)}
           </h2>
           <p style={{ fontSize: "1rem", color: "var(--text-muted)", marginTop: "1rem", maxWidth: 480, margin: "1rem auto 0", lineHeight: 1.7 }}>
             {dbReviews && dbReviews.length > 0
