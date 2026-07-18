@@ -104,28 +104,6 @@ export function SiteHeader({
 						<NavigationMenuList>
 							<NavigationMenuItem>
 								<NavigationMenuTrigger className="bg-transparent text-[var(--text-muted)] hover:text-[var(--text)] text-sm font-medium">
-									Product
-								</NavigationMenuTrigger>
-								<NavigationMenuContent className="bg-[var(--nav-dropdown-bg,var(--surface))] p-1 pr-1.5">
-									<ul className="bg-[var(--nav-dropdown-bg,var(--surface))] grid w-[540px] grid-cols-2 gap-2 rounded-xl border border-[var(--border)] p-2 shadow-lg">
-										{productLinks.map((item, i) => (
-											<li key={i}>
-												<ListItem {...item} />
-											</li>
-										))}
-									</ul>
-									<div className="p-2">
-										<p className="text-[var(--text-muted)] text-sm">
-											Interested?{' '}
-											<a href="#contact" className="text-[var(--accent-deep)] font-medium hover:underline">
-												Schedule a demo
-											</a>
-										</p>
-									</div>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger className="bg-transparent text-[var(--text-muted)] hover:text-[var(--text)] text-sm font-medium">
 									Company
 								</NavigationMenuTrigger>
 								<NavigationMenuContent className="bg-[var(--nav-dropdown-bg,var(--surface))] p-1 pr-1.5 pb-1.5">
@@ -205,26 +183,22 @@ export function SiteHeader({
 			<MobileMenu open={open} className="flex flex-col justify-between gap-2 overflow-y-auto">
 				<NavigationMenu className="max-w-full">
 					<div className="flex w-full flex-col gap-y-2">
-						<span className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)] px-2 pt-2">Product</span>
-						{productLinks.map((link) => (
-							<ListItem key={link.title} {...link} />
-						))}
 						<span className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)] px-2 pt-2">Work</span>
 						{workLinks.map((link) => (
-							<ListItem key={link.title} {...link} />
+							<ListItem key={link.title} {...link} onClick={() => setOpen(false)} />
 						))}
 						<span className="text-xs font-bold uppercase tracking-widest text-[var(--text-dim)] px-2 pt-2">Company</span>
 						{companyLinks.map((link) => (
-							<ListItem key={link.title} {...link} />
+							<ListItem key={link.title} {...link} onClick={() => setOpen(false)} />
 						))}
 						{companyLinks2.map((link) => (
-							<ListItem key={link.title} {...link} />
+							<ListItem key={link.title} {...link} onClick={() => setOpen(false)} />
 						))}
 					</div>
 				</NavigationMenu>
 				<div className="flex flex-col gap-2 pt-2 border-t border-[var(--border)] mt-4">
-					<Button className="w-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)]" asChild>
-						<Link href="/book-meeting" className="no-underline text-white font-semibold">Book a Meeting</Link>
+					<Button className="w-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-2)]" asChild onClick={() => setOpen(false)}>
+						<Link href="/book-meeting" onClick={() => setOpen(false)} className="no-underline text-white font-semibold">Book a Meeting</Link>
 					</Button>
 				</div>
 			</MobileMenu>
@@ -269,8 +243,9 @@ function ListItem({
 	icon: Icon,
 	className,
 	href,
+	onClick,
 	...props
-}: React.ComponentProps<typeof NavigationMenuLink> & LinkItem) {
+}: React.ComponentProps<typeof NavigationMenuLink> & LinkItem & { onClick?: React.MouseEventHandler<HTMLAnchorElement> }) {
 	return (
 		<NavigationMenuLink
 			className={cn(
@@ -280,7 +255,7 @@ function ListItem({
 			{...props}
 			asChild
 		>
-			<a href={href}>
+			<a href={href} onClick={onClick}>
 				<div className="bg-[var(--glass-bg)] flex aspect-square size-11 items-center justify-center rounded-lg border border-[var(--border)] shadow-sm flex-shrink-0">
 					<Icon className="text-[var(--accent-deep)] size-5" />
 				</div>
@@ -295,7 +270,7 @@ function ListItem({
 
 // ─── Link data ────────────────────────────────────────────────
 
-const productLinks: LinkItem[] = [
+export const productLinks: LinkItem[] = [
 	{
 		title: 'AI Workflow Engine',
 		href: '/#workflow',

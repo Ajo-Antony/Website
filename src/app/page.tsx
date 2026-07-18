@@ -22,13 +22,12 @@ import TestimonialsHomePageSection from "@/components/pages/homePage/Testimonial
 import FaqHomePageSection from "@/components/pages/homePage/FaqHomePageSection";
 import CtaBannerHomePageSection from "@/components/pages/homePage/CtaBannerHomePageSection";
 import ContactHomePageSection from "@/components/pages/homePage/ContactHomePageSection";
-import CapabilitiesShowcaseSection from "@/components/pages/homePage/CapabilitiesShowcaseSection";
 import SectionWrapper from "@/components/pages/homePage/SectionWrapper";
 import { getContentMany } from "@/lib/actions/content";
 import { getSectionDesigns } from "@/lib/actions/sectionDesigner";
 import type { SectionDesign } from "@/lib/types/sectionDesigner";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import type { GalleryImage } from "@/lib/types/content";
 import GalleryHomePageSection from "@/components/pages/homePage/GalleryHomePageSection";
 
@@ -58,7 +57,7 @@ const websiteJsonLd = {
 };
 
 export default async function HomePage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const [c, rawSections, galleryRes] = await Promise.all([
     getContentMany(KEYS),
     getSectionDesigns("home"),
@@ -140,8 +139,6 @@ export default async function HomePage() {
         </SectionWrapper>
       )}
 
-      {/* 10. Capabilities showcase — static, always shown */}
-      <CapabilitiesShowcaseSection />
     </>
   );
 }

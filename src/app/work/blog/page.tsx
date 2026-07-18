@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import type { BlogPost } from "@/lib/types/content";
 import { Clock, ArrowRight } from "lucide-react";
 import { blurDataURL } from "@/lib/utils";
@@ -34,7 +34,7 @@ function getReadingTime(content: string | null): string {
 }
 
 export default async function WorkBlogListPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("blog_posts").select("*").eq("published", true).order("published_at", { ascending: false });
   const posts = (data ?? []) as BlogPost[];
 

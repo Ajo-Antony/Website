@@ -8,6 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import { withTimeout } from "@/lib/withTimeout";
 import type { SectionDesign, SectionDesignUpdate, DesignSettings } from "@/lib/types/sectionDesigner";
 
@@ -26,7 +27,7 @@ function getPublicPath(page: string): string {
  *  styling) after a short timeout. */
 export async function getSectionDesigns(page: string): Promise<SectionDesign[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createStaticClient();
     const query = supabase
       .from("section_designs")
       .select("*")

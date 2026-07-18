@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import type { GalleryImage } from "@/lib/types/content";
 import GalleryClient from "@/components/pages/workPage/GalleryClient";
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function WorkGalleryPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("gallery_images").select("*").eq("published", true).order("sort_order", { ascending: true }).order("created_at", { ascending: false });
   const images = (data ?? []) as GalleryImage[];
 

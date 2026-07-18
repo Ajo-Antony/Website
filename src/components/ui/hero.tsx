@@ -296,7 +296,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
 
       {/* ── Content — crossfades between slides ── */}
       <div
-        className="relative z-10 flex flex-col items-start justify-center h-full"
+        className="relative z-10 flex flex-col items-start md:items-center justify-center h-full w-full"
         style={{ minHeight: "calc(100vh - 72px)", padding: "clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 6vw, 5rem)" }}
       >
         <AnimatePresence mode="wait" custom={direction} initial={false}>
@@ -307,10 +307,10 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: direction === 1 ? -40 : 40 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
-            className="flex flex-col items-start"
+            className="flex flex-col items-start md:items-center md:text-center md:mx-auto max-w-4xl w-full"
           >
             {/* Three-line headline */}
-            <h1 className="flex flex-col mb-7" style={{ lineHeight: 0.94 }}>
+            <h1 className="flex flex-col mb-7 items-start md:items-center w-full" style={{ lineHeight: 0.94 }}>
               {/* Line 1 — teal / light weight */}
               <span
                 style={{
@@ -358,14 +358,14 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
 
             {/* Subheadline */}
             <p
-              className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed"
+              className="max-w-xl mb-10 text-base sm:text-lg leading-relaxed md:text-center md:mx-auto"
               style={{ color: "rgba(255,255,255,0.80)", fontWeight: 400 }}
             >
               {slide.subheadline}
             </p>
 
             {/* CTA row */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 md:justify-center w-full">
               {/* Ghost */}
               <Link
                 href={slide.secondaryCtaHref}
@@ -402,7 +402,7 @@ export const PremiumHero = ({ slides = DEFAULT_SLIDES }: PremiumHeroProps) => {
 
         {/* Slide dot indicators */}
         {slides.length > 1 && (
-          <div className="flex items-center gap-2 mt-10" role="tablist" aria-label="Hero slides">
+          <div className="flex items-center gap-2 mt-10 md:justify-center w-full" role="tablist" aria-label="Hero slides">
             {slides.map((_, i) => (
               <button
                 key={i}

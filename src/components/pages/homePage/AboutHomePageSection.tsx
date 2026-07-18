@@ -35,7 +35,7 @@ export default function AboutHomePageSection({
           <a href="/about" style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--accent-deep)", textDecoration: "none" }}>Learn more about us →</a>
         </div>
 
-        <div className="p-8 sm:p-10" style={{ borderRadius: 24, background: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.85)", backdropFilter: "blur(20px)", boxShadow: "0 12px 48px rgba(99,88,210,0.14)", position: "relative", overflow: "hidden" }}>
+        <div className="p-8 sm:p-10" style={{ borderRadius: 24, background: "var(--glass-bg)", border: "1px solid var(--glass-border)", backdropFilter: "blur(20px)", boxShadow: "0 12px 48px var(--shadow)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle,rgba(167,139,250,0.18),transparent 70%)", pointerEvents: "none" }} />
 
           {/* Journey label */}

@@ -6,7 +6,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import type { Project, BlogPost, GalleryImage } from "@/lib/types/content";
 import { getContent } from "@/lib/actions/content";
 import { IconBriefcase, IconEdit, IconGallery } from "@/components/ui/SvgIcons";
@@ -51,7 +51,7 @@ const HUB_ITEMS: HubItem[] = [
 ];
 
 export default async function WorkHubPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const hub = await getContent("work.hub") as any;
 
   const [{ data: projects }, { data: posts }, { data: images }] = await Promise.all([

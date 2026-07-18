@@ -15,6 +15,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/Theme/ThemeProvider";
 import { FeatureIllustration } from "./FeatureIllustration";
 
 // StrixMind product features — each paired with a custom vector scene
@@ -91,6 +92,8 @@ const wrap = (min: number, max: number, v: number) => {
 };
 
 export function FeatureCarousel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [step, setStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -146,9 +149,24 @@ export function FeatureCarousel() {
           <div className="relative overflow-hidden rounded-[2.5rem] lg:rounded-[3rem] flex flex-col lg:flex-row min-h-[600px] lg:aspect-video border border-[rgba(108,99,255,0.15)] shadow-[0_20px_64px_var(--border)]">
 
             {/* Left panel — feature list */}
-            <div className="w-full lg:w-[40%] min-h-[350px] md:min-h-[450px] lg:h-full relative z-30 flex flex-col items-start justify-center overflow-hidden px-8 md:px-16 lg:pl-16 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-deep)]">
-              <div className="absolute inset-x-0 top-0 h-12 md:h-20 lg:h-16 bg-gradient-to-b from-[var(--accent)] via-[var(--accent)]/80 to-transparent z-40" />
-              <div className="absolute inset-x-0 bottom-0 h-12 md:h-20 lg:h-16 bg-gradient-to-t from-[var(--accent-deep)] via-[var(--accent-deep)]/80 to-transparent z-40" />
+            <div className={cn(
+              "w-full lg:w-[40%] min-h-[350px] md:min-h-[450px] lg:h-full relative z-30 flex flex-col items-start justify-center overflow-hidden px-8 md:px-16 lg:pl-16 transition-all duration-300",
+              isDark 
+                ? "bg-gradient-to-br from-[#0c1a18] via-[#07100f] to-[#040807]" 
+                : "bg-gradient-to-br from-[var(--accent)] to-[var(--accent-deep)]"
+            )}>
+              <div className={cn(
+                "absolute inset-x-0 top-0 h-12 md:h-20 lg:h-16 z-40 transition-all duration-300",
+                isDark 
+                  ? "bg-gradient-to-b from-[#0c1a18] via-[#0c1a18]/80 to-transparent" 
+                  : "bg-gradient-to-b from-[var(--accent)] via-[var(--accent)]/80 to-transparent"
+              )} />
+              <div className={cn(
+                "absolute inset-x-0 bottom-0 h-12 md:h-20 lg:h-16 z-40 transition-all duration-300",
+                isDark 
+                  ? "bg-gradient-to-t from-[#040807] via-[#040807]/80 to-transparent" 
+                  : "bg-gradient-to-t from-[var(--accent-deep)] via-[var(--accent-deep)]/80 to-transparent"
+              )} />
 
               <div className="relative w-full h-full flex items-center justify-center lg:justify-start z-20">
                 {FEATURES.map((feature, index) => {

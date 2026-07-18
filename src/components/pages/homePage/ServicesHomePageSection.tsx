@@ -114,7 +114,7 @@ export default function ServicesHomePageSection({
                   key={s.title}
                   className="strix-service-card"
                   data-strix-grid-item
-                  style={{ flex: "0 0 320px", scrollSnapAlign: "start", padding: "2.5rem", borderRadius: 24, background: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.85)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", boxShadow: "0 8px 32px rgba(99,88,210,0.10)", cursor: "default", position: "relative", overflow: "hidden" }}
+                  style={{ flex: "0 0 320px", scrollSnapAlign: "start", padding: "2.5rem", borderRadius: 24, background: "var(--glass-bg)", border: "1px solid var(--glass-border)", backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)", boxShadow: "0 8px 32px var(--shadow)", cursor: "default", position: "relative", overflow: "hidden" }}
                 >
                   <div style={{ fontFamily: "var(--font-mono, monospace)", fontSize: "0.65rem", letterSpacing: "0.15em", color: "var(--text-dim)", marginBottom: "1rem" }}>{String(i + 1).padStart(2, "0")}</div>
                   {/* SVG icon replaces emoji */}

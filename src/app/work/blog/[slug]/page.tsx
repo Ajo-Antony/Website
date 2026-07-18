@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import { renderMarkdown } from "@/lib/markdown";
 import type { BlogPost } from "@/lib/types/content";
 import BlogLikesComments from "@/components/pages/workPage/BlogLikesComments";
@@ -16,7 +16,7 @@ function formatDate(iso: string | null): string {
 }
 
 async function getPost(slug: string) {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("blog_posts").select("*").eq("slug", slug).eq("published", true).single();
   return data as BlogPost | null;
 }

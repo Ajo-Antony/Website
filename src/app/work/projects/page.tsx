@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/staticClient";
 import type { Project } from "@/lib/types/content";
 import ProjectsCategoryFilter from "@/components/pages/workPage/ProjectsCategoryFilter";
 
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function WorkProjectsListPage() {
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("projects").select("*").eq("published", true).order("sort_order", { ascending: true }).order("created_at", { ascending: false });
   const projects = (data ?? []) as Project[];
 
