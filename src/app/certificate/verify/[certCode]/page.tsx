@@ -14,6 +14,7 @@ import {
   Clock
 } from "lucide-react";
 import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
+import { PrintButton } from "@/components/ui/PrintButton";
 
 export const dynamic = "force-dynamic";
 
@@ -80,13 +81,7 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2.5">
-            <button
-              onClick={`window.print()` as any}
-              className="flex items-center gap-2 px-4 py-2 border border-white/10 hover:bg-white/5 rounded-xl text-xs font-bold transition-all"
-            >
-              <Printer size={13} />
-              Print
-            </button>
+            <PrintButton />
             <a
               href={`/api/certificates/${certificate.certCode}/download`}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-accent to-accent-2 hover:opacity-90 rounded-xl text-xs font-bold transition-all shadow-[0_4px_16px_rgba(108,99,255,0.2)]"
@@ -140,9 +135,6 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
               src="/brand/strixmind-logo.png" 
               alt="StrixMind Logo" 
               className="h-6 sm:h-9 md:h-11 w-auto object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
             />
           </div>
 
