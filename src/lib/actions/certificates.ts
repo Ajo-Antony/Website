@@ -14,6 +14,16 @@ export interface CertificateTemplate {
   secondaryColor: string; // Hex code, default #00d4aa
   textColor: string; // Hex code, default #1a1a1e
   mutedColor: string; // Hex code, default #4b5563
+  // Advanced template layout coordinates and dimensions (custom spacing)
+  titleY?: number;
+  subtitleY?: number;
+  studentNameY?: number;
+  bodyY?: number;
+  footerY?: number;
+  qrY?: number;
+  qrSize?: number;
+  borderWidth?: number;
+  fontFamily?: "sans" | "serif" | "mono";
 }
 
 export interface StudentCertificate {
@@ -37,21 +47,131 @@ const DEFAULT_TEMPLATE: CertificateTemplate = {
   secondaryColor: "#00d4aa",
   textColor: "#15140f",
   mutedColor: "#4b5563",
+  titleY: 150,
+  subtitleY: 200,
+  studentNameY: 250,
+  bodyY: 310,
+  footerY: 120,
+  qrY: 60,
+  qrSize: 74,
+  borderWidth: 4,
+  fontFamily: "sans",
 };
+
+// ── HELPERS FOR RELATIONAL MAPPING ──
+
+function isTableMissingError(error: any): boolean {
+  if (!error) return false;
+  const msg = String(error.message || "").toLowerCase();
+  const code = String(error.code || "").toUpperCase();
+  return (
+    code === "42P01" ||
+    code === "PGRST116" ||
+    msg.includes("relation") && msg.includes("does not exist") ||
+    msg.includes("table") && msg.includes("does not exist")
+  );
+}
+
+function mapTemplateRow(row: any): CertificateTemplate {
+  return {
+    title: row.title ?? DEFAULT_TEMPLATE.title,
+    subtitle: row.subtitle ?? DEFAULT_TEMPLATE.subtitle,
+    bodyTemplate: row.body_template ?? DEFAULT_TEMPLATE.bodyTemplate,
+    signatoryName: row.signatory_name ?? DEFAULT_TEMPLATE.signatoryName,
+    signatoryTitle: row.signatory_title ?? DEFAULT_TEMPLATE.signatoryTitle,
+    primaryColor: row.primary_color ?? DEFAULT_TEMPLATE.primaryColor,
+    secondaryColor: row.secondary_color ?? DEFAULT_TEMPLATE.secondaryColor,
+    textColor: row.text_color ?? DEFAULT_TEMPLATE.textColor,
+    mutedColor: row.muted_color ?? DEFAULT_TEMPLATE.mutedColor,
+    titleY: row.title_y ?? DEFAULT_TEMPLATE.titleY,
+    subtitleY: row.subtitle_y ?? DEFAULT_TEMPLATE.subtitleY,
+    studentNameY: row.student_name_y ?? DEFAULT_TEMPLATE.studentNameY,
+    bodyY: row.body_y ?? DEFAULT_TEMPLATE.bodyY,
+    footerY: row.footer_y ?? DEFAULT_TEMPLATE.footerY,
+    qrY: row.qr_y ?? DEFAULT_TEMPLATE.qrY,
+    qrSize: row.qr_size ?? DEFAULT_TEMPLATE.qrSize,
+    borderWidth: row.border_width ?? DEFAULT_TEMPLATE.borderWidth,
+    fontFamily: row.font_family ?? DEFAULT_TEMPLATE.fontFamily,
+  };
+}
+
+function mapTemplateToRow(t: CertificateTemplate) {
+  return {
+    key: "certificates.template",
+    title: t.title,
+    subtitle: t.subtitle,
+    body_template: t.bodyTemplate,
+    signatory_name: t.signatoryName,
+    signatory_title: t.signatoryTitle,
+    primary_color: t.primaryColor,
+    secondary_color: t.secondaryColor,
+    text_color: t.textColor,
+    muted_color: t.mutedColor,
+    title_y: t.titleY ?? DEFAULT_TEMPLATE.titleY,
+    subtitle_y: t.subtitleY ?? DEFAULT_TEMPLATE.subtitleY,
+    student_name_y: t.studentNameY ?? DEFAULT_TEMPLATE.studentNameY,
+    body_y: t.bodyY ?? DEFAULT_TEMPLATE.bodyY,
+    footer_y: t.footerY ?? DEFAULT_TEMPLATE.footerY,
+    qr_y: t.qrY ?? DEFAULT_TEMPLATE.qrY,
+    qr_size: t.qrSize ?? DEFAULT_TEMPLATE.qrSize,
+    border_width: t.borderWidth ?? DEFAULT_TEMPLATE.borderWidth,
+    font_family: t.fontFamily ?? DEFAULT_TEMPLATE.fontFamily,
+    updated_at: new Date().toISOString(),
+  };
+}
+
+function mapStudentRow(row: any): StudentCertificate {
+  return {
+    id: row.id,
+    studentName: row.student_name,
+    courseName: row.course_name,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    issueDate: row.issue_date,
+    certCode: row.cert_code,
+    created_at: row.created_at,
+  };
+}
+
+function mapStudentToRow(s: Partial<StudentCertificate>) {
+  const row: any = {};
+  if (s.id !== undefined) row.id = s.id;
+  if (s.studentName !== undefined) row.student_name = s.studentName;
+  if (s.courseName !== undefined) row.course_name = s.courseName;
+  if (s.startDate !== undefined) row.start_date = s.startDate;
+  if (s.endDate !== undefined) row.end_date = s.endDate;
+  if (s.issueDate !== undefined) row.issue_date = s.issueDate;
+  if (s.certCode !== undefined) row.cert_code = s.certCode;
+  if (s.created_at !== undefined) row.created_at = s.created_at;
+  return row;
+}
 
 // ── TEMPLATE ACTIONS ──
 
 export async function getCertificateTemplate(): Promise<CertificateTemplate> {
   try {
     const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("site_content")
-      .select("value")
+    const { data, error } = await supabase
+      .from("certificate_templates")
+      .select("*")
       .eq("key", "certificates.template")
       .maybeSingle();
 
-    if (data?.value) {
-      return { ...DEFAULT_TEMPLATE, ...(data.value as any) };
+    if (error && isTableMissingError(error)) {
+      const { data: legacyData } = await supabase
+        .from("site_content")
+        .select("value")
+        .eq("key", "certificates.template")
+        .maybeSingle();
+
+      if (legacyData?.value) {
+        return { ...DEFAULT_TEMPLATE, ...(legacyData.value as any) };
+      }
+      return DEFAULT_TEMPLATE;
+    }
+
+    if (data) {
+      return mapTemplateRow(data);
     }
   } catch (e) {
     console.error("Error loading certificate template:", e);
@@ -62,18 +182,30 @@ export async function getCertificateTemplate(): Promise<CertificateTemplate> {
 export async function updateCertificateTemplate(template: CertificateTemplate): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
+    const row = mapTemplateToRow(template);
     const { error } = await supabase
-      .from("site_content")
-      .upsert(
-        {
-          key: "certificates.template",
-          value: template as any,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "key" }
-      );
+      .from("certificate_templates")
+      .upsert(row, { onConflict: "key" });
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      if (isTableMissingError(error)) {
+        const { error: legacyError } = await supabase
+          .from("site_content")
+          .upsert(
+            {
+              key: "certificates.template",
+              value: template as any,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "key" }
+          );
+
+        if (legacyError) return { success: false, error: legacyError.message };
+        revalidatePath("/admin/certificates");
+        return { success: true };
+      }
+      return { success: false, error: error.message };
+    }
     revalidatePath("/admin/certificates");
     return { success: true };
   } catch (e) {
@@ -86,14 +218,26 @@ export async function updateCertificateTemplate(template: CertificateTemplate): 
 export async function getCertificateStudents(): Promise<StudentCertificate[]> {
   try {
     const supabase = createStaticClient();
-    const { data } = await supabase
-      .from("site_content")
-      .select("value")
-      .eq("key", "certificates.students")
-      .maybeSingle();
+    const { data, error } = await supabase
+      .from("student_certificates")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (data?.value && Array.isArray(data.value)) {
-      return data.value as StudentCertificate[];
+    if (error && isTableMissingError(error)) {
+      const { data: legacyData } = await supabase
+        .from("site_content")
+        .select("value")
+        .eq("key", "certificates.students")
+        .maybeSingle();
+
+      if (legacyData?.value && Array.isArray(legacyData.value)) {
+        return legacyData.value as StudentCertificate[];
+      }
+      return [];
+    }
+
+    if (data && Array.isArray(data)) {
+      return data.map(mapStudentRow);
     }
   } catch (e) {
     console.error("Error loading certificate students:", e);
@@ -104,18 +248,31 @@ export async function getCertificateStudents(): Promise<StudentCertificate[]> {
 export async function updateCertificateStudents(students: StudentCertificate[]): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
+    const rows = students.map((s) => mapStudentToRow(s));
+    
     const { error } = await supabase
-      .from("site_content")
-      .upsert(
-        {
-          key: "certificates.students",
-          value: students as any,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "key" }
-      );
+      .from("student_certificates")
+      .upsert(rows, { onConflict: "cert_code" });
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      if (isTableMissingError(error)) {
+        const { error: legacyError } = await supabase
+          .from("site_content")
+          .upsert(
+            {
+              key: "certificates.students",
+              value: students as any,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "key" }
+          );
+
+        if (legacyError) return { success: false, error: legacyError.message };
+        revalidatePath("/admin/certificates");
+        return { success: true };
+      }
+      return { success: false, error: error.message };
+    }
     revalidatePath("/admin/certificates");
     return { success: true };
   } catch (e) {
@@ -156,12 +313,26 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
       created_at: new Date().toISOString(),
     };
 
-    const updated = [newStudent, ...students];
-    const res = await updateCertificateStudents(updated);
-    if (res.success) {
-      return { success: true, code: certCode };
+    const supabase = await createClient();
+    const row = mapStudentToRow(newStudent);
+    const { error } = await supabase
+      .from("student_certificates")
+      .insert(row);
+
+    if (error) {
+      if (isTableMissingError(error)) {
+        const updated = [newStudent, ...students];
+        const res = await updateCertificateStudents(updated);
+        if (res.success) {
+          return { success: true, code: certCode };
+        }
+        return { success: false, error: res.error };
+      }
+      return { success: false, error: error.message };
     }
-    return { success: false, error: res.error };
+
+    revalidatePath("/admin/certificates");
+    return { success: true, code: certCode };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Failed to add student" };
   }
@@ -169,9 +340,23 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
 
 export async function deleteCertificateStudent(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const students = await getCertificateStudents();
-    const filtered = students.filter((s) => s.id !== id);
-    return await updateCertificateStudents(filtered);
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from("student_certificates")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      if (isTableMissingError(error)) {
+        const students = await getCertificateStudents();
+        const filtered = students.filter((s) => s.id !== id);
+        return await updateCertificateStudents(filtered);
+      }
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/certificates");
+    return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Failed to delete student" };
   }
@@ -179,19 +364,33 @@ export async function deleteCertificateStudent(id: string): Promise<{ success: b
 
 export async function updateSingleStudent(id: string, updatedFields: Partial<Omit<StudentCertificate, "id" | "certCode" | "created_at">>): Promise<{ success: boolean; error?: string }> {
   try {
-    const students = await getCertificateStudents();
-    const idx = students.findIndex((s) => s.id === id);
-    if (idx === -1) return { success: false, error: "Student not found" };
+    const supabase = await createClient();
+    const mapped = mapStudentToRow(updatedFields);
+    const { error } = await supabase
+      .from("student_certificates")
+      .update(mapped)
+      .eq("id", id);
 
-    students[idx] = { ...students[idx], ...updatedFields };
-    return await updateCertificateStudents(students);
+    if (error) {
+      if (isTableMissingError(error)) {
+        const students = await getCertificateStudents();
+        const idx = students.findIndex((s) => s.id === id);
+        if (idx === -1) return { success: false, error: "Student not found" };
+
+        students[idx] = { ...students[idx], ...updatedFields };
+        return await updateCertificateStudents(students);
+      }
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/certificates");
+    return { success: true };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Failed to update student" };
   }
 }
 
 // ── PUBLIC / VERIFY SECURE ACTION ──
-// This ONLY returns the single matched certificate, completely hiding all other entries.
 export async function getCertificateByCode(certCode: string): Promise<{ success: boolean; certificate?: StudentCertificate; template?: CertificateTemplate; error?: string }> {
   try {
     const cleanCode = String(certCode ?? "").trim().toUpperCase();
@@ -199,8 +398,21 @@ export async function getCertificateByCode(certCode: string): Promise<{ success:
       return { success: false, error: "Verification code is required." };
     }
 
-    const students = await getCertificateStudents();
-    const match = students.find((s) => s.certCode.toUpperCase() === cleanCode);
+    const supabase = createStaticClient();
+    const { data: studentData, error: studentError } = await supabase
+      .from("student_certificates")
+      .select("*")
+      .eq("cert_code", cleanCode)
+      .maybeSingle();
+
+    let match: StudentCertificate | undefined;
+
+    if (studentError && isTableMissingError(studentError)) {
+      const students = await getCertificateStudents();
+      match = students.find((s) => s.certCode.toUpperCase() === cleanCode);
+    } else if (studentData) {
+      match = mapStudentRow(studentData);
+    }
 
     if (!match) {
       return { success: false, error: "No certificate found with this verification code." };

@@ -118,57 +118,79 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
         </div>
 
         {/* Dynamic, responsive HTML representation of the Certificate */}
-        <div className="relative aspect-[1.414/1] w-full bg-[#FAF9F6] rounded-3xl p-6 sm:p-10 md:p-16 text-[#15140f] border border-slate-300 shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-8">
-          
-          {/* Borders mirroring generateCertificatePdf */}
+        <div 
+          className="relative aspect-[1.414/1] w-full bg-[#ffffff] rounded-3xl text-[#15140f] border border-slate-200 shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-8"
+          style={{
+            fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+          }}
+        >
+          {/* TOP-RIGHT CORNER ACCENT BANDS */}
           <div 
-            className="absolute inset-2 sm:inset-3 pointer-events-none transition-all"
-            style={{ borderColor: template.secondaryColor || "#00d4aa", borderWidth: "1.5px", borderStyle: "solid" }}
+            className="absolute top-0 right-0 w-3 sm:w-4.5 h-12 sm:h-16 transition-all"
+            style={{ background: template.primaryColor || "#003e8f" }}
           />
           <div 
-            className="absolute inset-3.5 sm:inset-5 pointer-events-none transition-all"
-            style={{ borderColor: template.primaryColor || "#003e8f", borderWidth: "4px", borderStyle: "solid" }}
-          />
-          <div 
-            className="absolute inset-5 sm:inset-7 pointer-events-none transition-all"
-            style={{ borderColor: template.secondaryColor || "#00d4aa", borderWidth: "1px", borderStyle: "solid" }}
+            className="absolute top-0 right-3 sm:right-4.5 w-3 sm:w-4.5 h-12 sm:h-16 transition-all"
+            style={{ background: template.secondaryColor || "#00d4aa" }}
           />
 
-          {/* Corner Diamonds */}
-          {[
-            "top-4 left-4 sm:top-5 sm:left-5",
-            "top-4 right-4 sm:top-5 sm:right-5",
-            "bottom-4 left-4 sm:bottom-5 sm:left-5",
-            "bottom-4 right-4 sm:bottom-5 sm:right-5"
-          ].map((pos) => (
-            <div key={pos} className={`absolute ${pos} w-6 h-6 flex items-center justify-center`}>
-              <div 
-                className="w-4 h-4 rotate-45"
-                style={{ background: template.primaryColor || "#003e8f" }}
-              />
+          {/* BRAND LOGO TOP-LEFT */}
+          <div className="absolute top-[4.5%] left-[6%] flex items-center pointer-events-none">
+            <img 
+              src="/brand/strixmind-logo.png" 
+              alt="StrixMind Logo" 
+              className="h-6 sm:h-9 md:h-11 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+
+          {/* CONTACT INFO TOP-RIGHT */}
+          <div className="absolute top-[4%] right-[8%] text-right pointer-events-none text-[4px] sm:text-[7px] md:text-[8px] leading-snug text-slate-500 font-sans space-y-0.5">
+            <div className="flex items-center justify-end gap-1">
+              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              <span>Changanassery, Kottayam</span>
             </div>
-          ))}
+            <div className="flex items-center justify-end gap-1">
+              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              <span>strixmindllp@gmail.com</span>
+            </div>
+            <div className="flex items-center justify-end gap-1">
+              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              <span>www.strixmind.com</span>
+            </div>
+          </div>
 
-          {/* Watermark brand */}
-          <div className="text-center mt-2 sm:mt-4">
-            <span 
-              className="text-[9px] sm:text-xs font-bold tracking-widest block transition-colors"
-              style={{ color: template.primaryColor || "#003e8f" }}
-            >
-              STRIXMIND AI OPERATING SYSTEM
-            </span>
+          {/* ASYMMETRIC DIVIDER LINE */}
+          <div className="absolute top-[16%] left-[6%] right-[6%] h-[3px] flex pointer-events-none">
+            <div className="w-[30%] h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
+            <div className="flex-1 h-[0.75px] self-center transition-all bg-slate-200" />
+          </div>
+
+          {/* QUAD-COLOR BOTTOM STRIP */}
+          <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-3.5 flex pointer-events-none">
+            <div className="flex-1 h-full bg-[#0a192f]" />
+            <div className="flex-1 h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
+            <div className="flex-1 h-full bg-[#1b6ca8]" />
+            <div className="flex-1 h-full transition-all" style={{ background: template.secondaryColor || "#00d4aa" }} />
           </div>
 
           {/* Certificate Title */}
-          <div className="text-center mt-6 sm:mt-12 md:mt-14">
+          <div 
+            className="absolute left-0 right-0 text-center px-4"
+            style={{ 
+              top: `${((template.titleY ?? 150) / 595.27) * 100}%`
+            }}
+          >
             <h1 
-              className="text-sm sm:text-2xl md:text-3xl font-extrabold tracking-tight transition-colors line-clamp-2 uppercase"
+              className="text-[9px] sm:text-base md:text-xl lg:text-2xl font-bold tracking-tight transition-colors line-clamp-1 uppercase"
               style={{ color: template.primaryColor || "#003e8f" }}
             >
               {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
             </h1>
             <p 
-              className="text-[10px] sm:text-sm italic mt-1 sm:mt-2"
+              className="text-[7px] sm:text-xs italic mt-0.5 sm:mt-1"
               style={{ color: template.mutedColor || "#4b5563" }}
             >
               {template.subtitle || "This is to certify that"}
@@ -176,19 +198,29 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
           </div>
 
           {/* Student Name */}
-          <div className="text-center mt-4 sm:mt-10">
-            <h2 className="text-lg sm:text-3xl md:text-4xl font-extrabold tracking-tight">
+          <div 
+            className="absolute left-0 right-0 text-center px-4"
+            style={{ 
+              top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`
+            }}
+          >
+            <h2 className="text-[12px] sm:text-xl md:text-3xl font-extrabold tracking-tight">
               {certificate.studentName}
             </h2>
             <div 
-              className="w-40 sm:w-56 h-[2px] mx-auto mt-2 sm:mt-3 transition-all"
+              className="w-24 sm:w-48 h-[1.5px] mx-auto mt-1 sm:mt-2 transition-all"
               style={{ background: template.secondaryColor || "#00d4aa" }}
             />
           </div>
 
           {/* Paragraph body */}
-          <div className="text-center mt-4 sm:mt-8 max-w-[85%] mx-auto leading-relaxed text-[10px] sm:text-sm md:text-base">
-            <p>
+          <div 
+            className="absolute left-[10%] right-[10%] text-center px-4"
+            style={{ 
+              top: `${((template.bodyY ?? 310) / 595.27) * 100}%`
+            }}
+          >
+            <p className="text-[7px] sm:text-[10px] md:text-sm lg:text-base leading-relaxed">
               {template.bodyTemplate
                 ? template.bodyTemplate
                     .replace("{courseName}", certificate.courseName)
@@ -198,49 +230,63 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
             </p>
           </div>
 
-          {/* Certificate Footer Row */}
-          <div className="absolute bottom-6 sm:bottom-12 md:bottom-16 left-8 sm:left-14 right-8 sm:right-14 flex items-end justify-between text-[8px] sm:text-xs">
+          {/* Certificate Footer Row (Signatories & Issue Date) */}
+          <div 
+            className="absolute left-[8%] right-[8%] flex justify-between px-2 items-end"
+            style={{ 
+              bottom: `${((template.footerY ?? 120) / 595.27) * 100}%`
+            }}
+          >
             {/* Left Signatory / Date */}
-            <div className="text-center w-28 sm:w-44">
-              <div className="font-bold border-t border-slate-300 pt-1 sm:pt-2">
+            <div className="text-center w-[30%]">
+              <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] md:text-xs pt-1">
                 {certificate.issueDate}
               </div>
-              <div className="text-[7px] sm:text-[10px] mt-0.5 sm:mt-1 text-slate-500">
+              <div className="text-[5px] sm:text-[8px] md:text-[9px] mt-0.5 text-slate-500">
                 Date of Issue
               </div>
             </div>
 
-            {/* Verification QR */}
-            <div className="flex flex-col items-center">
-              <div 
-                className="w-12 h-12 sm:w-20 sm:h-20 p-1 border rounded bg-white flex items-center justify-center shadow-sm"
-                style={{ borderColor: template.primaryColor || "#003e8f" }}
-              >
-                <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="60" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="10" y="60" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="20" y="20" width="10" height="10" fill="white" />
-                  <rect x="70" y="20" width="10" height="10" fill="white" />
-                  <rect x="20" y="70" width="10" height="10" fill="white" />
-                  <rect x="50" y="50" width="20" height="20" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
-                </svg>
-              </div>
-              <span className="text-[6px] sm:text-[9px] font-mono font-bold mt-1 sm:mt-2" style={{ color: template.primaryColor || "#003e8f" }}>
-                {certificate.certCode}
-              </span>
-            </div>
-
             {/* Right Signatory */}
-            <div className="text-center w-28 sm:w-44">
-              <div className="font-bold border-t border-slate-300 pt-1 sm:pt-2 truncate">
+            <div className="text-center w-[30%]">
+              <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] md:text-xs pt-1 truncate">
                 {template.signatoryName}
               </div>
-              <div className="text-[7px] sm:text-[10px] italic mt-0.5 sm:mt-1 text-slate-500 truncate leading-tight">
+              <div className="text-[5px] sm:text-[8px] md:text-[9px] italic mt-0.5 text-slate-500 truncate leading-tight">
                 {template.signatoryTitle}
               </div>
             </div>
+          </div>
+
+          {/* Verification QR (Bottom Center) */}
+          <div 
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
+            style={{ 
+              bottom: `${((template.qrY ?? 60) / 595.27) * 100}%`
+            }}
+          >
+            <div 
+              className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm"
+              style={{ 
+                borderColor: template.primaryColor || "#003e8f",
+                width: `${(template.qrSize ?? 74) * 0.7}px`,
+                height: `${(template.qrSize ?? 74) * 0.7}px`
+              }}
+            >
+              <svg className="w-full h-full" viewBox="0 0 100 100">
+                <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                <rect x="60" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                <rect x="10" y="60" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                <rect x="20" y="20" width="10" height="10" fill="white" />
+                <rect x="70" y="20" width="10" height="10" fill="white" />
+                <rect x="20" y="70" width="10" height="10" fill="white" />
+                <rect x="50" y="50" width="20" height="20" fill={template.primaryColor || "#003e8f"} />
+                <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
+              </svg>
+            </div>
+            <span className="text-[5px] sm:text-[8px] font-mono font-bold mt-1" style={{ color: template.primaryColor || "#003e8f" }}>
+              {certificate.certCode}
+            </span>
           </div>
         </div>
 

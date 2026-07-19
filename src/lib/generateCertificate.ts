@@ -1,6 +1,8 @@
 import { PDFDocument, StandardFonts, rgb, PDFPage, PDFFont } from "pdf-lib";
 import QRCode from "qrcode";
 import type { CertificateTemplate } from "@/lib/actions/certificates";
+import fs from "fs";
+import path from "path";
 
 interface GenerateParams {
   studentName: string;
@@ -45,94 +47,178 @@ export async function generateCertificatePdf({
   const { width, height } = page.getSize();
 
   // Embed standard Helvetica fonts
-  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fontItalic = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+  // Embed requested font families dynamically based on configuration
+  const fontFam = templateSettings.fontFamily || "sans";
+  let regularFontName = StandardFonts.Helvetica;
+  let boldFontName = StandardFonts.HelveticaBold;
+  let italicFontName = StandardFonts.HelveticaOblique;
+
+  if (fontFam === "serif") {
+    regularFontName = StandardFonts.TimesRoman;
+    boldFontName = StandardFonts.TimesRomanBold;
+    italicFontName = StandardFonts.TimesRomanItalic;
+  } else if (fontFam === "mono") {
+    regularFontName = StandardFonts.Courier;
+    boldFontName = StandardFonts.CourierBold;
+    italicFontName = StandardFonts.CourierOblique;
+  }
+
+  const fontRegular = await pdfDoc.embedFont(regularFontName);
+  const fontBold = await pdfDoc.embedFont(boldFontName);
+  const fontItalic = await pdfDoc.embedFont(italicFontName);
 
   const primaryColor = hexToRgb(templateSettings.primaryColor || "#003e8f");
   const secondaryColor = hexToRgb(templateSettings.secondaryColor || "#00d4aa");
   const textColor = hexToRgb(templateSettings.textColor || "#15140f");
   const mutedColor = hexToRgb(templateSettings.mutedColor || "#4b5563");
 
-  // ---- DRAW PREMIUM BACKGROUND & BORDERS DYNAMICALLY --------------------
-  // Subtle cream/white page background
+  const boldBorderWidth = templateSettings.borderWidth ?? 4;
+
+  // ---- DRAW BRANDED TEMPLATE DESIGN (Matching "my template" layout) ----
+  // 1. Plain white A4 background
   page.drawRectangle({
     x: 0,
     y: 0,
     width,
     height,
-    color: rgb(0.98, 0.98, 0.97),
+    color: rgb(1, 1, 1),
   });
 
-  // Outer thin accent border (Secondary Color)
+  // 2. Top-Right Corner Color Blocks (Stripes)
+  // Strip 1 (Primary - Rightmost): Dark Blue
   page.drawRectangle({
-    x: 20,
-    y: 20,
-    width: width - 40,
-    height: height - 40,
-    borderColor: secondaryColor,
-    borderWidth: 1.5,
+    x: width - 15,
+    y: height - 45,
+    width: 15,
+    height: 45,
+    color: primaryColor,
   });
-
-  // Inner bold border (Primary Color)
+  // Strip 2 (Secondary - Left of Strip 1): Light/Medium Blue
   page.drawRectangle({
-    x: 30,
-    y: 30,
-    width: width - 60,
-    height: height - 60,
-    borderColor: primaryColor,
-    borderWidth: 4,
+    x: width - 30,
+    y: height - 45,
+    width: 15,
+    height: 45,
+    color: secondaryColor,
   });
 
-  // Dual inner thin border
-  page.drawRectangle({
-    x: 38,
-    y: 38,
-    width: width - 76,
-    height: height - 76,
-    borderColor: secondaryColor,
-    borderWidth: 1,
-  });
+  // 3. Embed and draw Logo in the Top-Left Header
+  let logoImage;
+  try {
+    const logoPath = path.join(process.cwd(), "public", "brand", "strixmind-logo.png");
+    if (fs.existsSync(logoPath)) {
+      const logoBytes = fs.readFileSync(logoPath);
+      logoImage = await pdfDoc.embedPng(logoBytes);
+    }
+  } catch (e) {
+    console.error("Failed to load logo in PDF generator:", e);
+  }
 
-  // Decorative corner accent shapes (Classic luxury certificate style)
-  const drawCornerDecoration = (p: PDFPage, cx: number, cy: number) => {
-    // Elegant diamond or square accents at corners
-    p.drawRectangle({
-      x: cx - 10,
-      y: cy - 10,
-      width: 20,
-      height: 20,
+  if (logoImage) {
+    page.drawImage(logoImage, {
+      x: 60,
+      y: height - 80,
+      width: 150,
+      height: 38,
+    });
+  } else {
+    page.drawText("STRIXMIND", {
+      x: 60,
+      y: height - 70,
+      size: 20,
+      font: fontBold,
       color: primaryColor,
     });
-    p.drawRectangle({
-      x: cx - 6,
-      y: cy - 6,
-      width: 12,
-      height: 12,
+  }
+
+  // 4. Draw Right-Aligned Contact Information in Top-Right
+  const contactLines = [
+    "Changanassery,Kottayam",
+    "strixmindllp@gmail.com",
+    "www.strixmind.com"
+  ];
+  
+  let contactY = height - 50;
+  for (const line of contactLines) {
+    const lineWidth = fontRegular.widthOfTextAtSize(line, 8);
+    // Right align to width - 50
+    const textX = width - 50 - lineWidth;
+    page.drawText(line, {
+      x: textX,
+      y: contactY,
+      size: 8,
+      font: fontRegular,
+      color: mutedColor,
+    });
+    // Draw tiny colored indicator dot
+    page.drawCircle({
+      x: textX - 8,
+      y: contactY + 3,
+      size: 2,
       color: secondaryColor,
     });
-  };
+    contactY -= 12;
+  }
 
-  drawCornerDecoration(page, 34, 34);
-  drawCornerDecoration(page, width - 34, 34);
-  drawCornerDecoration(page, 34, height - 34);
-  drawCornerDecoration(page, width - 34, height - 34);
-
-  // Top header branding / logo watermark
-  const brandName = "STRIXMIND AI OPERATING SYSTEM";
-  page.drawText(brandName, {
-    x: centerX(fontBold, 10, brandName, width),
-    y: height - 80,
-    size: 10,
-    font: fontBold,
+  // 5. Draw Horizontal Divider Line (thick primary line on left, thin gray on right)
+  const dividerY = height - 95;
+  // Left thick bar
+  page.drawLine({
+    start: { x: 60, y: dividerY },
+    end: { x: 300, y: dividerY },
+    thickness: 3,
     color: primaryColor,
+  });
+  // Right thin bar
+  page.drawLine({
+    start: { x: 300, y: dividerY },
+    end: { x: width - 50, y: dividerY },
+    thickness: 0.75,
+    color: rgb(0.85, 0.85, 0.85),
+  });
+
+  // 6. Draw 4-Segment Footer blocks at the very bottom
+  const footerHeight = 15;
+  const colWidth = width / 4;
+  // Segment 1 (Deep Navy): #0a192f
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: hexToRgb("#0a192f"),
+  });
+  // Segment 2 (Primary Blue)
+  page.drawRectangle({
+    x: colWidth,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: primaryColor,
+  });
+  // Segment 3 (Medium Blue): #1b6ca8
+  page.drawRectangle({
+    x: colWidth * 2,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: hexToRgb("#1b6ca8"),
+  });
+  // Segment 4 (Light Blue)
+  page.drawRectangle({
+    x: colWidth * 3,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: secondaryColor,
   });
 
   // ---- TITLE -----------------------------------------------------------
   const titleText = templateSettings.title || "CERTIFICATE OF INTERNSHIP COMPLETION";
+  const titleY = height - (templateSettings.titleY ?? 150);
   page.drawText(titleText, {
     x: centerX(fontBold, 22, titleText, width),
-    y: height - 150,
+    y: titleY,
     size: 22,
     font: fontBold,
     color: primaryColor,
@@ -140,18 +226,20 @@ export async function generateCertificatePdf({
 
   // Subtitle
   const subtitleText = templateSettings.subtitle || "This is to certify that";
+  const subtitleY = height - (templateSettings.subtitleY ?? 200);
   page.drawText(subtitleText, {
     x: centerX(fontItalic, 14, subtitleText, width),
-    y: height - 200,
+    y: subtitleY,
     size: 14,
     font: fontItalic,
     color: mutedColor,
   });
 
   // ---- STUDENT NAME ----------------------------------------------------
+  const studentNameY = height - (templateSettings.studentNameY ?? 250);
   page.drawText(studentName, {
     x: centerX(fontBold, 30, studentName, width),
-    y: height - 250,
+    y: studentNameY,
     size: 30,
     font: fontBold,
     color: textColor,
@@ -160,8 +248,8 @@ export async function generateCertificatePdf({
   // Underline decorative element below student name
   const nameWidth = fontBold.widthOfTextAtSize(studentName, 30);
   page.drawLine({
-    start: { x: (width - nameWidth) / 2, y: height - 262 },
-    end: { x: (width + nameWidth) / 2, y: height - 262 },
+    start: { x: (width - nameWidth) / 2, y: studentNameY - 12 },
+    end: { x: (width + nameWidth) / 2, y: studentNameY - 12 },
     thickness: 1.5,
     color: secondaryColor,
   });
@@ -193,7 +281,7 @@ export async function generateCertificatePdf({
     lines.push(currentLine);
   }
 
-  let bodyY = height - 310;
+  let bodyY = height - (templateSettings.bodyY ?? 310);
   for (const line of lines) {
     page.drawText(line, {
       x: centerX(fontRegular, 13, line, width),
@@ -206,7 +294,7 @@ export async function generateCertificatePdf({
   }
 
   // ---- SIGNATURES AND ISSUANCE DATES -----------------------------------
-  const footerY = 120;
+  const footerY = templateSettings.footerY ?? 120;
 
   // Left Signatory / Issuance Date
   page.drawLine({
@@ -259,9 +347,9 @@ export async function generateCertificatePdf({
   });
 
   // ---- QR CODE & VERIFICATION SYSTEM (Centered at bottom) ------------
-  const qrSize = 74;
+  const qrSize = templateSettings.qrSize ?? 74;
   const qrX = (width - qrSize) / 2;
-  const qrY = 60;
+  const qrY = templateSettings.qrY ?? 60;
 
   const verifyUrl = `${verifyBaseUrl}/${certCode}`;
   

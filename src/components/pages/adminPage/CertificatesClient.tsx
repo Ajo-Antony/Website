@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition, useEffect } from "react";
+import React, { useState, useTransition, useEffect, useRef } from "react";
 import { 
   addCertificateStudent, 
   deleteCertificateStudent, 
@@ -24,9 +24,18 @@ import {
   Award,
   Calendar,
   Layers,
-  FileText
+  FileText,
+  QrCode,
+  CheckSquare,
+  Square,
+  FileArchive,
+  Move,
+  Info,
+  Type,
+  Maximize2
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import QRCode from "qrcode";
 
 interface Props {
   initialTemplate: CertificateTemplate;
@@ -38,17 +47,40 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
   const [isPending, startTransition] = useTransition();
 
   // Template State
-  const [template, setTemplate] = useState<CertificateTemplate>(initialTemplate);
+  const [template, setTemplate] = useState<CertificateTemplate>({
+    titleY: 150,
+    subtitleY: 200,
+    studentNameY: 250,
+    bodyY: 310,
+    footerY: 120,
+    qrY: 60,
+    qrSize: 74,
+    borderWidth: 4,
+    fontFamily: "sans",
+    ...initialTemplate
+  });
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // Drag and Drop State for Advanced Canvas Layout Editor
+  const [draggingElement, setDraggingElement] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   // Students State
   const [students, setStudents] = useState<StudentCertificate[]>(initialStudents);
   const [search, setSearch] = useState("");
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
+  // Selection state for Bulk Actions
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
+  const [isExportingZip, setIsExportingZip] = useState(false);
+
   // Modals & Forms State
   const [isAdding, setIsAdding] = useState(false);
   const [editingStudent, setEditingStudent] = useState<StudentCertificate | null>(null);
+
+  // QR Generator Modal State
+  const [qrModalStudent, setQrModalStudent] = useState<StudentCertificate | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
 
   // Form inputs for Add
   const [formName, setFormName] = useState("");
@@ -73,7 +105,6 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
         });
       };
       
-      // Default: Last 2 months
       const start = new Date();
       start.setMonth(start.getMonth() - 2);
       
@@ -83,6 +114,29 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       setFormError("");
     }
   }, [isAdding]);
+
+  // Generate QR on-demand when student row button is clicked
+  useEffect(() => {
+    if (qrModalStudent) {
+      const origin = window.location.origin;
+      const verifyUrl = `${origin}/certificate/verify/${qrModalStudent.certCode}`;
+      
+      QRCode.toDataURL(verifyUrl, {
+        margin: 2,
+        width: 350,
+        color: {
+          dark: template.primaryColor || "#003e8f",
+          light: "#ffffff",
+        }
+      }).then(url => {
+        setQrDataUrl(url);
+      }).catch(err => {
+        console.error("QR creation failed", err);
+      });
+    } else {
+      setQrDataUrl("");
+    }
+  }, [qrModalStudent, template.primaryColor]);
 
   // Handle template updates
   const handleSaveTemplate = async (e: React.FormEvent) => {
@@ -94,10 +148,68 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       if (res.success) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
+        confetti({ particleCount: 50, spread: 40 });
       } else {
         alert("Failed to save styles: " + res.error);
       }
     });
+  };
+
+  // Reset coordinates to default safely
+  const handleResetCoordinates = () => {
+    setTemplate(prev => ({
+      ...prev,
+      titleY: 150,
+      subtitleY: 200,
+      studentNameY: 250,
+      bodyY: 310,
+      footerY: 120,
+      qrY: 60,
+      qrSize: 74,
+      borderWidth: 4,
+      fontFamily: "sans"
+    }));
+  };
+
+  // Drag and Drop Core Event Listeners
+  const startDrag = (e: React.MouseEvent, elementId: string) => {
+    e.preventDefault();
+    setDraggingElement(elementId);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!draggingElement || !canvasRef.current) return;
+    
+    const rect = canvasRef.current.getBoundingClientRect();
+    const yFromTop = e.clientY - rect.top;
+    const yFromBottom = rect.bottom - e.clientY;
+    
+    // Total PDF height is 595.27 pts
+    const ratio = 595.27 / rect.height;
+    
+    if (draggingElement === "title") {
+      const pt = Math.round(yFromTop * ratio);
+      setTemplate(prev => ({ ...prev, titleY: Math.max(20, Math.min(300, pt)) }));
+    } else if (draggingElement === "subtitle") {
+      const pt = Math.round(yFromTop * ratio);
+      setTemplate(prev => ({ ...prev, subtitleY: Math.max(40, Math.min(350, pt)) }));
+    } else if (draggingElement === "studentName") {
+      const pt = Math.round(yFromTop * ratio);
+      setTemplate(prev => ({ ...prev, studentNameY: Math.max(80, Math.min(420, pt)) }));
+    } else if (draggingElement === "body") {
+      const pt = Math.round(yFromTop * ratio);
+      setTemplate(prev => ({ ...prev, bodyY: Math.max(120, Math.min(480, pt)) }));
+    } else if (draggingElement === "footer") {
+      const pt = Math.round(yFromBottom * ratio);
+      setTemplate(prev => ({ ...prev, footerY: Math.max(20, Math.min(250, pt)) }));
+    } else if (draggingElement === "qr") {
+      const pt = Math.round(yFromBottom * ratio);
+      setTemplate(prev => ({ ...prev, qrY: Math.max(10, Math.min(200, pt)) }));
+    }
+  };
+
+  const stopDrag = () => {
+    setDraggingElement(null);
   };
 
   // Handle Add Student
@@ -121,7 +233,6 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
 
       if (res.success && res.code) {
         setIsAdding(false);
-        // Refresh local student list
         const updated = [
           {
             id: crypto.randomUUID(),
@@ -162,6 +273,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
           students.map((s) => (s.id === editingStudent.id ? editingStudent : s))
         );
         setEditingStudent(null);
+        confetti({ particleCount: 30 });
       } else {
         alert("Failed to update: " + res.error);
       }
@@ -178,6 +290,11 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       const res = await deleteCertificateStudent(id);
       if (res.success) {
         setStudents(students.filter((s) => s.id !== id));
+        // Remove from selected list
+        setSelectedCodes(prev => prev.filter(code => {
+          const m = students.find(s => s.id === id);
+          return m ? code !== m.certCode : true;
+        }));
       } else {
         alert("Failed to delete student certificate: " + res.error);
       }
@@ -205,6 +322,66 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
     document.body.removeChild(link);
   };
 
+  // Handle individual checkbox selection
+  const handleToggleSelect = (code: string) => {
+    setSelectedCodes(prev => 
+      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
+    );
+  };
+
+  // Handle Select All visible students
+  const handleToggleSelectAll = (visibleCodes: string[]) => {
+    const allSelected = visibleCodes.every(code => selectedCodes.includes(code));
+    if (allSelected) {
+      setSelectedCodes(prev => prev.filter(code => !visibleCodes.includes(code)));
+    } else {
+      // Add missing codes
+      setSelectedCodes(prev => {
+        const added = [...prev];
+        visibleCodes.forEach(code => {
+          if (!added.includes(code)) added.push(code);
+        });
+        return added;
+      });
+    }
+  };
+
+  // Bulk ZIP Download API Handler
+  const handleBulkDownloadZip = async () => {
+    if (selectedCodes.length === 0) return;
+    setIsExportingZip(true);
+
+    try {
+      const res = await fetch("/api/certificates/bulk-download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ certCodes: selectedCodes }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to package bulk certificates archive.");
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `StrixMind_Certificates_Batch_${new Date().toISOString().slice(0, 10)}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      confetti({ particleCount: 120, spread: 80 });
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Bulk ZIP download failed.");
+    } finally {
+      setIsExportingZip(false);
+    }
+  };
+
   // Filter students
   const filteredStudents = students.filter((s) => {
     const query = search.toLowerCase();
@@ -215,6 +392,9 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
     );
   });
 
+  const visibleCodes = filteredStudents.map(s => s.certCode);
+  const isAllSelected = visibleCodes.length > 0 && visibleCodes.every(code => selectedCodes.includes(code));
+
   return (
     <div className="space-y-6">
       {/* Tab Switcher */}
@@ -223,23 +403,23 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
           onClick={() => setActiveTab("students")}
           className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all ${
             activeTab === "students"
-              ? "border-accent text-accent"
+              ? "border-accent text-accent animate-fade-in"
               : "border-transparent text-[var(--text-dim)] hover:text-[var(--text)]"
           }`}
         >
           <Users size={16} />
-          Student Certificates ({students.length})
+          Student Directory ({students.length})
         </button>
         <button
           onClick={() => setActiveTab("branding")}
           className={`flex items-center gap-2 px-5 py-3 border-b-2 font-bold text-sm transition-all ${
             activeTab === "branding"
-              ? "border-accent text-accent"
+              ? "border-accent text-accent animate-fade-in"
               : "border-transparent text-[var(--text-dim)] hover:text-[var(--text)]"
           }`}
         >
           <Sliders size={16} />
-          Branding & Layout Editor
+          Branding & Layout Customizer
         </button>
       </div>
 
@@ -247,8 +427,8 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       {activeTab === "students" && (
         <div className="space-y-6">
           {/* Controls Panel */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[var(--surface)] p-4 rounded-2xl border border-[var(--border)]">
-            <div className="relative w-full sm:max-w-md">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--surface)] p-4 rounded-2xl border border-[var(--border)] shadow-sm">
+            <div className="relative flex-1">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[var(--text-dim)]">
                 <Search size={16} />
               </span>
@@ -256,17 +436,36 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search students, courses or verify IDs..."
+                placeholder="Search students, courses or unique verification IDs..."
                 className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
               />
             </div>
-            <button
-              onClick={() => setIsAdding(true)}
-              className="w-full sm:w-auto bg-gradient-to-br from-accent to-accent-2 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-[0_8px_20px_rgba(108,99,255,0.3)] hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-            >
-              <Plus size={16} />
-              Issue Certificate
-            </button>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              {/* ZIP Bulk download trigger */}
+              {selectedCodes.length > 0 && (
+                <button
+                  onClick={handleBulkDownloadZip}
+                  disabled={isExportingZip}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-lg transition-all flex items-center gap-2"
+                >
+                  {isExportingZip ? (
+                    <RefreshCw size={15} className="animate-spin" />
+                  ) : (
+                    <FileArchive size={15} />
+                  )}
+                  <span>Export Selection ({selectedCodes.length}) as ZIP</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => setIsAdding(true)}
+                className="bg-gradient-to-br from-accent to-accent-2 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-[0_8px_20px_rgba(108,99,255,0.3)] hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+              >
+                <Plus size={16} />
+                Issue Certificate
+              </button>
+            </div>
           </div>
 
           {/* Student Add collapse form */}
@@ -293,7 +492,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. Antony Sebastian"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
                   <div>
@@ -306,7 +505,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. Full Stack AI Engineering Internship"
                       value={formCourse}
                       onChange={(e) => setFormCourse(e.target.value)}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
                 </div>
@@ -322,7 +521,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. 01 May 2026"
                       value={formStart}
                       onChange={(e) => setFormStart(e.target.value)}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -335,7 +534,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. 30 June 2026"
                       value={formEnd}
                       onChange={(e) => setFormEnd(e.target.value)}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -348,7 +547,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. 01 July 2026"
                       value={formIssue}
                       onChange={(e) => setFormIssue(e.target.value)}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -389,7 +588,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       required
                       value={editingStudent.studentName}
                       onChange={(e) => setEditingStudent({ ...editingStudent, studentName: e.target.value })}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                     />
                   </div>
                   <div>
@@ -401,7 +600,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       required
                       value={editingStudent.courseName}
                       onChange={(e) => setEditingStudent({ ...editingStudent, courseName: e.target.value })}
-                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-4">
@@ -414,7 +613,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                         required
                         value={editingStudent.startDate}
                         onChange={(e) => setEditingStudent({ ...editingStudent, startDate: e.target.value })}
-                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                       />
                     </div>
                     <div>
@@ -426,7 +625,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                         required
                         value={editingStudent.endDate}
                         onChange={(e) => setEditingStudent({ ...editingStudent, endDate: e.target.value })}
-                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                       />
                     </div>
                     <div>
@@ -438,7 +637,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                         required
                         value={editingStudent.issueDate}
                         onChange={(e) => setEditingStudent({ ...editingStudent, issueDate: e.target.value })}
-                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                       />
                     </div>
                   </div>
@@ -463,6 +662,87 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
             </div>
           )}
 
+          {/* QR Code Dynamic Generator Modal */}
+          {qrModalStudent && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/75" onClick={() => setQrModalStudent(null)} />
+              <div className="relative bg-[var(--surface)] border border-[var(--border)] p-6 rounded-3xl max-w-sm w-full shadow-2xl animate-fade-in z-10 text-center">
+                <div className="mb-4 flex items-center justify-between border-b border-[var(--border)] pb-2 text-ink">
+                  <h3 className="font-bold flex items-center gap-2">
+                    <QrCode size={16} className="text-accent" />
+                    Dynamic QR Passport
+                  </h3>
+                  <button 
+                    onClick={() => setQrModalStudent(null)}
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text)]"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <p className="text-xs text-[var(--text-muted)] mb-4">
+                  Dynamically mapped to verification records of <br/>
+                  <strong className="text-[var(--text)] font-semibold">{qrModalStudent.studentName}</strong>
+                </p>
+
+                {/* QR Code Graphic Container */}
+                <div className="bg-white p-4 rounded-2xl inline-block border border-slate-200 shadow-inner mb-4">
+                  {qrDataUrl ? (
+                    <img 
+                      src={qrDataUrl} 
+                      alt="Student Verification QR Code" 
+                      className="w-48 h-48 mx-auto"
+                    />
+                  ) : (
+                    <div className="w-48 h-48 flex items-center justify-center text-xs text-slate-400">
+                      Generating QR...
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Row */}
+                <div className="space-y-2">
+                  <code className="block bg-[var(--surface-alt)] px-3 py-1.5 rounded-lg border border-[var(--border)] text-[var(--text)] font-mono text-xs font-bold mb-3 select-all">
+                    {qrModalStudent.certCode}
+                  </code>
+
+                  <button
+                    onClick={() => {
+                      const link = document.createElement("a");
+                      link.href = qrDataUrl;
+                      link.download = `QR_${qrModalStudent.studentName.replace(/\s+/g, "_")}_${qrModalStudent.certCode}.png`;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }}
+                    disabled={!qrDataUrl}
+                    className="w-full bg-accent hover:bg-accent-deep text-white text-xs font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Download size={13} />
+                    Download QR Image (PNG)
+                  </button>
+
+                  <button
+                    onClick={() => handleCopyLink(qrModalStudent.certCode)}
+                    className="w-full border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text)] text-xs font-semibold py-2 rounded-xl transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    {copiedCode === qrModalStudent.certCode ? (
+                      <>
+                        <Check size={13} className="text-emerald-400" />
+                        <span>Copied Link!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={13} />
+                        <span>Copy Verification Link</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Students List */}
           {filteredStudents.length === 0 ? (
             <div className="text-center py-16 bg-[var(--surface)] rounded-2xl border border-[var(--border)] border-dashed">
@@ -473,131 +753,330 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
             </div>
           ) : (
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl overflow-hidden divide-y divide-[var(--border)] shadow-md">
-              <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3.5 bg-[var(--surface-alt)] text-xs font-bold uppercase tracking-wider text-[var(--text-dim)]">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3.5 bg-[var(--surface-alt)] text-xs font-bold uppercase tracking-wider text-[var(--text-dim)] items-center">
+                <div className="col-span-1 flex items-center justify-center">
+                  <button
+                    onClick={() => handleToggleSelectAll(visibleCodes)}
+                    className="p-1 rounded text-[var(--text-dim)] hover:text-accent transition-colors"
+                    title={isAllSelected ? "Deselect All" : "Select All"}
+                  >
+                    {isAllSelected ? (
+                      <CheckSquare size={16} className="text-accent" />
+                    ) : (
+                      <Square size={16} />
+                    )}
+                  </button>
+                </div>
                 <div className="col-span-3">Student Name</div>
-                <div className="col-span-4">Course Name</div>
+                <div className="col-span-3">Course Name</div>
                 <div className="col-span-2">Verification Code</div>
-                <div className="col-span-1">Issue Date</div>
+                <div className="col-span-1 text-center">QR Code</div>
                 <div className="col-span-2 text-right">Actions</div>
               </div>
 
-              {filteredStudents.map((student) => (
-                <div key={student.id} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center px-6 py-4 hover:bg-[var(--surface-alt)]/50 transition-colors">
-                  {/* Name */}
-                  <div className="col-span-3 min-w-0">
-                    <div className="font-bold text-[var(--text)] truncate">{student.studentName}</div>
-                    <div className="text-[10px] text-[var(--text-dim)] md:hidden mt-0.5">Verification Code: {student.certCode}</div>
-                  </div>
+              {filteredStudents.map((student) => {
+                const isSelected = selectedCodes.includes(student.certCode);
+                return (
+                  <div key={student.id} className={`grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center px-6 py-4 hover:bg-[var(--surface-alt)]/50 transition-colors ${isSelected ? 'bg-accent/5' : ''}`}>
+                    {/* Checkbox */}
+                    <div className="col-span-1 flex items-center justify-center">
+                      <button
+                        onClick={() => handleToggleSelect(student.certCode)}
+                        className="p-1.5 rounded transition-colors text-[var(--text-dim)] hover:text-accent"
+                      >
+                        {isSelected ? (
+                          <CheckSquare size={16} className="text-accent" />
+                        ) : (
+                          <Square size={16} />
+                        )}
+                      </button>
+                    </div>
 
-                  {/* Course */}
-                  <div className="col-span-4 text-sm text-[var(--text-muted)] md:truncate">
-                    {student.courseName}
-                  </div>
+                    {/* Name */}
+                    <div className="col-span-3 min-w-0">
+                      <div className="font-bold text-[var(--text)] truncate">{student.studentName}</div>
+                      <div className="text-[10px] text-[var(--text-dim)] md:hidden mt-0.5">ID: {student.certCode}</div>
+                    </div>
 
-                  {/* Verification ID */}
-                  <div className="col-span-2 hidden md:block">
-                    <code className="text-xs font-mono bg-[var(--surface-alt)] px-2.5 py-1 rounded-md border border-[var(--border)] text-accent font-bold">
-                      {student.certCode}
-                    </code>
-                  </div>
+                    {/* Course */}
+                    <div className="col-span-3 text-sm text-[var(--text-muted)] md:truncate">
+                      {student.courseName}
+                    </div>
 
-                  {/* Issue Date */}
-                  <div className="col-span-1 text-sm text-[var(--text-dim)] flex items-center gap-1.5">
-                    <Calendar size={13} />
-                    {student.issueDate}
-                  </div>
+                    {/* Verification ID */}
+                    <div className="col-span-2 hidden md:block">
+                      <code className="text-xs font-mono bg-[var(--surface-alt)] px-2.5 py-1 rounded-md border border-[var(--border)] text-accent font-bold">
+                        {student.certCode}
+                      </code>
+                    </div>
 
-                  {/* Actions */}
-                  <div className="col-span-2 flex items-center justify-end gap-1.5 pt-2 md:pt-0">
-                    <button
-                      onClick={() => handleCopyLink(student.certCode)}
-                      title="Copy public link"
-                      className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors relative"
-                    >
-                      {copiedCode === student.certCode ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    </button>
-                    <a
-                      href={`/certificate/verify/${student.certCode}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="View certificate"
-                      className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-accent transition-colors"
-                    >
-                      <ExternalLink size={14} />
-                    </a>
-                    <button
-                      onClick={() => handleDownloadPdf(student.certCode, student.studentName)}
-                      title="Download high-res PDF"
-                      className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-accent-2 transition-colors"
-                    >
-                      <Download size={14} />
-                    </button>
-                    <button
-                      onClick={() => setEditingStudent({ ...student })}
-                      title="Edit certificate details"
-                      className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-blue-400 transition-colors"
-                    >
-                      <Edit size={14} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(student.id, student.studentName)}
-                      title="Delete student record"
-                      className="p-2 rounded-lg border border-[var(--border)] hover:border-red-500/30 hover:bg-red-500/10 text-red-400 transition-all"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {/* Dynamic QR Passport Trigger */}
+                    <div className="col-span-1 flex items-center justify-center">
+                      <button
+                        onClick={() => setQrModalStudent(student)}
+                        title="Open QR Passport"
+                        className="p-2 rounded-lg border border-transparent hover:border-accent/20 hover:bg-accent/10 text-accent transition-all flex items-center gap-1"
+                      >
+                        <QrCode size={16} />
+                        <span className="text-[10px] font-bold md:hidden">QR code</span>
+                      </button>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-2 flex items-center justify-end gap-1.5 pt-2 md:pt-0">
+                      <button
+                        onClick={() => handleCopyLink(student.certCode)}
+                        title="Copy public link"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text)] transition-colors relative"
+                      >
+                        {copiedCode === student.certCode ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                      </button>
+                      <a
+                        href={`/certificate/verify/${student.certCode}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="View certificate verification"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-accent transition-colors"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                      <button
+                        onClick={() => handleDownloadPdf(student.certCode, student.studentName)}
+                        title="Download high-res PDF"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-accent-2 transition-colors"
+                      >
+                        <Download size={14} />
+                      </button>
+                      <button
+                        onClick={() => setEditingStudent({ ...student })}
+                        title="Edit certificate details"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-blue-400 transition-colors"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student.id, student.studentName)}
+                        title="Delete student record"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:border-red-500/30 hover:bg-red-500/10 text-red-400 transition-all"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       )}
 
-      {/* ─── BRANDING & LAYOUT EDITOR TAB ─── */}
+      {/* ─── BRANDING & LAYOUT CUSTOMIZER TAB ─── */}
       {activeTab === "branding" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Controls Editor (Left side, 5 cols) */}
-          <div className="lg:col-span-5 bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] shadow-md">
-            <h2 className="text-base font-bold text-ink mb-4 flex items-center gap-2 border-b border-[var(--border)] pb-2">
-              <Sliders size={16} className="text-accent" />
-              Template Layout Variables
-            </h2>
+          <div className="lg:col-span-5 bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] shadow-md space-y-6">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-2">
+              <h2 className="text-base font-bold text-ink flex items-center gap-2">
+                <Sliders size={16} className="text-accent" />
+                Branding Configurator
+              </h2>
+              <button
+                type="button"
+                onClick={handleResetCoordinates}
+                className="text-[11px] font-bold text-accent hover:underline flex items-center gap-1"
+                title="Reset layout spacings to factory standards"
+              >
+                Reset Layout
+              </button>
+            </div>
 
             <form onSubmit={handleSaveTemplate} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
-                  Certificate Header Title
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={template.title}
-                  onChange={(e) => setTemplate({ ...template, title: e.target.value })}
-                  className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
-                />
+              {/* Text Fields */}
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                    Certificate Header Title
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={template.title}
+                    onChange={(e) => setTemplate({ ...template, title: e.target.value })}
+                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                    Eye-Brow Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={template.subtitle}
+                    onChange={(e) => setTemplate({ ...template, subtitle: e.target.value })}
+                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                    Typography Selection
+                  </label>
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[var(--text-dim)]">
+                      <Type size={14} />
+                    </span>
+                    <select
+                      value={template.fontFamily || "sans"}
+                      onChange={(e) => setTemplate({ ...template, fontFamily: e.target.value as any })}
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
+                    >
+                      <option value="sans">Inter & Helvetica (Clean Modern)</option>
+                      <option value="serif">Playfair & Times (Luxury Traditional)</option>
+                      <option value="mono">Fira Code & Courier (Tech Minimalist)</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
-                  Eye-Brow Subtitle
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={template.subtitle}
-                  onChange={(e) => setTemplate({ ...template, subtitle: e.target.value })}
-                  className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none"
-                />
+              {/* Spacing Controls (Sliders) */}
+              <div className="space-y-3 bg-[var(--surface-alt)]/40 p-4 rounded-xl border border-[var(--border)]">
+                <span className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
+                  Fine-Tune Vertical Spacings (PDF points)
+                </span>
+
+                <div>
+                  <div className="flex justify-between text-[11px] text-[var(--text-dim)] mb-1">
+                    <span>Title Y-Offset</span>
+                    <span className="font-mono">{template.titleY ?? 150} pt</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="50"
+                    max="280"
+                    value={template.titleY ?? 150}
+                    onChange={(e) => setTemplate({ ...template, titleY: parseInt(e.target.value) })}
+                    className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] text-[var(--text-dim)] mb-1">
+                    <span>Subtitle Y-Offset</span>
+                    <span className="font-mono">{template.subtitleY ?? 200} pt</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="100"
+                    max="320"
+                    value={template.subtitleY ?? 200}
+                    onChange={(e) => setTemplate({ ...template, subtitleY: parseInt(e.target.value) })}
+                    className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] text-[var(--text-dim)] mb-1">
+                    <span>Student Name Y-Offset</span>
+                    <span className="font-mono">{template.studentNameY ?? 250} pt</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="150"
+                    max="380"
+                    value={template.studentNameY ?? 250}
+                    onChange={(e) => setTemplate({ ...template, studentNameY: parseInt(e.target.value) })}
+                    className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                  />
+                </div>
+
+                <div>
+                  <div className="flex justify-between text-[11px] text-[var(--text-dim)] mb-1">
+                    <span>Paragraph Body Y-Offset</span>
+                    <span className="font-mono">{template.bodyY ?? 310} pt</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="200"
+                    max="450"
+                    value={template.bodyY ?? 310}
+                    onChange={(e) => setTemplate({ ...template, bodyY: parseInt(e.target.value) })}
+                    className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <div className="flex justify-between text-[10px] text-[var(--text-dim)] mb-1">
+                      <span>Signatures Bottom</span>
+                      <span className="font-mono">{template.footerY ?? 120}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="40"
+                      max="220"
+                      value={template.footerY ?? 120}
+                      onChange={(e) => setTemplate({ ...template, footerY: parseInt(e.target.value) })}
+                      className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[10px] text-[var(--text-dim)] mb-1">
+                      <span>QR Bottom</span>
+                      <span className="font-mono">{template.qrY ?? 60}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="20"
+                      max="180"
+                      value={template.qrY ?? 60}
+                      onChange={(e) => setTemplate({ ...template, qrY: parseInt(e.target.value) })}
+                      className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <div className="flex justify-between text-[10px] text-[var(--text-dim)] mb-1">
+                      <span>QR Code Size</span>
+                      <span className="font-mono">{template.qrSize ?? 74}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="110"
+                      value={template.qrSize ?? 74}
+                      onChange={(e) => setTemplate({ ...template, qrSize: parseInt(e.target.value) })}
+                      className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[10px] text-[var(--text-dim)] mb-1">
+                      <span>Border Width</span>
+                      <span className="font-mono">{template.borderWidth ?? 4}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={template.borderWidth ?? 4}
+                      onChange={(e) => setTemplate({ ...template, borderWidth: parseInt(e.target.value) })}
+                      className="w-full accent-accent cursor-pointer h-1 rounded-lg bg-[var(--border)]"
+                    />
+                  </div>
+                </div>
               </div>
 
+              {/* Colors */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
-                  Certificate Color Accents
+                  Palettes & Accents
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-[10px] text-[var(--text-dim)]">Primary (Dark Border/Text)</span>
+                    <span className="text-[10px] text-[var(--text-dim)]">Primary (Watermark/Border)</span>
                     <div className="flex gap-2 items-center mt-1">
                       <input
                         type="color"
@@ -614,7 +1093,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                     </div>
                   </div>
                   <div>
-                    <span className="text-[10px] text-[var(--text-dim)]">Secondary (Inner Border)</span>
+                    <span className="text-[10px] text-[var(--text-dim)]">Secondary (Inner Line)</span>
                     <div className="flex gap-2 items-center mt-1">
                       <input
                         type="color"
@@ -633,22 +1112,24 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 </div>
               </div>
 
+              {/* Text Area */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
                   Paragraph Template Body
                 </label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   required
                   value={template.bodyTemplate}
                   onChange={(e) => setTemplate({ ...template, bodyTemplate: e.target.value })}
                   className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm text-[var(--text)] focus:outline-none font-sans"
                 />
-                <span className="text-[10px] text-[var(--text-dim)] block mt-1 leading-normal">
-                  Use placeholders: <code className="font-mono text-accent">{`{courseName}`}</code>, <code className="font-mono text-accent">{`{startDate}`}</code>, and <code className="font-mono text-accent">{`{endDate}`}</code>. These will resolve automatically for each student certificate.
+                <span className="text-[9px] text-[var(--text-dim)] block mt-1 leading-normal">
+                  Use: <code className="font-mono text-accent">{`{courseName}`}</code>, <code className="font-mono text-accent">{`{startDate}`}</code>, and <code className="font-mono text-accent">{`{endDate}`}</code>.
                 </span>
               </div>
 
+              {/* Signatories */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
@@ -659,7 +1140,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                     required
                     value={template.signatoryName}
                     onChange={(e) => setTemplate({ ...template, signatoryName: e.target.value })}
-                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
+                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] text-xs rounded-xl px-3 py-2 text-[var(--text)]"
                   />
                 </div>
                 <div>
@@ -671,7 +1152,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                     required
                     value={template.signatoryTitle}
                     onChange={(e) => setTemplate({ ...template, signatoryTitle: e.target.value })}
-                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
+                    className="w-full bg-[var(--surface-alt)] border border-[var(--border)] text-xs rounded-xl px-3 py-2 text-[var(--text)]"
                   />
                 </div>
               </div>
@@ -687,125 +1168,204 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 </button>
                 {saveSuccess && (
                   <p className="text-xs text-emerald-400 font-semibold text-center mt-2 animate-pulse">
-                    ✓ Advanced branding config updated successfully!
+                    ✓ Custom layouts & styles updated successfully!
                   </p>
                 )}
               </div>
             </form>
           </div>
 
-          {/* Interactive Dynamic Certificate Live Preview (Right side, 7 cols) */}
+          {/* Interactive Drag-and-Drop Canvas (Right side, 7 cols) */}
           <div className="lg:col-span-7 space-y-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)]">
-              Interactive Design Canvas Preview (Landscape 16:11 Aspect)
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] flex items-center gap-1.5">
+                <Maximize2 size={13} className="text-accent" />
+                Live Draggable Canvas (Mouse drag to position Y coords)
+              </span>
+              {draggingElement && (
+                <span className="text-[10px] bg-accent/20 text-accent font-bold px-2.5 py-0.5 rounded-full animate-pulse">
+                  Aligning {draggingElement}...
+                </span>
+              )}
+            </div>
 
-            {/* Simulated Live PDF certificate render */}
+            {/* Canvas Container */}
             <div 
-              className="w-full aspect-[1.414/1] rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden transition-all border border-line"
+              ref={canvasRef}
+              onMouseMove={handleMouseMove}
+              onMouseUp={stopDrag}
+              onMouseLeave={stopDrag}
+              className={`w-full aspect-[1.414/1] rounded-3xl shadow-2xl relative overflow-hidden select-none transition-all border border-line ${draggingElement ? 'cursor-ns-resize ring-2 ring-accent/40' : 'cursor-default'}`}
               style={{ 
-                background: "#FAF9F6", // Luxury linen paper colour
+                background: "#ffffff", // Pure white layout background
                 color: template.textColor || "#15140f",
-                fontFamily: "var(--font-body)"
               }}
             >
-              {/* Decorative Accent Borders */}
+              {/* TOP-RIGHT CORNER ACCENT BANDS */}
               <div 
-                className="absolute inset-2 pointer-events-none transition-all"
-                style={{ borderColor: template.secondaryColor || "#00d4aa", borderWidth: "1.5px", borderStyle: "solid" }}
+                className="absolute top-0 right-0 w-3 md:w-4.5 h-12 md:h-16 transition-all"
+                style={{ background: template.primaryColor || "#003e8f" }}
               />
               <div 
-                className="absolute inset-3 pointer-events-none transition-all"
-                style={{ borderColor: template.primaryColor || "#003e8f", borderWidth: "4px", borderStyle: "solid" }}
-              />
-              <div 
-                className="absolute inset-4.5 pointer-events-none transition-all"
-                style={{ borderColor: template.secondaryColor || "#00d4aa", borderWidth: "1px", borderStyle: "solid" }}
+                className="absolute top-0 right-3 md:right-4.5 w-3 md:w-4.5 h-12 md:h-16 transition-all"
+                style={{ background: template.secondaryColor || "#00d4aa" }}
               />
 
-              {/* Corner Diamonds */}
-              {[
-                "top-3 left-3",
-                "top-3 right-3",
-                "bottom-3 left-3",
-                "bottom-3 right-3"
-              ].map((pos) => (
-                <div key={pos} className={`absolute ${pos} w-4.5 h-4.5 flex items-center justify-center`}>
-                  <div 
-                    className="w-3.5 h-3.5 rotate-45"
-                    style={{ background: template.primaryColor || "#003e8f" }}
-                  />
-                </div>
-              ))}
-
-              {/* Branding Header Watermark */}
-              <div className="text-center mt-3">
-                <span 
-                  className="text-[8px] md:text-[10px] font-bold tracking-widest block transition-colors"
-                  style={{ color: template.primaryColor || "#003e8f" }}
-                >
-                  STRIXMIND AI OPERATING SYSTEM
-                </span>
-              </div>
-
-              {/* Dynamic Title */}
-              <div className="text-center mt-4 md:mt-6">
-                <h3 
-                  className="text-sm md:text-xl font-bold tracking-tight transition-colors line-clamp-1"
-                  style={{ color: template.primaryColor || "#003e8f" }}
-                >
-                  {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
-                </h3>
-                <p 
-                  className="text-[10px] md:text-xs italic mt-1"
-                  style={{ color: template.mutedColor || "#4b5563" }}
-                >
-                  {template.subtitle || "This is to certify that"}
-                </p>
-              </div>
-
-              {/* Sample Student Name */}
-              <div className="text-center mt-3 md:mt-5">
-                <h4 className="text-lg md:text-2xl font-extrabold tracking-tight">
-                  John Doe Sebastian
-                </h4>
-                {/* Accent line */}
-                <div 
-                  className="w-32 h-[1.5px] mx-auto mt-1 md:mt-2 transition-all"
-                  style={{ background: template.secondaryColor || "#00d4aa" }}
+              {/* BRAND LOGO TOP-LEFT */}
+              <div className="absolute top-[4.5%] left-[6%] flex items-center pointer-events-none">
+                <img 
+                  src="/brand/strixmind-logo.png" 
+                  alt="StrixMind Logo" 
+                  className="h-6 sm:h-9 md:h-11 w-auto object-contain"
+                  onError={(e) => {
+                    // Fallback to text if missing
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </div>
 
-              {/* Body Text Compiled preview */}
-              <div className="text-center mt-3 md:mt-5 max-w-[85%] mx-auto leading-relaxed">
-                <p className="text-[10px] md:text-xs">
-                  {template.bodyTemplate
-                    ? template.bodyTemplate
-                        .replace("{courseName}", "Full Stack AI Engineering Internship")
-                        .replace("{startDate}", "01 May 2026")
-                        .replace("{endDate}", "30 June 2026")
-                    : "has successfully completed the internship program..."}
-                </p>
+              {/* CONTACT INFO TOP-RIGHT */}
+              <div className="absolute top-[4%] right-[8%] text-right pointer-events-none text-[4px] sm:text-[7px] md:text-[8px] leading-snug text-[var(--text-dim)] font-sans space-y-0.5">
+                <div className="flex items-center justify-end gap-1">
+                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+                  <span>Changanassery, Kottayam</span>
+                </div>
+                <div className="flex items-center justify-end gap-1">
+                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+                  <span>strixmindllp@gmail.com</span>
+                </div>
+                <div className="flex items-center justify-end gap-1">
+                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+                  <span>www.strixmind.com</span>
+                </div>
               </div>
 
-              {/* Footer row (Signatures and QR code) */}
-              <div className="absolute bottom-6 md:bottom-8 left-8 right-8 flex items-end justify-between text-[10px]">
-                {/* Date of Issue */}
-                <div className="text-center w-28 md:w-36">
-                  <div className="font-bold border-t border-slate-300 pt-1">
-                    01 July 2026
-                  </div>
-                  <div className="text-[8px] md:text-[9px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
-                    Date of Issue
-                  </div>
-                </div>
+              {/* ASYMMETRIC DIVIDER LINE */}
+              <div className="absolute top-[16%] left-[6%] right-[6%] h-[3px] flex pointer-events-none">
+                <div className="w-[30%] h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
+                <div className="flex-1 h-[0.75px] self-center transition-all bg-slate-200" />
+              </div>
 
-                {/* Simulated QR Code */}
-                <div className="flex flex-col items-center">
-                  {/* Outer QR Frame */}
+              {/* QUAD-COLOR BOTTOM STRIP */}
+              <div className="absolute bottom-0 left-0 right-0 h-2 md:h-3.5 flex pointer-events-none">
+                <div className="flex-1 h-full bg-[#0a192f]" />
+                <div className="flex-1 h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
+                <div className="flex-1 h-full bg-[#1b6ca8]" />
+                <div className="flex-1 h-full transition-all" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              </div>
+
+              {/* DRAGGABLE HEADER TITLE */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "title")}
+                className={`absolute left-0 right-0 text-center px-4 py-1.5 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "title" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  top: `${((template.titleY ?? 150) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                <div className="relative group">
+                  <h3 
+                    className="text-[9px] sm:text-base md:text-xl font-bold tracking-tight line-clamp-1 select-none"
+                    style={{ color: template.primaryColor || "#003e8f" }}
+                  >
+                    {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
+                  </h3>
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                    Y: {template.titleY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE SUBTITLE */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "subtitle")}
+                className={`absolute left-0 right-0 text-center px-4 py-1 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "subtitle" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  top: `${((template.subtitleY ?? 200) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                <div className="relative group">
+                  <p 
+                    className="text-[7px] sm:text-xs italic select-none"
+                    style={{ color: template.mutedColor || "#4b5563" }}
+                  >
+                    {template.subtitle || "This is to certify that"}
+                  </p>
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                    Y: {template.subtitleY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE STUDENT NAME */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "studentName")}
+                className={`absolute left-0 right-0 text-center px-4 py-2 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "studentName" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                <div className="relative group inline-block">
+                  <h4 className="text-[12px] sm:text-xl md:text-2xl font-extrabold tracking-tight select-none">
+                    John Doe Sebastian
+                  </h4>
                   <div 
-                    className="w-12 h-12 md:w-16 md:h-16 p-1 border rounded bg-white flex items-center justify-center shadow-sm"
-                    style={{ borderColor: template.primaryColor || "#003e8f" }}
+                    className="w-24 md:w-36 h-[1.5px] mx-auto mt-1 transition-all"
+                    style={{ background: template.secondaryColor || "#00d4aa" }}
+                  />
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                    Y: {template.studentNameY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE BODY TEXT */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "body")}
+                className={`absolute left-[10%] right-[10%] text-center px-4 py-2 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "body" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  top: `${((template.bodyY ?? 310) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                <div className="relative group">
+                  <p className="text-[7px] sm:text-[10px] md:text-xs leading-relaxed select-none">
+                    {template.bodyTemplate
+                      ? template.bodyTemplate
+                          .replace("{courseName}", "Full Stack AI Engineering Internship")
+                          .replace("{startDate}", "01 May 2026")
+                          .replace("{endDate}", "30 June 2026")
+                      : "has successfully completed the internship program..."}
+                  </p>
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                    Y: {template.bodyY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE STANDALONE VERIFICATION QR CODE (Bottom Centered) */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "qr")}
+                className={`absolute left-1/2 -translate-x-1/2 p-2 flex flex-col items-center transition-shadow hover:bg-accent/5 rounded ${draggingElement === "qr" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  bottom: `${((template.qrY ?? 60) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                }}
+              >
+                <div className="relative group flex flex-col items-center">
+                  <div 
+                    className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm"
+                    style={{ 
+                      borderColor: template.primaryColor || "#003e8f",
+                      width: `${(template.qrSize ?? 74) * 0.7}px`,
+                      height: `${(template.qrSize ?? 74) * 0.7}px`
+                    }}
                   >
                     <svg className="w-full h-full" viewBox="0 0 100 100">
                       <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
@@ -818,27 +1378,54 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
                     </svg>
                   </div>
-                  <span className="text-[7px] md:text-[8px] font-mono font-bold mt-1.5" style={{ color: template.primaryColor || "#003e8f" }}>
+                  <span className="text-[5px] sm:text-[7px] font-mono font-bold mt-1 text-center" style={{ color: template.primaryColor || "#003e8f" }}>
                     SM-2026-XJ92K
                   </span>
+                  <span className="absolute -top-4 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap">
+                    Bottom Y: {template.qrY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE SIGNATORIES (Left & Right alignment) */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "footer")}
+                className={`absolute left-[8%] right-[8%] flex justify-between px-2 py-1.5 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "footer" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                style={{ 
+                  bottom: `${((template.footerY ?? 120) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                {/* Left Side: Issuance */}
+                <div className="text-center w-[30%] relative group">
+                  <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] pt-1">
+                    01 July 2026
+                  </div>
+                  <div className="text-[5px] sm:text-[8px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
+                    Date of Issue
+                  </div>
                 </div>
 
-                {/* Signatory */}
-                <div className="text-center w-28 md:w-36">
-                  <div className="font-bold border-t border-slate-300 pt-1 line-clamp-1">
+                {/* Right Side: Signatory */}
+                <div className="text-center w-[30%] relative group">
+                  <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] pt-1 line-clamp-1">
                     {template.signatoryName || "Antony Sebastian"}
                   </div>
-                  <div className="text-[8px] md:text-[9px] italic mt-0.5 leading-none line-clamp-1" style={{ color: template.mutedColor || "#4b5563" }}>
+                  <div className="text-[5px] sm:text-[8px] italic mt-0.5 leading-none line-clamp-1" style={{ color: template.mutedColor || "#4b5563" }}>
                     {template.signatoryTitle || "Founder, StrixMind LLP"}
                   </div>
+                  <span className="absolute -top-6 right-0 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap">
+                    Bottom Y: {template.footerY}pt
+                  </span>
                 </div>
               </div>
             </div>
             
             <div className="bg-[var(--surface)] p-4 rounded-2xl border border-[var(--border)] text-xs text-[var(--text-dim)] leading-normal flex gap-2.5 items-start">
-              <span className="text-accent shrink-0 pt-0.5">ℹ</span>
+              <Info className="text-accent shrink-0 mt-0.5" size={14} />
               <span>
-                The dynamic preview panel on this canvas reflects real-time styling, accent borders, custom signatory values, and structural margins as they appear on the final generated PDF files.
+                <strong>Advanced Designer Instructions:</strong> Click and drag any of the elements (Header Title, Subtitle, Student Name, Paragraph text block, signatures, or QR container) vertically on the live preview canvas above to change their PDF positions instantly! Spacing values will update the controls on the left dynamically. Save when satisfied.
               </span>
             </div>
           </div>
