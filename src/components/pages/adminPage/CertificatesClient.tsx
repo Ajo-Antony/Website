@@ -207,27 +207,27 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
     const yFromTop = e.clientY - rect.top;
     const yFromBottom = rect.bottom - e.clientY;
     
-    // Total PDF height is 841.89 pts for A4 Portrait letterhead
-    const ratio = 841.89 / rect.height;
+    // Total PDF height is 595.27 pts
+    const ratio = 595.27 / rect.height;
     
     if (draggingElement === "title") {
       const pt = Math.round(yFromTop * ratio);
-      setTemplate(prev => ({ ...prev, titleY: Math.max(40, Math.min(400, pt)) }));
+      setTemplate(prev => ({ ...prev, titleY: Math.max(20, Math.min(300, pt)) }));
     } else if (draggingElement === "subtitle") {
       const pt = Math.round(yFromTop * ratio);
-      setTemplate(prev => ({ ...prev, subtitleY: Math.max(60, Math.min(450, pt)) }));
+      setTemplate(prev => ({ ...prev, subtitleY: Math.max(40, Math.min(350, pt)) }));
     } else if (draggingElement === "studentName") {
       const pt = Math.round(yFromTop * ratio);
-      setTemplate(prev => ({ ...prev, studentNameY: Math.max(100, Math.min(500, pt)) }));
+      setTemplate(prev => ({ ...prev, studentNameY: Math.max(80, Math.min(420, pt)) }));
     } else if (draggingElement === "body") {
       const pt = Math.round(yFromTop * ratio);
-      setTemplate(prev => ({ ...prev, bodyY: Math.max(150, Math.min(650, pt)) }));
+      setTemplate(prev => ({ ...prev, bodyY: Math.max(120, Math.min(480, pt)) }));
     } else if (draggingElement === "footer") {
       const pt = Math.round(yFromBottom * ratio);
-      setTemplate(prev => ({ ...prev, footerY: Math.max(40, Math.min(350, pt)) }));
+      setTemplate(prev => ({ ...prev, footerY: Math.max(20, Math.min(250, pt)) }));
     } else if (draggingElement === "qr") {
       const pt = Math.round(yFromBottom * ratio);
-      setTemplate(prev => ({ ...prev, qrY: Math.max(20, Math.min(250, pt)) }));
+      setTemplate(prev => ({ ...prev, qrY: Math.max(10, Math.min(200, pt)) }));
     }
   };
 
@@ -1432,25 +1432,39 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
             </div>
 
             {/* Canvas Container */}
-            {/* Live Interactive Designer Preview (rendered dynamically with drag-and-drop coordinates) */}
             <div 
               ref={canvasRef}
               onMouseMove={handleMouseMove}
               onMouseUp={stopDrag}
               onMouseLeave={stopDrag}
-              className={`w-full aspect-[1/1.414] rounded-3xl shadow-2xl relative overflow-hidden select-none transition-all ${draggingElement ? 'cursor-ns-resize ring-2 ring-accent/40' : 'cursor-default'}`}
+              className={`w-full aspect-[1.414/1] rounded-3xl shadow-2xl relative overflow-hidden select-none transition-all ${draggingElement ? 'cursor-ns-resize ring-2 ring-accent/40' : 'cursor-default'}`}
               style={{ 
-                background: "#ffffff", // Pure white letterhead background
+                background: "#ffffff", // Pure white layout background
                 color: template.textColor || "#15140f",
+                borderColor: template.primaryColor || "#003e8f",
+                borderWidth: `${template.borderWidth ?? 4}px`,
+                borderStyle: 'solid',
               }}
             >
+              {/* Elegant Double Border (Inner Line) */}
+              <div 
+                className="absolute pointer-events-none transition-all rounded-[16px]"
+                style={{
+                  top: `${(template.borderWidth ?? 4) + 3}px`,
+                  bottom: `${(template.borderWidth ?? 4) + 3}px`,
+                  left: `${(template.borderWidth ?? 4) + 3}px`,
+                  right: `${(template.borderWidth ?? 4) + 3}px`,
+                  border: `1.5px solid ${template.secondaryColor || "#00d4aa"}`,
+                }}
+              />
+
               {/* Show Horizontal Guideline Markers for Pixel-Perfect Spacing & Margins */}
               {showGuides && (
                 <>
                   {/* Title guideline */}
                   <div 
                     className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ top: `${((template.titleY ?? 135) / 841.89) * 100}%` }}
+                    style={{ top: `${((template.titleY ?? 150) / 595.27) * 100}%` }}
                   >
                     <span>Title Level</span>
                     <span>{template.titleY} pt</span>
@@ -1458,7 +1472,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   {/* Subtitle guideline */}
                   <div 
                     className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ top: `${(((template.titleY ?? 135) + 14) / 841.89) * 100}%` }}
+                    style={{ top: `${((template.subtitleY ?? 200) / 595.27) * 100}%` }}
                   >
                     <span>Subtitle Level</span>
                     <span>{template.subtitleY} pt</span>
@@ -1466,15 +1480,15 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   {/* Student Name guideline */}
                   <div 
                     className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ top: `${((template.studentNameY ?? 180) / 841.89) * 100}%` }}
+                    style={{ top: `${((template.studentNameY ?? 250) / 595.27) * 100}%` }}
                   >
-                    <span>Recipient/Date Level</span>
+                    <span>Student Name Level</span>
                     <span>{template.studentNameY} pt</span>
                   </div>
                   {/* Body guideline */}
                   <div 
                     className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ top: `${((template.bodyY ?? 265) / 841.89) * 100}%` }}
+                    style={{ top: `${((template.bodyY ?? 310) / 595.27) * 100}%` }}
                   >
                     <span>Body Level</span>
                     <span>{template.bodyY} pt</span>
@@ -1482,7 +1496,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   {/* QR guideline */}
                   <div 
                     className="absolute left-0 right-0 border-b border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ bottom: `${((template.qrY ?? 60) / 841.89) * 100}%` }}
+                    style={{ bottom: `${((template.qrY ?? 60) / 595.27) * 100}%` }}
                   >
                     <span>QR Level</span>
                     <span>{template.qrY} pt</span>
@@ -1490,58 +1504,86 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   {/* Signatures guideline */}
                   <div 
                     className="absolute left-0 right-0 border-b border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
-                    style={{ bottom: `${((template.footerY ?? 120) / 841.89) * 100}%` }}
+                    style={{ bottom: `${((template.footerY ?? 120) / 595.27) * 100}%` }}
                   >
-                    <span>Regards/Signatures Level</span>
+                    <span>Signatures Level</span>
                     <span>{template.footerY} pt</span>
                   </div>
                 </>
               )}
 
+              {/* TOP-RIGHT CORNER ACCENT BANDS */}
+              <div 
+                className="absolute top-0 right-0 w-3 md:w-4.5 h-12 md:h-16 transition-all"
+                style={{ background: template.primaryColor || "#003e8f" }}
+              />
+              <div 
+                className="absolute top-0 right-3 md:right-4.5 w-3 md:w-4.5 h-12 md:h-16 transition-all"
+                style={{ background: template.secondaryColor || "#00d4aa" }}
+              />
+
               {/* BRAND LOGO TOP-LEFT */}
-              <div className="absolute top-[4.5%] left-[8%] flex items-center pointer-events-none">
+              <div className="absolute top-[4.5%] left-[6%] flex items-center pointer-events-none">
                 <img 
                   src="/brand/strixmind-logo.png" 
                   alt="StrixMind Logo" 
-                  className="h-7 sm:h-9 md:h-12 w-auto object-contain"
+                  className="h-6 sm:h-9 md:h-11 w-auto object-contain"
                   onError={(e) => {
+                    // Fallback to text if missing
                     e.currentTarget.style.display = 'none';
                   }}
                 />
               </div>
 
               {/* CONTACT INFO TOP-RIGHT */}
-              <div className="absolute top-[3%] right-[8%] text-right pointer-events-none text-[5px] sm:text-[8px] md:text-[10px] leading-snug text-slate-600 font-sans space-y-0.5 sm:space-y-1">
-                <div className="flex items-center justify-end gap-1.5">
+              <div className="absolute top-[3%] right-[6%] text-right pointer-events-none text-[5px] sm:text-[9px] md:text-[11px] leading-snug text-slate-600 font-sans space-y-1 sm:space-y-1.5">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>Changanassery, Kottayam</span>
-                  <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
-                    <MapPin className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <MapPin className="w-2 h-2 sm:w-3 sm:h-3" />
                   </div>
                 </div>
-                <div className="flex items-center justify-end gap-1.5">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>strixmindllp@gmail.com</span>
-                  <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
-                    <Mail className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <Mail className="w-2 h-2 sm:w-3 sm:h-3" />
                   </div>
                 </div>
-                <div className="flex items-center justify-end gap-1.5">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>www.strixmind.com</span>
-                  <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
-                    <Globe className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
                   </div>
                 </div>
               </div>
 
               {/* ASYMMETRIC DIVIDER LINE */}
-              <div className="absolute top-[12.5%] left-[8%] right-[8%] h-[3.5px] flex pointer-events-none">
+              <div className="absolute top-[16%] left-[6%] right-[6%] h-[3px] flex pointer-events-none">
                 <div className="w-[30%] h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
-                <div className="flex-1 h-[0.75px] self-center transition-all bg-[#121016]" />
+                <div className="flex-1 h-[0.75px] self-center transition-all bg-slate-200" />
               </div>
 
-              {/* DRAGGABLE SUBJECT / DOCUMENT TITLE (Centered below header) */}
+              {/* QUAD-COLOR BOTTOM STRIP */}
+              <div className="absolute bottom-0 left-0 right-0 h-2 md:h-3.5 flex pointer-events-none">
+                <div className="flex-1 h-full bg-[#0a192f]" />
+                <div className="flex-1 h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
+                <div className="flex-1 h-full bg-[#1b6ca8]" />
+                <div className="flex-1 h-full transition-all" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              </div>
+
+              {/* DRAGGABLE HEADER TITLE */}
               <div 
                 onMouseDown={(e) => startDrag(e, "title")}
-                className={`absolute left-0 right-0 text-center px-8 py-1.5 transition-all hover:bg-accent/5 rounded ${
+                className={`absolute left-0 right-0 text-center px-4 py-1.5 transition-all hover:bg-accent/5 rounded ${
                   draggingElement === "title" 
                     ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
                     : showGuides 
@@ -1549,36 +1591,57 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       : "hover:shadow-sm"
                 }`}
                 style={{ 
-                  top: `${((template.titleY ?? 135) / 841.89) * 100}%`,
+                  top: `${((template.titleY ?? 150) / 595.27) * 100}%`,
                   cursor: "ns-resize",
                   fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
                 }}
               >
                 <div className="relative group">
-                  <h1 
-                    className="text-[8px] sm:text-[13px] md:text-[16px] lg:text-[18px] font-extrabold tracking-tight transition-colors uppercase select-none"
+                  <h3 
+                    className="text-[9px] sm:text-base md:text-xl font-bold tracking-tight line-clamp-1 select-none"
                     style={{ color: template.primaryColor || "#003e8f" }}
                   >
                     {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
-                  </h1>
-                  {template.subtitle && (
-                    <p 
-                      className="text-[5px] sm:text-[9px] md:text-[11px] italic mt-0.5 select-none"
-                      style={{ color: template.mutedColor || "#4b5563" }}
-                    >
-                      {template.subtitle}
-                    </p>
-                  )}
+                  </h3>
                   <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.titleY}pt
                   </span>
                 </div>
               </div>
 
-              {/* DRAGGABLE LETTER RECIPIENT & DATE HEADER */}
+              {/* DRAGGABLE SUBTITLE */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "subtitle")}
+                className={`absolute left-0 right-0 text-center px-4 py-1 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "subtitle" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
+                style={{ 
+                  top: `${((template.subtitleY ?? 200) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                <div className="relative group">
+                  <p 
+                    className="text-[7px] sm:text-xs italic select-none"
+                    style={{ color: template.mutedColor || "#4b5563" }}
+                  >
+                    {template.subtitle || "This is to certify that"}
+                  </p>
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
+                    Y: {template.subtitleY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE STUDENT NAME */}
               <div 
                 onMouseDown={(e) => startDrag(e, "studentName")}
-                className={`absolute left-[8%] right-[8%] flex justify-between items-end px-2 py-1.5 transition-all hover:bg-accent/5 rounded ${
+                className={`absolute left-0 right-0 text-center px-4 py-2 transition-all hover:bg-accent/5 rounded ${
                   draggingElement === "studentName" 
                     ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
                     : showGuides 
@@ -1586,39 +1649,32 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       : "hover:shadow-sm"
                 }`}
                 style={{ 
-                  top: `${((template.studentNameY ?? 180) / 841.89) * 100}%`,
+                  top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`,
                   cursor: "ns-resize",
                   fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
                 }}
               >
-                <div className="relative group flex justify-between w-full">
-                  <div>
-                    <span className="text-[6px] sm:text-[10px] md:text-xs font-extrabold select-none" style={{ color: template.textColor || "#15140f" }}>
-                      To: Max Sebastian
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[6px] sm:text-[10px] md:text-xs font-extrabold select-none" style={{ color: template.textColor || "#15140f" }}>
-                      25 January, 2029
-                    </span>
-                  </div>
+                <div className="relative group inline-block">
+                  <h4 
+                    className="text-[12px] sm:text-xl md:text-2xl font-extrabold tracking-tight select-none"
+                    style={{ color: template.textColor || "#15140f" }}
+                  >
+                    John Doe Sebastian
+                  </h4>
+                  <div 
+                    className="w-24 md:w-36 h-[1.5px] mx-auto mt-1 transition-all"
+                    style={{ background: template.secondaryColor || "#00d4aa" }}
+                  />
                   <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.studentNameY}pt
                   </span>
                 </div>
               </div>
 
-              {/* SALUTATION (Positioned dynamically slightly below recipient line) */}
-              <div className="absolute left-[8%] right-[8%] pointer-events-none" style={{ top: `${(((template.studentNameY ?? 180) + 40) / 841.89) * 100}%` }}>
-                <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
-                  Dear Max Sebastian,
-                </p>
-              </div>
-
-              {/* DRAGGABLE LETTER BODY TEXT */}
+              {/* DRAGGABLE BODY TEXT */}
               <div 
                 onMouseDown={(e) => startDrag(e, "body")}
-                className={`absolute left-[8%] right-[8%] text-justify px-2 py-2 transition-all hover:bg-accent/5 rounded ${
+                className={`absolute left-[10%] right-[10%] text-center px-4 py-2 transition-all hover:bg-accent/5 rounded ${
                   draggingElement === "body" 
                     ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
                     : showGuides 
@@ -1626,74 +1682,33 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       : "hover:shadow-sm"
                 }`}
                 style={{ 
-                  top: `${((template.bodyY ?? 265) / 841.89) * 100}%`,
+                  top: `${((template.bodyY ?? 310) / 595.27) * 100}%`,
                   cursor: "ns-resize",
                   fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
                 }}
               >
-                <div className="relative group space-y-2">
-                  {(template.bodyTemplate || "")
-                    .replace("{courseName}", "Full Stack AI Engineering Internship")
-                    .replace("{startDate}", "01 May 2026")
-                    .replace("{endDate}", "30 June 2026")
-                    .split("\n")
-                    .map((paragraph: string, idx: number) => {
-                      const trimmed = paragraph.trim();
-                      if (!trimmed) return null;
-                      return (
-                        <p 
-                          key={idx}
-                          className="text-[5.5px] sm:text-[10px] md:text-xs lg:text-[13px] leading-relaxed select-none"
-                          style={{ color: template.textColor || "#15140f" }}
-                        >
-                          {trimmed}
-                        </p>
-                      );
-                    })}
+                <div className="relative group">
+                  <p 
+                    className="text-[7px] sm:text-[10px] md:text-xs leading-relaxed select-none"
+                    style={{ color: template.textColor || "#15140f" }}
+                  >
+                    {template.bodyTemplate
+                      ? template.bodyTemplate
+                          .replace("{courseName}", "Full Stack AI Engineering Internship")
+                          .replace("{startDate}", "01 May 2026")
+                          .replace("{endDate}", "30 June 2026")
+                      : "has successfully completed the internship program..."}
+                  </p>
                   <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.bodyY}pt
                   </span>
                 </div>
               </div>
 
-              {/* DRAGGABLE REGARDS & SIGNATORY */}
-              <div 
-                onMouseDown={(e) => startDrag(e, "footer")}
-                className={`absolute left-[8%] text-left px-2 py-1.5 transition-all hover:bg-accent/5 rounded ${
-                  draggingElement === "footer" 
-                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
-                    : showGuides 
-                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
-                      : "hover:shadow-sm"
-                }`}
-                style={{ 
-                  bottom: `${((template.footerY ?? 120) / 841.89) * 100}%`,
-                  cursor: "ns-resize",
-                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
-                }}
-              >
-                <div className="relative group space-y-1 sm:space-y-2">
-                  <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold select-none" style={{ color: template.textColor || "#15140f" }}>
-                    Regards,
-                  </p>
-                  <div className="pt-2">
-                    <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold select-none" style={{ color: template.textColor || "#15140f" }}>
-                      {template.signatoryName || "Antony Sebastian"}
-                    </p>
-                    <p className="text-[5px] sm:text-[8px] md:text-[9.5px] italic select-none" style={{ color: template.mutedColor || "#4b5563" }}>
-                      {template.signatoryTitle || "Founder, StrixMind LLP"}
-                    </p>
-                  </div>
-                  <span className="absolute -top-4 left-0 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
-                    Bottom Y: {template.footerY}pt
-                  </span>
-                </div>
-              </div>
-
-              {/* DRAGGABLE VERIFICATION QR & ID DIGITAL STAMP (Bottom-Right) */}
+              {/* DRAGGABLE STANDALONE VERIFICATION QR CODE (Bottom Centered) */}
               <div 
                 onMouseDown={(e) => startDrag(e, "qr")}
-                className={`absolute bottom-[6%] right-[8%] p-2 flex flex-col items-center transition-all hover:bg-accent/5 rounded ${
+                className={`absolute left-1/2 -translate-x-1/2 p-2 flex flex-col items-center transition-all hover:bg-accent/5 rounded ${
                   draggingElement === "qr" 
                     ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
                     : showGuides 
@@ -1701,17 +1716,17 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       : "hover:shadow-sm"
                 }`}
                 style={{ 
-                  bottom: `${((template.qrY ?? 60) / 841.89) * 100}%`,
+                  bottom: `${((template.qrY ?? 60) / 595.27) * 100}%`,
                   cursor: "ns-resize",
                 }}
               >
                 <div className="relative group flex flex-col items-center">
                   <div 
-                    className="p-0.5 border bg-white flex items-center justify-center shadow-sm overflow-hidden"
+                    className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm"
                     style={{ 
                       borderColor: template.primaryColor || "#003e8f",
-                      width: "48px",
-                      height: "48px"
+                      width: `${(template.qrSize ?? 74) * 0.7}px`,
+                      height: `${(template.qrSize ?? 74) * 0.7}px`
                     }}
                   >
                     <svg className="w-full h-full" viewBox="0 0 100 100">
@@ -1725,14 +1740,63 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
                     </svg>
                   </div>
-                  <span className="text-[4px] sm:text-[7.5px] font-mono font-bold mt-1 select-none" style={{ color: template.primaryColor || "#003e8f" }}>
-                    Scan to verify
-                  </span>
-                  <span className="text-[4px] sm:text-[7.5px] font-mono font-extrabold select-none" style={{ color: template.primaryColor || "#003e8f" }}>
-                    ID: SM-2026-XJ92K
+                  <span className="text-[5px] sm:text-[7px] font-mono font-bold mt-1 text-center" style={{ color: template.primaryColor || "#003e8f" }}>
+                    SM-2026-XJ92K
                   </span>
                   <span className="absolute -top-4 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Bottom Y: {template.qrY}pt
+                  </span>
+                </div>
+              </div>
+
+              {/* DRAGGABLE SIGNATORIES (Left & Right alignment) */}
+              <div 
+                onMouseDown={(e) => startDrag(e, "footer")}
+                className={`absolute left-[8%] right-[8%] flex justify-between px-2 py-1.5 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "footer" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
+                style={{ 
+                  bottom: `${((template.footerY ?? 120) / 595.27) * 100}%`,
+                  cursor: "ns-resize",
+                  fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+                }}
+              >
+                {/* Left Side: Issuance */}
+                <div className="text-center w-[30%] relative group">
+                  <div 
+                    className="font-bold border-t text-[6px] sm:text-[10px] pt-1"
+                    style={{ 
+                      borderColor: template.primaryColor || "#cbd5e1",
+                      color: template.textColor || "#15140f"
+                    }}
+                  >
+                    01 July 2026
+                  </div>
+                  <div className="text-[5px] sm:text-[8px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
+                    Date of Issue
+                  </div>
+                </div>
+
+                {/* Right Side: Signatory */}
+                <div className="text-center w-[30%] relative group">
+                  <div 
+                    className="font-bold border-t text-[6px] sm:text-[10px] pt-1 line-clamp-1"
+                    style={{ 
+                      borderColor: template.primaryColor || "#cbd5e1",
+                      color: template.textColor || "#15140f"
+                    }}
+                  >
+                    {template.signatoryName || "Antony Sebastian"}
+                  </div>
+                  <div className="text-[5px] sm:text-[8px] italic mt-0.5 leading-none line-clamp-1" style={{ color: template.mutedColor || "#4b5563" }}>
+                    {template.signatoryTitle || "Founder, StrixMind LLP"}
+                  </div>
+                  <span className="absolute -top-6 right-0 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
+                    Bottom Y: {template.footerY}pt
                   </span>
                 </div>
               </div>

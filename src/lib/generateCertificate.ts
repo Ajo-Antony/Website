@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts, rgb, PDFFont } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb, PDFPage, PDFFont } from "pdf-lib";
 import QRCode from "qrcode";
 import type { CertificateTemplate } from "@/lib/actions/certificates";
 import fs from "fs";
@@ -42,11 +42,12 @@ export async function generateCertificatePdf({
   // Create a fresh PDF document
   const pdfDoc = await PDFDocument.create();
   
-  // A4 Portrait is 595.27 x 841.89 points
-  const page = pdfDoc.addPage([595.27, 841.89]);
+  // A4 Landscape is 841.89 x 595.27 points (roughly 11.7 x 8.3 inches)
+  const page = pdfDoc.addPage([841.89, 595.27]);
   const { width, height } = page.getSize();
 
   // Embed standard Helvetica fonts
+  // Embed requested font families dynamically based on configuration
   const fontFam = templateSettings.fontFamily || "sans";
   let regularFontName = StandardFonts.Helvetica;
   let boldFontName = StandardFonts.HelveticaBold;
@@ -71,7 +72,10 @@ export async function generateCertificatePdf({
   const textColor = hexToRgb(templateSettings.textColor || "#15140f");
   const mutedColor = hexToRgb(templateSettings.mutedColor || "#4b5563");
 
-  // Plain white background
+  const boldBorderWidth = templateSettings.borderWidth ?? 4;
+
+  // ---- DRAW BRANDED TEMPLATE DESIGN (Matching "my template" layout) ----
+  // 1. Plain white A4 background
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -80,7 +84,46 @@ export async function generateCertificatePdf({
     color: rgb(1, 1, 1),
   });
 
-  // Embed and draw Logo in the Top-Left Header
+  // 1.b Draw primary outer border & secondary inner border matching preview configuration
+  const borderMargin = 12;
+  page.drawRectangle({
+    x: borderMargin,
+    y: borderMargin,
+    width: width - (borderMargin * 2),
+    height: height - (borderMargin * 2),
+    borderColor: primaryColor,
+    borderWidth: boldBorderWidth,
+  });
+
+  const innerBorderMargin = borderMargin + boldBorderWidth + 3;
+  page.drawRectangle({
+    x: innerBorderMargin,
+    y: innerBorderMargin,
+    width: width - (innerBorderMargin * 2),
+    height: height - (innerBorderMargin * 2),
+    borderColor: secondaryColor,
+    borderWidth: 1.5,
+  });
+
+  // 2. Top-Right Corner Color Blocks (Stripes)
+  // Strip 1 (Primary - Rightmost): Dark Blue
+  page.drawRectangle({
+    x: width - 15,
+    y: height - 45,
+    width: 15,
+    height: 45,
+    color: primaryColor,
+  });
+  // Strip 2 (Secondary - Left of Strip 1): Light/Medium Blue
+  page.drawRectangle({
+    x: width - 30,
+    y: height - 45,
+    width: 15,
+    height: 45,
+    color: secondaryColor,
+  });
+
+  // 3. Embed and draw Logo in the Top-Left Header
   let logoImage;
   try {
     const logoPath = path.join(process.cwd(), "public", "brand", "strixmind-logo.png");
@@ -92,40 +135,35 @@ export async function generateCertificatePdf({
     console.error("Failed to load logo in PDF generator:", e);
   }
 
-  const leftMargin = 50;
-  const rightMargin = 50;
-  const contentWidth = width - leftMargin - rightMargin;
-
   if (logoImage) {
-    // Aligned to leftMargin
     page.drawImage(logoImage, {
-      x: leftMargin,
-      y: height - 75,
-      width: 140,
-      height: 35,
+      x: 60,
+      y: height - 80,
+      width: 150,
+      height: 38,
     });
   } else {
     page.drawText("STRIXMIND", {
-      x: leftMargin,
-      y: height - 65,
-      size: 18,
+      x: 60,
+      y: height - 70,
+      size: 20,
       font: fontBold,
       color: primaryColor,
     });
   }
 
-  // Draw Right-Aligned Contact Information in Top-Right
+  // 4. Draw Right-Aligned Contact Information in Top-Right
   const contactLines = [
     "Changanassery,Kottayam",
     "strixmindllp@gmail.com",
     "www.strixmind.com"
   ];
   
-  let contactY = height - 45;
+  let contactY = height - 42;
   for (let i = 0; i < contactLines.length; i++) {
     const line = contactLines[i];
     const lineWidth = fontRegular.widthOfTextAtSize(line, 8);
-    const textX = width - rightMargin - 18 - lineWidth; // Align to right margin minus space for icon
+    const textX = width - 72 - lineWidth; // Right align text to width - 72
     
     // Draw text
     page.drawText(line, {
@@ -136,210 +174,244 @@ export async function generateCertificatePdf({
       color: textColor,
     });
 
-    // Draw outlined circle for the icon background (matches the requested image design)
-    const circleX = width - rightMargin - 6;
+    // Draw solid blue circle for the icon background
+    const circleX = width - 58;
     const circleY = contactY + 3;
-    
     page.drawCircle({
       x: circleX,
       y: circleY,
-      size: 5.5,
-      borderColor: primaryColor,
-      borderWidth: 1.2,
+      size: 5,
+      color: primaryColor,
     });
 
-    // Draw tiny inner white dots or lines to act as clean abstract glyphs
-    if (i === 0) { // Pin dot
+    // Draw a small white inner indicator to represent the icon!
+    if (i === 0) { // Location: draw a small pinhead or white dot
       page.drawCircle({
         x: circleX,
-        y: circleY,
+        y: circleY + 1,
         size: 1.5,
-        color: primaryColor,
+        color: rgb(1, 1, 1),
       });
-    } else if (i === 1) { // Mail dot
-      page.drawCircle({
-        x: circleX,
-        y: circleY,
-        size: 1.5,
-        color: primaryColor,
+      page.drawLine({
+        start: { x: circleX, y: circleY - 2 },
+        end: { x: circleX, y: circleY + 1 },
+        thickness: 1,
+        color: rgb(1, 1, 1),
       });
-    } else { // Web dot
+    } else if (i === 1) { // Email: draw a tiny envelope
+      page.drawRectangle({
+        x: circleX - 2.5,
+        y: circleY - 1.8,
+        width: 5,
+        height: 3.5,
+        color: rgb(1, 1, 1),
+      });
+    } else { // Web: draw a globe
       page.drawCircle({
         x: circleX,
         y: circleY,
-        size: 1.5,
-        color: primaryColor,
+        size: 2,
+        color: rgb(1, 1, 1),
       });
     }
 
-    contactY -= 14;
+    contactY -= 15;
   }
 
-  // Draw Divider Line (thick primary line on left, thin dark gray on right)
-  const dividerY = height - 90;
-  
-  // Left thick bar (covers logo width - under the logo, thick like the image)
+  // 5. Draw Horizontal Divider Line (thick primary line on left, thin gray on right)
+  const dividerY = height - 95;
+  // Left thick bar
   page.drawLine({
-    start: { x: leftMargin, y: dividerY },
-    end: { x: leftMargin + 150, y: dividerY },
-    thickness: 3.5,
+    start: { x: 60, y: dividerY },
+    end: { x: 300, y: dividerY },
+    thickness: 3,
     color: primaryColor,
   });
-  
-  // Right thin bar (extending to the right edge)
+  // Right thin bar
   page.drawLine({
-    start: { x: leftMargin + 150, y: dividerY },
-    end: { x: width - rightMargin, y: dividerY },
+    start: { x: 300, y: dividerY },
+    end: { x: width - 50, y: dividerY },
     thickness: 0.75,
-    color: rgb(0.12, 0.16, 0.22), // Dark charcoal/black
+    color: rgb(0.85, 0.85, 0.85),
   });
 
-  // ---- DOCUMENT TITLE (Centered subject/title, highly professional) ----
+  // 6. Draw 4-Segment Footer blocks at the very bottom
+  const footerHeight = 15;
+  const colWidth = width / 4;
+  // Segment 1 (Deep Navy): #0a192f
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: hexToRgb("#0a192f"),
+  });
+  // Segment 2 (Primary Blue)
+  page.drawRectangle({
+    x: colWidth,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: primaryColor,
+  });
+  // Segment 3 (Medium Blue): #1b6ca8
+  page.drawRectangle({
+    x: colWidth * 2,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: hexToRgb("#1b6ca8"),
+  });
+  // Segment 4 (Light Blue)
+  page.drawRectangle({
+    x: colWidth * 3,
+    y: 0,
+    width: colWidth,
+    height: footerHeight,
+    color: secondaryColor,
+  });
+
+  // ---- TITLE -----------------------------------------------------------
   const titleText = templateSettings.title || "CERTIFICATE OF INTERNSHIP COMPLETION";
-  const titleY = height - 135;
+  const titleY = height - (templateSettings.titleY ?? 150);
   page.drawText(titleText, {
-    x: centerX(fontBold, 13, titleText, width),
+    x: centerX(fontBold, 22, titleText, width),
     y: titleY,
-    size: 13,
+    size: 22,
     font: fontBold,
     color: primaryColor,
   });
 
-  // Subtitle (if present)
-  if (templateSettings.subtitle) {
-    page.drawText(templateSettings.subtitle, {
-      x: centerX(fontItalic, 9.5, templateSettings.subtitle, width),
-      y: titleY - 14,
-      size: 9.5,
-      font: fontItalic,
-      color: mutedColor,
-    });
-  }
+  // Subtitle
+  const subtitleText = templateSettings.subtitle || "This is to certify that";
+  const subtitleY = height - (templateSettings.subtitleY ?? 200);
+  page.drawText(subtitleText, {
+    x: centerX(fontItalic, 14, subtitleText, width),
+    y: subtitleY,
+    size: 14,
+    font: fontItalic,
+    color: mutedColor,
+  });
 
-  // ---- LETTER HEADER (To: & Date) ----
-  const infoY = height - 180;
-  
-  // "To: studentName"
-  page.drawText(`To: ${studentName}`, {
-    x: leftMargin,
-    y: infoY,
-    size: 11,
+  // ---- STUDENT NAME ----------------------------------------------------
+  const studentNameY = height - (templateSettings.studentNameY ?? 250);
+  page.drawText(studentName, {
+    x: centerX(fontBold, 30, studentName, width),
+    y: studentNameY,
+    size: 30,
     font: fontBold,
     color: textColor,
   });
 
-  // Date (right-aligned)
-  const formattedDate = issueDate || "25 January, 2029";
-  const dateWidth = fontRegular.widthOfTextAtSize(formattedDate, 11);
-  page.drawText(formattedDate, {
-    x: width - rightMargin - dateWidth,
-    y: infoY - 12,
-    size: 11,
-    font: fontBold,
-    color: textColor,
+  // Underline decorative element below student name
+  const nameWidth = fontBold.widthOfTextAtSize(studentName, 30);
+  page.drawLine({
+    start: { x: (width - nameWidth) / 2, y: studentNameY - 12 },
+    end: { x: (width + nameWidth) / 2, y: studentNameY - 12 },
+    thickness: 1.5,
+    color: secondaryColor,
   });
 
-  // ---- SALUTATION ----
-  const salutationY = height - 235;
-  page.drawText(`Dear ${studentName},`, {
-    x: leftMargin,
-    y: salutationY,
-    size: 11,
-    font: fontBold,
-    color: textColor,
-  });
-
-  // ---- BODY TEXT ----
+  // ---- BODY TEXT -------------------------------------------------------
+  // Replace variables in the template body
   const bodyTextRaw = templateSettings.bodyTemplate || "";
   const bodyTextCompiled = bodyTextRaw
     .replace("{courseName}", courseName)
     .replace("{startDate}", startDate)
     .replace("{endDate}", endDate);
 
-  // Split compiled body text by newlines to support multi-paragraph formatting perfectly!
-  const paragraphs = bodyTextCompiled.split("\n");
-  let currentY = height - 265;
-  
-  for (const paragraph of paragraphs) {
-    const trimmed = paragraph.trim();
-    if (!trimmed) continue;
-    
-    const words = trimmed.split(" ");
-    const lines: string[] = [];
-    let currentLine = "";
-    
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const testWidth = fontRegular.widthOfTextAtSize(testLine, 11);
-      if (testWidth < contentWidth) {
-        currentLine = testLine;
-      } else {
-        lines.push(currentLine);
-        currentLine = word;
-      }
-    }
-    if (currentLine) {
+  // Split text into chunks that fit beautifully in the page
+  const words = bodyTextCompiled.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    const testWidth = fontRegular.widthOfTextAtSize(testLine, 13);
+    if (testWidth < width - 200) {
+      currentLine = testLine;
+    } else {
       lines.push(currentLine);
+      currentLine = word;
     }
-    
-    for (const line of lines) {
-      page.drawText(line, {
-        x: leftMargin,
-        y: currentY,
-        size: 11,
-        font: fontRegular,
-        color: textColor,
-      });
-      currentY -= 17; // Line spacing
-    }
-    currentY -= 12; // Paragraph gap
+  }
+  if (currentLine) {
+    lines.push(currentLine);
   }
 
-  // ---- REGARDS & SIGNATURES ----
-  currentY -= 10;
+  let bodyY = height - (templateSettings.bodyY ?? 310);
+  for (const line of lines) {
+    page.drawText(line, {
+      x: centerX(fontRegular, 13, line, width),
+      y: bodyY,
+      size: 13,
+      font: fontRegular,
+      color: textColor,
+    });
+    bodyY -= 22;
+  }
+
+  // ---- SIGNATURES AND ISSUANCE DATES -----------------------------------
+  const footerY = templateSettings.footerY ?? 120;
+
+  // Left Signatory / Issuance Date
+  page.drawLine({
+    start: { x: 100, y: footerY + 20 },
+    end: { x: 260, y: footerY + 20 },
+    thickness: 1,
+    color: primaryColor,
+  });
   
-  // Prevent falling off the page by guarding currentY
-  if (currentY < 180) {
-    currentY = 180;
-  }
-
-  page.drawText("Regards,", {
-    x: leftMargin,
-    y: currentY,
+  page.drawText(issueDate, {
+    x: 100 + centerX(fontBold, 11, issueDate, 160),
+    y: footerY + 28,
     size: 11,
     font: fontBold,
     color: textColor,
   });
 
-  currentY -= 30; // Spacing for signature
+  page.drawText("Date of Issue", {
+    x: 100 + centerX(fontRegular, 10, "Date of Issue", 160),
+    y: footerY + 4,
+    size: 10,
+    font: fontRegular,
+    color: mutedColor,
+  });
+
+  // Right Signatory
+  page.drawLine({
+    start: { x: width - 260, y: footerY + 20 },
+    end: { x: width - 100, y: footerY + 20 },
+    thickness: 1,
+    color: primaryColor,
+  });
 
   const signatoryName = templateSettings.signatoryName || "Antony Sebastian";
   page.drawText(signatoryName, {
-    x: leftMargin,
-    y: currentY,
+    x: width - 260 + centerX(fontBold, 11, signatoryName, 160),
+    y: footerY + 28,
     size: 11,
     font: fontBold,
     color: textColor,
   });
 
-  currentY -= 13;
   const signatoryTitle = templateSettings.signatoryTitle || "Founder, StrixMind LLP";
   page.drawText(signatoryTitle, {
-    x: leftMargin,
-    y: currentY,
-    size: 9.5,
+    x: width - 260 + centerX(fontItalic, 9, signatoryTitle, 160),
+    y: footerY + 4,
+    size: 9,
     font: fontItalic,
     color: mutedColor,
   });
 
-  // ---- QR CODE & VERIFICATION DIGITAL STAMP (Bottom-Right, extremely professional) ----
-  const qrSize = 65;
-  const qrX = width - rightMargin - qrSize;
-  const qrY = 55;
+  // ---- QR CODE & VERIFICATION SYSTEM (Centered at bottom) ------------
+  const qrSize = templateSettings.qrSize ?? 74;
+  const qrX = (width - qrSize) / 2;
+  const qrY = templateSettings.qrY ?? 60;
 
   const verifyUrl = `${verifyBaseUrl}/${certCode}`;
   
-  // Generate QR code data URL
+  // Generate QR code data URL using qrcode library
   const qrDataUrl = await QRCode.toDataURL(verifyUrl, {
     margin: 1,
     color: {
@@ -351,17 +423,6 @@ export async function generateCertificatePdf({
   const qrImageBytes = Buffer.from(qrDataUrl.split(",")[1], "base64");
   const qrImage = await pdfDoc.embedPng(qrImageBytes);
 
-  // Draw delicate border around QR code to act as a security seal
-  page.drawRectangle({
-    x: qrX - 4,
-    y: qrY - 4,
-    width: qrSize + 8,
-    height: qrSize + 8,
-    borderColor: primaryColor,
-    borderWidth: 0.75,
-    color: rgb(1, 1, 1),
-  });
-
   page.drawImage(qrImage, {
     x: qrX,
     y: qrY,
@@ -369,23 +430,21 @@ export async function generateCertificatePdf({
     height: qrSize,
   });
 
-  // Verification metadata aligned neatly next to or below the QR Code
-  const scanText = "Scan to verify authenticity";
-  const scanTextWidth = fontRegular.widthOfTextAtSize(scanText, 7.5);
+  // Verification metadata text below QR code
+  const scanText = "Scan to verify certificate authenticity";
   page.drawText(scanText, {
-    x: qrX + (qrSize / 2) - (scanTextWidth / 2),
-    y: qrY - 11,
-    size: 7.5,
+    x: centerX(fontRegular, 8, scanText, width),
+    y: qrY - 12,
+    size: 8,
     font: fontRegular,
     color: mutedColor,
   });
 
   const codeLabel = `Verification ID: ${certCode}`;
-  const codeLabelWidth = fontBold.widthOfTextAtSize(codeLabel, 7.5);
   page.drawText(codeLabel, {
-    x: qrX + (qrSize / 2) - (codeLabelWidth / 2),
-    y: qrY - 21,
-    size: 7.5,
+    x: centerX(fontBold, 8, codeLabel, width),
+    y: qrY - 24,
+    size: 8,
     font: fontBold,
     color: primaryColor,
   });
