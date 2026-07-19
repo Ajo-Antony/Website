@@ -19,12 +19,21 @@ export async function withTimeout<T>(
   fallback: T
 ): Promise<T> {
   let timer: ReturnType<typeof setTimeout>;
+  
+  const nativePromise = Promise.resolve(promise);
+  
+  // Attach a catch handler directly to prevent Unhandled Promise Rejections
+  // if the query fails or times out after the race has already finished.
+  nativePromise.catch((err) => {
+    console.error("Database query background rejection caught in withTimeout:", err);
+  });
+
   const timeout = new Promise<T>((resolve) => {
     timer = setTimeout(() => resolve(fallback), ms);
   });
 
   try {
-    return await Promise.race([Promise.resolve(promise), timeout]);
+    return await Promise.race([nativePromise, timeout]);
   } finally {
     clearTimeout(timer!);
   }
