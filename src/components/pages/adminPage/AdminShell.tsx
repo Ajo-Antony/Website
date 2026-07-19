@@ -10,7 +10,7 @@ import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 import { useTheme } from "@/components/Theme/ThemeProvider";
 import ThemeToggle from "@/components/Theme/ThemeToggle";
 import {
-  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock, IconInbox, IconMessage,
+  IconOverview, IconContent, IconGallery, IconEdit, IconBriefcase, IconPalette, IconExternalLink, IconClock, IconInbox, IconMessage, IconCertificate,
 } from "@/components/ui/SvgIcons";
 import type { ElementType } from "react";
 
@@ -23,6 +23,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: "/admin",                  label: "Overview",          Icon: IconOverview  },
   { href: "/admin/content",          label: "Site Content",      Icon: IconContent   },
+  { href: "/admin/certificates",     label: "Certificates",      Icon: IconCertificate },
   { href: "/admin/section-designer", label: "Section Designer",  Icon: IconPalette   },
   { href: "/admin/bookings",         label: "Bookings",          Icon: IconClock     },
   { href: "/admin/reviews",          label: "Reviews",           Icon: IconInbox     },
