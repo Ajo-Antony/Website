@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getCertificateByCode } from "@/lib/actions/certificates";
+import { createClient } from "@/lib/supabase/server";
 import { 
   Award, 
   Download, 
@@ -11,10 +12,15 @@ import {
   User, 
   ChevronRight,
   AlertCircle,
-  Clock
+  Clock,
+  MapPin,
+  Mail,
+  Globe
 } from "lucide-react";
 import { StrixmindWordmark } from "@/components/ui/StrixmindLogo";
 import { PrintButton } from "@/components/ui/PrintButton";
+import { headers } from "next/headers";
+import QRCode from "qrcode";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +30,54 @@ interface PageProps {
 
 export default async function VerifyCertificatePage({ params }: PageProps) {
   const { certCode } = await params;
-  const res = await getCertificateByCode(certCode);
+  
+  // 1. Link integrity format check
+  const cleanCode = String(certCode ?? "").trim().toUpperCase();
+  const certCodeRegex = /^SM-\d{4}-[A-Z2-9]{5}$/i;
+  const isValidFormat = certCodeRegex.test(cleanCode);
+
+  // 2. Active session validation (defense-in-depth)
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Route Guard: structurally unsound dynamic route requests are blocked unless from active admin session
+  if (!isValidFormat && !user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#0a090d]" style={{ background: "radial-gradient(circle at center, #151124 0%, #0a090d 100%)" }}>
+        <div className="mb-10 animate-fade-in">
+          <Link href="/">
+            <StrixmindWordmark theme="dark" height={22} />
+          </Link>
+        </div>
+
+        <div className="max-w-md w-full bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl text-center shadow-2xl relative overflow-hidden">
+          {/* Subtle background red pulse */}
+          <div className="absolute -top-12 -left-12 w-24 h-24 bg-rose/10 rounded-full filter blur-xl" />
+          
+          <AlertCircle className="w-14 h-14 text-rose-500 mx-auto mb-4" />
+          <h1 className="text-xl font-extrabold text-white mb-2">Invalid Link Integrity</h1>
+          <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+            The certificate verification URL format is invalid. Please ensure the QR code scan or URL link has not been tampered with.
+          </p>
+          
+          <div className="space-y-4">
+            <Link 
+              href="/"
+              className="block w-full text-center bg-gradient-to-r from-accent to-accent-2 text-white font-bold text-sm py-3 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Return to Homepage
+            </Link>
+            <p className="text-[10px] text-slate-500">
+              Only authorized students and credential holders with valid links or QR codes can access internship certificates.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Fetch verification details securely
+  const res = await getCertificateByCode(cleanCode);
 
   if (!res.success || !res.certificate || !res.template) {
     return (
@@ -62,6 +115,24 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
   }
 
   const { certificate, template } = res;
+
+  // Resolve host dynamically to generate a scan-able dynamic QR code
+  let qrDataUrl = "";
+  try {
+    const headersList = await headers();
+    const host = headersList.get("host") || "strixmind.com";
+    const protocol = headersList.get("x-forwarded-proto") || "https";
+    const verifyUrl = `${protocol}://${host}/certificate/verify/${certificate.certCode}`;
+    qrDataUrl = await QRCode.toDataURL(verifyUrl, {
+      margin: 1,
+      color: {
+        dark: template.primaryColor || "#003e8f",
+        light: "#ffffff",
+      },
+    });
+  } catch (e) {
+    console.error("Failed to generate QR code for verification page:", e);
+  }
 
   // Render a beautifully styled certificate page
   return (
@@ -114,11 +185,25 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
 
         {/* Dynamic, responsive HTML representation of the Certificate */}
         <div 
-          className="relative aspect-[1.414/1] w-full bg-[#ffffff] rounded-3xl text-[#15140f] border border-slate-200 shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-8"
+          className="relative aspect-[1.414/1] w-full bg-[#ffffff] rounded-3xl shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-8 transition-all"
           style={{
-            fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif"
+            fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif",
+            border: `${template.borderWidth ?? 4}px solid ${template.primaryColor || "#003e8f"}`,
+            color: template.textColor || "#15140f"
           }}
         >
+          {/* Elegant Double Border (Inner Line) */}
+          <div 
+            className="absolute pointer-events-none transition-all rounded-[16px]"
+            style={{
+              top: `${(template.borderWidth ?? 4) + 3}px`,
+              bottom: `${(template.borderWidth ?? 4) + 3}px`,
+              left: `${(template.borderWidth ?? 4) + 3}px`,
+              right: `${(template.borderWidth ?? 4) + 3}px`,
+              border: `1.5px solid ${template.secondaryColor || "#00d4aa"}`,
+            }}
+          />
+
           {/* TOP-RIGHT CORNER ACCENT BANDS */}
           <div 
             className="absolute top-0 right-0 w-3 sm:w-4.5 h-12 sm:h-16 transition-all"
@@ -139,18 +224,33 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
           </div>
 
           {/* CONTACT INFO TOP-RIGHT */}
-          <div className="absolute top-[4%] right-[8%] text-right pointer-events-none text-[4px] sm:text-[7px] md:text-[8px] leading-snug text-slate-500 font-sans space-y-0.5">
-            <div className="flex items-center justify-end gap-1">
-              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+          <div className="absolute top-[3%] right-[6%] text-right pointer-events-none text-[5px] sm:text-[9px] md:text-[11px] leading-snug text-slate-600 font-sans space-y-1 sm:space-y-1.5">
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
               <span>Changanassery, Kottayam</span>
+              <div 
+                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                style={{ background: template.primaryColor || "#003e8f" }}
+              >
+                <MapPin className="w-2 h-2 sm:w-3 sm:h-3" />
+              </div>
             </div>
-            <div className="flex items-center justify-end gap-1">
-              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
               <span>strixmindllp@gmail.com</span>
+              <div 
+                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                style={{ background: template.primaryColor || "#003e8f" }}
+              >
+                <Mail className="w-2 h-2 sm:w-3 sm:h-3" />
+              </div>
             </div>
-            <div className="flex items-center justify-end gap-1">
-              <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
               <span>www.strixmind.com</span>
+              <div 
+                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                style={{ background: template.primaryColor || "#003e8f" }}
+              >
+                <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
+              </div>
             </div>
           </div>
 
@@ -196,7 +296,10 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
               top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`
             }}
           >
-            <h2 className="text-[12px] sm:text-xl md:text-3xl font-extrabold tracking-tight">
+            <h2 
+              className="text-[12px] sm:text-xl md:text-3xl font-extrabold tracking-tight"
+              style={{ color: template.textColor || "#15140f" }}
+            >
               {certificate.studentName}
             </h2>
             <div 
@@ -212,7 +315,10 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
               top: `${((template.bodyY ?? 310) / 595.27) * 100}%`
             }}
           >
-            <p className="text-[7px] sm:text-[10px] md:text-sm lg:text-base leading-relaxed">
+            <p 
+              className="text-[7px] sm:text-[10px] md:text-sm lg:text-base leading-relaxed"
+              style={{ color: template.textColor || "#15140f" }}
+            >
               {template.bodyTemplate
                 ? template.bodyTemplate
                     .replace("{courseName}", certificate.courseName)
@@ -231,20 +337,32 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
           >
             {/* Left Signatory / Date */}
             <div className="text-center w-[30%]">
-              <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] md:text-xs pt-1">
+              <div 
+                className="font-bold border-t text-[6px] sm:text-[10px] md:text-xs pt-1"
+                style={{ 
+                  borderColor: template.primaryColor || "#cbd5e1",
+                  color: template.textColor || "#15140f"
+                }}
+              >
                 {certificate.issueDate}
               </div>
-              <div className="text-[5px] sm:text-[8px] md:text-[9px] mt-0.5 text-slate-500">
+              <div className="text-[5px] sm:text-[8px] md:text-[9px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
                 Date of Issue
               </div>
             </div>
 
             {/* Right Signatory */}
             <div className="text-center w-[30%]">
-              <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] md:text-xs pt-1 truncate">
+              <div 
+                className="font-bold border-t text-[6px] sm:text-[10px] md:text-xs pt-1 truncate"
+                style={{ 
+                  borderColor: template.primaryColor || "#cbd5e1",
+                  color: template.textColor || "#15140f"
+                }}
+              >
                 {template.signatoryName}
               </div>
-              <div className="text-[5px] sm:text-[8px] md:text-[9px] italic mt-0.5 text-slate-500 truncate leading-tight">
+              <div className="text-[5px] sm:text-[8px] md:text-[9px] italic mt-0.5 truncate leading-tight" style={{ color: template.mutedColor || "#4b5563" }}>
                 {template.signatoryTitle}
               </div>
             </div>
@@ -258,23 +376,27 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
             }}
           >
             <div 
-              className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm"
+              className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm overflow-hidden"
               style={{ 
                 borderColor: template.primaryColor || "#003e8f",
                 width: `${(template.qrSize ?? 74) * 0.7}px`,
                 height: `${(template.qrSize ?? 74) * 0.7}px`
               }}
             >
-              <svg className="w-full h-full" viewBox="0 0 100 100">
-                <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                <rect x="60" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                <rect x="10" y="60" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                <rect x="20" y="20" width="10" height="10" fill="white" />
-                <rect x="70" y="20" width="10" height="10" fill="white" />
-                <rect x="20" y="70" width="10" height="10" fill="white" />
-                <rect x="50" y="50" width="20" height="20" fill={template.primaryColor || "#003e8f"} />
-                <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
-              </svg>
+              {qrDataUrl ? (
+                <img src={qrDataUrl} alt="Verification QR Code" className="w-full h-full object-contain" />
+              ) : (
+                <svg className="w-full h-full" viewBox="0 0 100 100">
+                  <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                  <rect x="60" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                  <rect x="10" y="60" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
+                  <rect x="20" y="20" width="10" height="10" fill="white" />
+                  <rect x="70" y="20" width="10" height="10" fill="white" />
+                  <rect x="20" y="70" width="10" height="10" fill="white" />
+                  <rect x="50" y="50" width="20" height="20" fill={template.primaryColor || "#003e8f"} />
+                  <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
+                </svg>
+              )}
             </div>
             <span className="text-[5px] sm:text-[8px] font-mono font-bold mt-1" style={{ color: template.primaryColor || "#003e8f" }}>
               {certificate.certCode}

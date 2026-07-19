@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/staticClient";
 
@@ -35,6 +36,7 @@ export interface StudentCertificate {
   issueDate: string;
   certCode: string; // SM-2026-XJ92K etc.
   created_at: string;
+  studentEmail?: string;
 }
 
 const DEFAULT_TEMPLATE: CertificateTemplate = {
@@ -70,6 +72,13 @@ function isTableMissingError(error: any): boolean {
     msg.includes("relation") && msg.includes("does not exist") ||
     msg.includes("table") && msg.includes("does not exist")
   );
+}
+
+function isColumnMissingError(error: any): boolean {
+  if (!error) return false;
+  const msg = String(error.message || "").toLowerCase();
+  const code = String(error.code || "").toUpperCase();
+  return code === "42703" || msg.includes("column") && msg.includes("does not exist");
 }
 
 function mapTemplateRow(row: any): CertificateTemplate {
@@ -130,10 +139,11 @@ function mapStudentRow(row: any): StudentCertificate {
     issueDate: row.issue_date,
     certCode: row.cert_code,
     created_at: row.created_at,
+    studentEmail: row.student_email || row.studentEmail || "",
   };
 }
 
-function mapStudentToRow(s: Partial<StudentCertificate>) {
+function mapStudentToRow(s: Partial<StudentCertificate>, includeEmail = true) {
   const row: any = {};
   if (s.id !== undefined) row.id = s.id;
   if (s.studentName !== undefined) row.student_name = s.studentName;
@@ -143,6 +153,7 @@ function mapStudentToRow(s: Partial<StudentCertificate>) {
   if (s.issueDate !== undefined) row.issue_date = s.issueDate;
   if (s.certCode !== undefined) row.cert_code = s.certCode;
   if (s.created_at !== undefined) row.created_at = s.created_at;
+  if (includeEmail && s.studentEmail !== undefined) row.student_email = s.studentEmail;
   return row;
 }
 
@@ -182,6 +193,11 @@ export async function getCertificateTemplate(): Promise<CertificateTemplate> {
 export async function updateCertificateTemplate(template: CertificateTemplate): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
     const row = mapTemplateToRow(template);
     const { error } = await supabase
       .from("certificate_templates")
@@ -215,7 +231,8 @@ export async function updateCertificateTemplate(template: CertificateTemplate): 
 
 // ── STUDENT ACTIONS ──
 
-export async function getCertificateStudents(): Promise<StudentCertificate[]> {
+// Internal helper to bypass admin session check (only used inside secure server-side functions)
+export async function getCertificateStudentsInternal(): Promise<StudentCertificate[]> {
   try {
     const supabase = createStaticClient();
     const { data, error } = await supabase
@@ -240,19 +257,48 @@ export async function getCertificateStudents(): Promise<StudentCertificate[]> {
       return data.map(mapStudentRow);
     }
   } catch (e) {
-    console.error("Error loading certificate students:", e);
+    console.error("Error loading certificate students internally:", e);
   }
   return [];
+}
+
+export async function getCertificateStudents(): Promise<StudentCertificate[]> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.warn("Unauthorized attempt to access aggregate student certificates list.");
+      return [];
+    }
+    return await getCertificateStudentsInternal();
+  } catch (e) {
+    console.error("Error loading certificate students:", e);
+    return [];
+  }
 }
 
 export async function updateCertificateStudents(students: StudentCertificate[]): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
-    const rows = students.map((s) => mapStudentToRow(s));
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
+    let rows = students.map((s) => mapStudentToRow(s, true));
     
-    const { error } = await supabase
+    let { error } = await supabase
       .from("student_certificates")
       .upsert(rows, { onConflict: "cert_code" });
+
+    if (error && isColumnMissingError(error)) {
+      console.warn("Database is missing student_email column. Retrying without it.");
+      rows = students.map((s) => mapStudentToRow(s, false));
+      const retry = await supabase
+        .from("student_certificates")
+        .upsert(rows, { onConflict: "cert_code" });
+      error = retry.error;
+    }
 
     if (error) {
       if (isTableMissingError(error)) {
@@ -302,7 +348,13 @@ function generateUniqueCode(existingCodes: Set<string>): string {
 
 export async function addCertificateStudent(student: Omit<StudentCertificate, "id" | "certCode" | "created_at">): Promise<{ success: boolean; error?: string; code?: string }> {
   try {
-    const students = await getCertificateStudents();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
+    const students = await getCertificateStudentsInternal();
     const existingCodes = new Set(students.map((s) => s.certCode));
     const certCode = generateUniqueCode(existingCodes);
 
@@ -313,11 +365,19 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
       created_at: new Date().toISOString(),
     };
 
-    const supabase = await createClient();
-    const row = mapStudentToRow(newStudent);
-    const { error } = await supabase
+    let row = mapStudentToRow(newStudent, true);
+    let { error } = await supabase
       .from("student_certificates")
       .insert(row);
+
+    if (error && isColumnMissingError(error)) {
+      console.warn("Database is missing student_email column. Retrying without it.");
+      row = mapStudentToRow(newStudent, false);
+      const retry = await supabase
+        .from("student_certificates")
+        .insert(row);
+      error = retry.error;
+    }
 
     if (error) {
       if (isTableMissingError(error)) {
@@ -341,6 +401,11 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
 export async function deleteCertificateStudent(id: string): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
     const { error } = await supabase
       .from("student_certificates")
       .delete()
@@ -348,7 +413,7 @@ export async function deleteCertificateStudent(id: string): Promise<{ success: b
 
     if (error) {
       if (isTableMissingError(error)) {
-        const students = await getCertificateStudents();
+        const students = await getCertificateStudentsInternal();
         const filtered = students.filter((s) => s.id !== id);
         return await updateCertificateStudents(filtered);
       }
@@ -365,15 +430,30 @@ export async function deleteCertificateStudent(id: string): Promise<{ success: b
 export async function updateSingleStudent(id: string, updatedFields: Partial<Omit<StudentCertificate, "id" | "certCode" | "created_at">>): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = await createClient();
-    const mapped = mapStudentToRow(updatedFields);
-    const { error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
+    let mapped = mapStudentToRow(updatedFields, true);
+    let { error } = await supabase
       .from("student_certificates")
       .update(mapped)
       .eq("id", id);
 
+    if (error && isColumnMissingError(error)) {
+      console.warn("Database is missing student_email column. Retrying without it.");
+      mapped = mapStudentToRow(updatedFields, false);
+      const retry = await supabase
+        .from("student_certificates")
+        .update(mapped)
+        .eq("id", id);
+      error = retry.error;
+    }
+
     if (error) {
       if (isTableMissingError(error)) {
-        const students = await getCertificateStudents();
+        const students = await getCertificateStudentsInternal();
         const idx = students.findIndex((s) => s.id === id);
         if (idx === -1) return { success: false, error: "Student not found" };
 
@@ -398,6 +478,17 @@ export async function getCertificateByCode(certCode: string): Promise<{ success:
       return { success: false, error: "Verification code is required." };
     }
 
+    // Validate link integrity or format to protect sensitive/aggregate search logic
+    const certCodeRegex = /^SM-\d{4}-[A-Z2-9]{5}$/i;
+    if (!certCodeRegex.test(cleanCode)) {
+      // Allow authenticated admin bypass for testing/search flexibility
+      const adminClient = await createClient();
+      const { data: { user } } = await adminClient.auth.getUser();
+      if (!user) {
+        return { success: false, error: "Invalid verification link integrity or certificate code format." };
+      }
+    }
+
     const supabase = createStaticClient();
     const { data: studentData, error: studentError } = await supabase
       .from("student_certificates")
@@ -408,7 +499,7 @@ export async function getCertificateByCode(certCode: string): Promise<{ success:
     let match: StudentCertificate | undefined;
 
     if (studentError && isTableMissingError(studentError)) {
-      const students = await getCertificateStudents();
+      const students = await getCertificateStudentsInternal();
       match = students.find((s) => s.certCode.toUpperCase() === cleanCode);
     } else if (studentData) {
       match = mapStudentRow(studentData);
@@ -422,5 +513,59 @@ export async function getCertificateByCode(certCode: string): Promise<{ success:
     return { success: true, certificate: match, template };
   } catch (e) {
     return { success: false, error: "Failed to verify certificate." };
+  }
+}
+
+// ── SEND CERTIFICATE EMAIL SERVER ACTION ──
+export async function sendCertificateEmailAction(
+  studentId: string,
+  recipientEmail: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { success: false, error: "Unauthorized: Admin session required" };
+    }
+
+    const students = await getCertificateStudentsInternal();
+    const student = students.find((s) => s.id === studentId);
+    if (!student) {
+      return { success: false, error: "Student certificate record not found." };
+    }
+
+    const emailToUse = String(recipientEmail ?? "").trim();
+    if (!emailToUse) {
+      return { success: false, error: "Recipient email address is required." };
+    }
+
+    // Persist email back to student record if it's new or updated
+    if (emailToUse !== student.studentEmail) {
+      await updateSingleStudent(student.id, { studentEmail: emailToUse });
+      student.studentEmail = emailToUse;
+    }
+
+    // Get dynamic site url
+    const hostHeader = (await headers()).get("host");
+    const protocol = hostHeader?.includes("localhost") ? "http" : "https";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${protocol}://${hostHeader}`;
+    const verificationUrl = `${siteUrl}/certificate/verify/${student.certCode}`;
+
+    const { sendCertificateEmail } = await import("@/lib/email");
+    const result = await sendCertificateEmail(
+      emailToUse,
+      student.studentName,
+      student.courseName,
+      student.certCode,
+      verificationUrl
+    );
+
+    if (!result.ok) {
+      return { success: false, error: result.error };
+    }
+
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : "Failed to send email." };
   }
 }

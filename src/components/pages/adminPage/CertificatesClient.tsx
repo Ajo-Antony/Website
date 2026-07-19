@@ -6,6 +6,7 @@ import {
   deleteCertificateStudent, 
   updateCertificateTemplate, 
   updateSingleStudent,
+  sendCertificateEmailAction,
   type CertificateTemplate, 
   type StudentCertificate 
 } from "@/lib/actions/certificates";
@@ -32,7 +33,10 @@ import {
   Move,
   Info,
   Type,
-  Maximize2
+  Maximize2,
+  MapPin,
+  Mail,
+  Globe
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import QRCode from "qrcode";
@@ -60,6 +64,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
     ...initialTemplate
   });
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showGuides, setShowGuides] = useState(true);
 
   // Drag and Drop State for Advanced Canvas Layout Editor
   const [draggingElement, setDraggingElement] = useState<string | null>(null);
@@ -78,6 +83,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
   const [isAdding, setIsAdding] = useState(false);
   const [editingStudent, setEditingStudent] = useState<StudentCertificate | null>(null);
 
+  // Email Student Modal State
+  const [emailModalStudent, setEmailModalStudent] = useState<StudentCertificate | null>(null);
+  const [emailModalInput, setEmailModalInput] = useState("");
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
   // QR Generator Modal State
   const [qrModalStudent, setQrModalStudent] = useState<StudentCertificate | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
@@ -88,6 +100,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
   const [formStart, setFormStart] = useState("");
   const [formEnd, setFormEnd] = useState("");
   const [formIssue, setFormIssue] = useState("");
+  const [formEmail, setFormEmail] = useState("");
   const [formError, setFormError] = useState("");
 
   // Populate helper templates for course or date defaults
@@ -111,6 +124,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       setFormStart(formatDate(start));
       setFormEnd(formatDate(today));
       setFormIssue(formatDate(today));
+      setFormEmail("");
       setFormError("");
     }
   }, [isAdding]);
@@ -137,6 +151,15 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
       setQrDataUrl("");
     }
   }, [qrModalStudent, template.primaryColor]);
+
+  // Sync email modal input with chosen student email
+  useEffect(() => {
+    if (emailModalStudent) {
+      setEmailModalInput(emailModalStudent.studentEmail || "");
+      setEmailSuccess(false);
+      setEmailError("");
+    }
+  }, [emailModalStudent]);
 
   // Handle template updates
   const handleSaveTemplate = async (e: React.FormEvent) => {
@@ -229,6 +252,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
         startDate: formStart.trim(),
         endDate: formEnd.trim(),
         issueDate: formIssue.trim(),
+        studentEmail: formEmail.trim() || undefined,
       });
 
       if (res.success && res.code) {
@@ -241,6 +265,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
             startDate: formStart.trim(),
             endDate: formEnd.trim(),
             issueDate: formIssue.trim(),
+            studentEmail: formEmail.trim(),
             certCode: res.code,
             created_at: new Date().toISOString(),
           },
@@ -266,6 +291,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
         startDate: editingStudent.startDate,
         endDate: editingStudent.endDate,
         issueDate: editingStudent.issueDate,
+        studentEmail: editingStudent.studentEmail,
       });
 
       if (res.success) {
@@ -299,6 +325,37 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
         alert("Failed to delete student certificate: " + res.error);
       }
     });
+  };
+
+  // Handle send certificate email action
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailModalStudent) return;
+
+    const email = emailModalInput.trim();
+    if (!email) {
+      setEmailError("Recipient email address is required.");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    setEmailError("");
+    setEmailSuccess(false);
+
+    try {
+      const res = await sendCertificateEmailAction(emailModalStudent.id, email);
+      if (res.success) {
+        setEmailSuccess(true);
+        setStudents(prev => prev.map(s => s.id === emailModalStudent.id ? { ...s, studentEmail: email } : s));
+        confetti({ particleCount: 30, spread: 50 });
+      } else {
+        setEmailError(res.error || "Failed to send email. Make sure SMTP is configured in your environments.");
+      }
+    } catch (err) {
+      setEmailError(err instanceof Error ? err.message : "An unexpected error occurred.");
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   // Copy unique view url to clipboard
@@ -481,7 +538,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                     {formError}
                   </div>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
                       Student Full Name
@@ -505,6 +562,18 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       placeholder="e.g. Full Stack AI Engineering Internship"
                       value={formCourse}
                       onChange={(e) => setFormCourse(e.target.value)}
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                      Student Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. student@gmail.com"
+                      value={formEmail}
+                      onChange={(e) => setFormEmail(e.target.value)}
                       className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
@@ -603,6 +672,18 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                       className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)]"
                     />
                   </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                      Student Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={editingStudent.studentEmail || ""}
+                      onChange={(e) => setEditingStudent({ ...editingStudent, studentEmail: e.target.value })}
+                      placeholder="e.g. student@gmail.com"
+                      className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    />
+                  </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
@@ -658,6 +739,112 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* Email to Student Modal */}
+          {emailModalStudent && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/75" onClick={() => setEmailModalStudent(null)} />
+              <div className="relative bg-[var(--surface)] border border-[var(--border)] p-6 rounded-3xl max-w-md w-full shadow-2xl animate-fade-in z-10">
+                <div className="mb-4 flex items-center justify-between border-b border-[var(--border)] pb-2 text-ink">
+                  <h3 className="font-bold flex items-center gap-2">
+                    <Mail size={16} className="text-accent" />
+                    Email Certificate to Student
+                  </h3>
+                  <button 
+                    onClick={() => setEmailModalStudent(null)}
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text)]"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                {emailSuccess ? (
+                  <div className="text-center py-6 space-y-4">
+                    <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Check size={24} />
+                    </div>
+                    <h4 className="font-bold text-[var(--text)] text-base">Email Dispatched Successfully!</h4>
+                    <p className="text-xs text-[var(--text-muted)] leading-relaxed max-w-sm mx-auto">
+                      An automated email containing the custom verification link and the QR passport attachment has been delivered to:
+                      <br />
+                      <strong className="text-[var(--text)] font-semibold break-all">{emailModalInput}</strong>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setEmailModalStudent(null)}
+                      className="mt-2 px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all"
+                    >
+                      Awesome
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSendEmail} className="space-y-4">
+                    <div className="bg-[var(--surface-alt)] p-4 rounded-2xl border border-[var(--border)] space-y-2">
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--text-dim)]">Student</span>
+                        <span className="text-xs font-bold text-[var(--text)] text-right">{emailModalStudent.studentName}</span>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--text-dim)]">Course</span>
+                        <span className="text-xs font-semibold text-[var(--text)] text-right max-w-[200px]">{emailModalStudent.courseName}</span>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[var(--text-dim)]">Code</span>
+                        <span className="font-mono text-xs font-bold text-accent">{emailModalStudent.certCode}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
+                        Recipient Email Address
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={emailModalInput}
+                        onChange={(e) => setEmailModalInput(e.target.value)}
+                        placeholder="student@example.com"
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      />
+                    </div>
+
+                    {emailError && (
+                      <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl text-xs">
+                        {emailError}
+                      </div>
+                    )}
+
+                    <div className="flex justify-end gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setEmailModalStudent(null)}
+                        className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)]"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSendingEmail}
+                        className="bg-accent hover:bg-accent-deep text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 flex items-center gap-1.5"
+                      >
+                        {isSendingEmail ? (
+                          <>
+                            <RefreshCw size={14} className="animate-spin" />
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Mail size={14} />
+                            <span>Send Email</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
           )}
@@ -841,6 +1028,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                         <ExternalLink size={14} />
                       </a>
                       <button
+                        onClick={() => setEmailModalStudent(student)}
+                        title="Email certificate & QR to student"
+                        className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-emerald-400 transition-colors"
+                      >
+                        <Mail size={14} />
+                      </button>
+                      <button
                         onClick={() => handleDownloadPdf(student.certCode, student.studentName)}
                         title="Download high-res PDF"
                         className="p-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-accent-2 transition-colors"
@@ -880,14 +1074,25 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 <Sliders size={16} className="text-accent" />
                 Branding Configurator
               </h2>
-              <button
-                type="button"
-                onClick={handleResetCoordinates}
-                className="text-[11px] font-bold text-accent hover:underline flex items-center gap-1"
-                title="Reset layout spacings to factory standards"
-              >
-                Reset Layout
-              </button>
+              <div className="flex items-center gap-3">
+                <label className="text-[11px] font-bold text-[var(--text-dim)] flex items-center gap-1 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={showGuides}
+                    onChange={(e) => setShowGuides(e.target.checked)}
+                    className="rounded border-[var(--border)] text-accent focus:ring-accent w-3.5 h-3.5"
+                  />
+                  Show Guides
+                </label>
+                <button
+                  type="button"
+                  onClick={handleResetCoordinates}
+                  className="text-[11px] font-bold text-accent hover:underline flex items-center gap-1"
+                  title="Reset layout spacings to factory standards"
+                >
+                  Reset Layout
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSaveTemplate} className="space-y-4">
@@ -1070,7 +1275,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               </div>
 
               {/* Colors */}
-              <div>
+              <div className="space-y-3">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[var(--text-dim)] mb-1">
                   Palettes & Accents
                 </label>
@@ -1105,6 +1310,43 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                         type="text"
                         value={template.secondaryColor}
                         onChange={(e) => setTemplate({ ...template, secondaryColor: e.target.value })}
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-[var(--text)] font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <span className="text-[10px] text-[var(--text-dim)]">Main Text Color</span>
+                    <div className="flex gap-2 items-center mt-1">
+                      <input
+                        type="color"
+                        value={template.textColor || "#15140f"}
+                        onChange={(e) => setTemplate({ ...template, textColor: e.target.value })}
+                        className="w-10 h-10 rounded border border-[var(--border)] cursor-pointer bg-transparent"
+                      />
+                      <input
+                        type="text"
+                        value={template.textColor || "#15140f"}
+                        onChange={(e) => setTemplate({ ...template, textColor: e.target.value })}
+                        className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-[var(--text)] font-mono"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[var(--text-dim)]">Muted Labels Color</span>
+                    <div className="flex gap-2 items-center mt-1">
+                      <input
+                        type="color"
+                        value={template.mutedColor || "#4b5563"}
+                        onChange={(e) => setTemplate({ ...template, mutedColor: e.target.value })}
+                        className="w-10 h-10 rounded border border-[var(--border)] cursor-pointer bg-transparent"
+                      />
+                      <input
+                        type="text"
+                        value={template.mutedColor || "#4b5563"}
+                        onChange={(e) => setTemplate({ ...template, mutedColor: e.target.value })}
                         className="w-full bg-[var(--surface-alt)] border border-[var(--border)] rounded-lg px-2 py-1 text-xs text-[var(--text)] font-mono"
                       />
                     </div>
@@ -1195,12 +1437,81 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               onMouseMove={handleMouseMove}
               onMouseUp={stopDrag}
               onMouseLeave={stopDrag}
-              className={`w-full aspect-[1.414/1] rounded-3xl shadow-2xl relative overflow-hidden select-none transition-all border border-line ${draggingElement ? 'cursor-ns-resize ring-2 ring-accent/40' : 'cursor-default'}`}
+              className={`w-full aspect-[1.414/1] rounded-3xl shadow-2xl relative overflow-hidden select-none transition-all ${draggingElement ? 'cursor-ns-resize ring-2 ring-accent/40' : 'cursor-default'}`}
               style={{ 
                 background: "#ffffff", // Pure white layout background
                 color: template.textColor || "#15140f",
+                borderColor: template.primaryColor || "#003e8f",
+                borderWidth: `${template.borderWidth ?? 4}px`,
+                borderStyle: 'solid',
               }}
             >
+              {/* Elegant Double Border (Inner Line) */}
+              <div 
+                className="absolute pointer-events-none transition-all rounded-[16px]"
+                style={{
+                  top: `${(template.borderWidth ?? 4) + 3}px`,
+                  bottom: `${(template.borderWidth ?? 4) + 3}px`,
+                  left: `${(template.borderWidth ?? 4) + 3}px`,
+                  right: `${(template.borderWidth ?? 4) + 3}px`,
+                  border: `1.5px solid ${template.secondaryColor || "#00d4aa"}`,
+                }}
+              />
+
+              {/* Show Horizontal Guideline Markers for Pixel-Perfect Spacing & Margins */}
+              {showGuides && (
+                <>
+                  {/* Title guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ top: `${((template.titleY ?? 150) / 595.27) * 100}%` }}
+                  >
+                    <span>Title Level</span>
+                    <span>{template.titleY} pt</span>
+                  </div>
+                  {/* Subtitle guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ top: `${((template.subtitleY ?? 200) / 595.27) * 100}%` }}
+                  >
+                    <span>Subtitle Level</span>
+                    <span>{template.subtitleY} pt</span>
+                  </div>
+                  {/* Student Name guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ top: `${((template.studentNameY ?? 250) / 595.27) * 100}%` }}
+                  >
+                    <span>Student Name Level</span>
+                    <span>{template.studentNameY} pt</span>
+                  </div>
+                  {/* Body guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-t border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ top: `${((template.bodyY ?? 310) / 595.27) * 100}%` }}
+                  >
+                    <span>Body Level</span>
+                    <span>{template.bodyY} pt</span>
+                  </div>
+                  {/* QR guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-b border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ bottom: `${((template.qrY ?? 60) / 595.27) * 100}%` }}
+                  >
+                    <span>QR Level</span>
+                    <span>{template.qrY} pt</span>
+                  </div>
+                  {/* Signatures guideline */}
+                  <div 
+                    className="absolute left-0 right-0 border-b border-dashed border-slate-300/60 pointer-events-none flex justify-between px-3 text-[7px] sm:text-[9px] text-slate-400 font-mono z-20"
+                    style={{ bottom: `${((template.footerY ?? 120) / 595.27) * 100}%` }}
+                  >
+                    <span>Signatures Level</span>
+                    <span>{template.footerY} pt</span>
+                  </div>
+                </>
+              )}
+
               {/* TOP-RIGHT CORNER ACCENT BANDS */}
               <div 
                 className="absolute top-0 right-0 w-3 md:w-4.5 h-12 md:h-16 transition-all"
@@ -1225,18 +1536,33 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               </div>
 
               {/* CONTACT INFO TOP-RIGHT */}
-              <div className="absolute top-[4%] right-[8%] text-right pointer-events-none text-[4px] sm:text-[7px] md:text-[8px] leading-snug text-[var(--text-dim)] font-sans space-y-0.5">
-                <div className="flex items-center justify-end gap-1">
-                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+              <div className="absolute top-[3%] right-[6%] text-right pointer-events-none text-[5px] sm:text-[9px] md:text-[11px] leading-snug text-slate-600 font-sans space-y-1 sm:space-y-1.5">
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>Changanassery, Kottayam</span>
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <MapPin className="w-2 h-2 sm:w-3 sm:h-3" />
+                  </div>
                 </div>
-                <div className="flex items-center justify-end gap-1">
-                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>strixmindllp@gmail.com</span>
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <Mail className="w-2 h-2 sm:w-3 sm:h-3" />
+                  </div>
                 </div>
-                <div className="flex items-center justify-end gap-1">
-                  <span className="w-1 h-1 rounded-full" style={{ background: template.secondaryColor || "#00d4aa" }} />
+                <div className="flex items-center justify-end gap-1.5 sm:gap-2">
                   <span>www.strixmind.com</span>
+                  <div 
+                    className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
+                    style={{ background: template.primaryColor || "#003e8f" }}
+                  >
+                    <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
+                  </div>
                 </div>
               </div>
 
@@ -1257,7 +1583,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE HEADER TITLE */}
               <div 
                 onMouseDown={(e) => startDrag(e, "title")}
-                className={`absolute left-0 right-0 text-center px-4 py-1.5 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "title" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-0 right-0 text-center px-4 py-1.5 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "title" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   top: `${((template.titleY ?? 150) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1271,7 +1603,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   >
                     {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
                   </h3>
-                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.titleY}pt
                   </span>
                 </div>
@@ -1280,7 +1612,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE SUBTITLE */}
               <div 
                 onMouseDown={(e) => startDrag(e, "subtitle")}
-                className={`absolute left-0 right-0 text-center px-4 py-1 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "subtitle" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-0 right-0 text-center px-4 py-1 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "subtitle" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   top: `${((template.subtitleY ?? 200) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1294,7 +1632,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   >
                     {template.subtitle || "This is to certify that"}
                   </p>
-                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.subtitleY}pt
                   </span>
                 </div>
@@ -1303,7 +1641,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE STUDENT NAME */}
               <div 
                 onMouseDown={(e) => startDrag(e, "studentName")}
-                className={`absolute left-0 right-0 text-center px-4 py-2 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "studentName" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-0 right-0 text-center px-4 py-2 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "studentName" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1311,14 +1655,17 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 }}
               >
                 <div className="relative group inline-block">
-                  <h4 className="text-[12px] sm:text-xl md:text-2xl font-extrabold tracking-tight select-none">
+                  <h4 
+                    className="text-[12px] sm:text-xl md:text-2xl font-extrabold tracking-tight select-none"
+                    style={{ color: template.textColor || "#15140f" }}
+                  >
                     John Doe Sebastian
                   </h4>
                   <div 
                     className="w-24 md:w-36 h-[1.5px] mx-auto mt-1 transition-all"
                     style={{ background: template.secondaryColor || "#00d4aa" }}
                   />
-                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.studentNameY}pt
                   </span>
                 </div>
@@ -1327,7 +1674,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE BODY TEXT */}
               <div 
                 onMouseDown={(e) => startDrag(e, "body")}
-                className={`absolute left-[10%] right-[10%] text-center px-4 py-2 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "body" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-[10%] right-[10%] text-center px-4 py-2 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "body" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   top: `${((template.bodyY ?? 310) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1335,7 +1688,10 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                 }}
               >
                 <div className="relative group">
-                  <p className="text-[7px] sm:text-[10px] md:text-xs leading-relaxed select-none">
+                  <p 
+                    className="text-[7px] sm:text-[10px] md:text-xs leading-relaxed select-none"
+                    style={{ color: template.textColor || "#15140f" }}
+                  >
                     {template.bodyTemplate
                       ? template.bodyTemplate
                           .replace("{courseName}", "Full Stack AI Engineering Internship")
@@ -1343,7 +1699,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                           .replace("{endDate}", "30 June 2026")
                       : "has successfully completed the internship program..."}
                   </p>
-                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity">
+                  <span className="absolute -top-4 right-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Y: {template.bodyY}pt
                   </span>
                 </div>
@@ -1352,7 +1708,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE STANDALONE VERIFICATION QR CODE (Bottom Centered) */}
               <div 
                 onMouseDown={(e) => startDrag(e, "qr")}
-                className={`absolute left-1/2 -translate-x-1/2 p-2 flex flex-col items-center transition-shadow hover:bg-accent/5 rounded ${draggingElement === "qr" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-1/2 -translate-x-1/2 p-2 flex flex-col items-center transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "qr" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   bottom: `${((template.qrY ?? 60) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1381,7 +1743,7 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
                   <span className="text-[5px] sm:text-[7px] font-mono font-bold mt-1 text-center" style={{ color: template.primaryColor || "#003e8f" }}>
                     SM-2026-XJ92K
                   </span>
-                  <span className="absolute -top-4 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap">
+                  <span className="absolute -top-4 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Bottom Y: {template.qrY}pt
                   </span>
                 </div>
@@ -1390,7 +1752,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               {/* DRAGGABLE SIGNATORIES (Left & Right alignment) */}
               <div 
                 onMouseDown={(e) => startDrag(e, "footer")}
-                className={`absolute left-[8%] right-[8%] flex justify-between px-2 py-1.5 transition-shadow hover:bg-accent/5 rounded ${draggingElement === "footer" ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md" : "hover:shadow-sm"}`}
+                className={`absolute left-[8%] right-[8%] flex justify-between px-2 py-1.5 transition-all hover:bg-accent/5 rounded ${
+                  draggingElement === "footer" 
+                    ? "ring-2 ring-dashed ring-accent bg-accent/5 shadow-md z-30" 
+                    : showGuides 
+                      ? "border border-dashed border-slate-200 hover:border-accent/40 hover:bg-slate-50/10 z-10" 
+                      : "hover:shadow-sm"
+                }`}
                 style={{ 
                   bottom: `${((template.footerY ?? 120) / 595.27) * 100}%`,
                   cursor: "ns-resize",
@@ -1399,7 +1767,13 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
               >
                 {/* Left Side: Issuance */}
                 <div className="text-center w-[30%] relative group">
-                  <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] pt-1">
+                  <div 
+                    className="font-bold border-t text-[6px] sm:text-[10px] pt-1"
+                    style={{ 
+                      borderColor: template.primaryColor || "#cbd5e1",
+                      color: template.textColor || "#15140f"
+                    }}
+                  >
                     01 July 2026
                   </div>
                   <div className="text-[5px] sm:text-[8px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
@@ -1409,13 +1783,19 @@ export default function CertificatesClient({ initialTemplate, initialStudents }:
 
                 {/* Right Side: Signatory */}
                 <div className="text-center w-[30%] relative group">
-                  <div className="font-bold border-t border-slate-300 text-[6px] sm:text-[10px] pt-1 line-clamp-1">
+                  <div 
+                    className="font-bold border-t text-[6px] sm:text-[10px] pt-1 line-clamp-1"
+                    style={{ 
+                      borderColor: template.primaryColor || "#cbd5e1",
+                      color: template.textColor || "#15140f"
+                    }}
+                  >
                     {template.signatoryName || "Antony Sebastian"}
                   </div>
                   <div className="text-[5px] sm:text-[8px] italic mt-0.5 leading-none line-clamp-1" style={{ color: template.mutedColor || "#4b5563" }}>
                     {template.signatoryTitle || "Founder, StrixMind LLP"}
                   </div>
-                  <span className="absolute -top-6 right-0 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap">
+                  <span className="absolute -top-6 right-0 opacity-0 group-hover:opacity-100 text-[8px] bg-accent text-white px-1.5 py-0.5 rounded font-mono font-bold transition-opacity whitespace-nowrap z-40">
                     Bottom Y: {template.footerY}pt
                   </span>
                 </div>

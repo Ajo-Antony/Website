@@ -84,6 +84,27 @@ export async function generateCertificatePdf({
     color: rgb(1, 1, 1),
   });
 
+  // 1.b Draw primary outer border & secondary inner border matching preview configuration
+  const borderMargin = 12;
+  page.drawRectangle({
+    x: borderMargin,
+    y: borderMargin,
+    width: width - (borderMargin * 2),
+    height: height - (borderMargin * 2),
+    borderColor: primaryColor,
+    borderWidth: boldBorderWidth,
+  });
+
+  const innerBorderMargin = borderMargin + boldBorderWidth + 3;
+  page.drawRectangle({
+    x: innerBorderMargin,
+    y: innerBorderMargin,
+    width: width - (innerBorderMargin * 2),
+    height: height - (innerBorderMargin * 2),
+    borderColor: secondaryColor,
+    borderWidth: 1.5,
+  });
+
   // 2. Top-Right Corner Color Blocks (Stripes)
   // Strip 1 (Primary - Rightmost): Dark Blue
   page.drawRectangle({
@@ -138,26 +159,63 @@ export async function generateCertificatePdf({
     "www.strixmind.com"
   ];
   
-  let contactY = height - 50;
-  for (const line of contactLines) {
+  let contactY = height - 42;
+  for (let i = 0; i < contactLines.length; i++) {
+    const line = contactLines[i];
     const lineWidth = fontRegular.widthOfTextAtSize(line, 8);
-    // Right align to width - 50
-    const textX = width - 50 - lineWidth;
+    const textX = width - 72 - lineWidth; // Right align text to width - 72
+    
+    // Draw text
     page.drawText(line, {
       x: textX,
       y: contactY,
       size: 8,
       font: fontRegular,
-      color: mutedColor,
+      color: textColor,
     });
-    // Draw tiny colored indicator dot
+
+    // Draw solid blue circle for the icon background
+    const circleX = width - 58;
+    const circleY = contactY + 3;
     page.drawCircle({
-      x: textX - 8,
-      y: contactY + 3,
-      size: 2,
-      color: secondaryColor,
+      x: circleX,
+      y: circleY,
+      size: 5,
+      color: primaryColor,
     });
-    contactY -= 12;
+
+    // Draw a small white inner indicator to represent the icon!
+    if (i === 0) { // Location: draw a small pinhead or white dot
+      page.drawCircle({
+        x: circleX,
+        y: circleY + 1,
+        size: 1.5,
+        color: rgb(1, 1, 1),
+      });
+      page.drawLine({
+        start: { x: circleX, y: circleY - 2 },
+        end: { x: circleX, y: circleY + 1 },
+        thickness: 1,
+        color: rgb(1, 1, 1),
+      });
+    } else if (i === 1) { // Email: draw a tiny envelope
+      page.drawRectangle({
+        x: circleX - 2.5,
+        y: circleY - 1.8,
+        width: 5,
+        height: 3.5,
+        color: rgb(1, 1, 1),
+      });
+    } else { // Web: draw a globe
+      page.drawCircle({
+        x: circleX,
+        y: circleY,
+        size: 2,
+        color: rgb(1, 1, 1),
+      });
+    }
+
+    contactY -= 15;
   }
 
   // 5. Draw Horizontal Divider Line (thick primary line on left, thin gray on right)
