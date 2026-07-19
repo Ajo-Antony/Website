@@ -183,223 +183,148 @@ export default async function VerifyCertificatePage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Dynamic, responsive HTML representation of the Certificate */}
+        {/* Dynamic, responsive HTML representation of the Certificate (Portrait Letterhead Style) */}
         <div 
-          className="relative aspect-[1.414/1] w-full bg-[#ffffff] rounded-3xl shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-8 transition-all"
+          className="relative aspect-[1/1.414] w-full bg-[#ffffff] rounded-3xl shadow-2xl overflow-hidden print:shadow-none print:border-none print:inset-0 print:m-0 print:p-12 transition-all"
           style={{
             fontFamily: template.fontFamily === "serif" ? "Georgia, serif" : template.fontFamily === "mono" ? "monospace" : "sans-serif",
-            border: `${template.borderWidth ?? 4}px solid ${template.primaryColor || "#003e8f"}`,
             color: template.textColor || "#15140f"
           }}
         >
-          {/* Elegant Double Border (Inner Line) */}
-          <div 
-            className="absolute pointer-events-none transition-all rounded-[16px]"
-            style={{
-              top: `${(template.borderWidth ?? 4) + 3}px`,
-              bottom: `${(template.borderWidth ?? 4) + 3}px`,
-              left: `${(template.borderWidth ?? 4) + 3}px`,
-              right: `${(template.borderWidth ?? 4) + 3}px`,
-              border: `1.5px solid ${template.secondaryColor || "#00d4aa"}`,
-            }}
-          />
-
-          {/* TOP-RIGHT CORNER ACCENT BANDS */}
-          <div 
-            className="absolute top-0 right-0 w-3 sm:w-4.5 h-12 sm:h-16 transition-all"
-            style={{ background: template.primaryColor || "#003e8f" }}
-          />
-          <div 
-            className="absolute top-0 right-3 sm:right-4.5 w-3 sm:w-4.5 h-12 sm:h-16 transition-all"
-            style={{ background: template.secondaryColor || "#00d4aa" }}
-          />
-
           {/* BRAND LOGO TOP-LEFT */}
-          <div className="absolute top-[4.5%] left-[6%] flex items-center pointer-events-none">
+          <div className="absolute top-[4.5%] left-[8%] flex items-center pointer-events-none">
             <img 
               src="/brand/strixmind-logo.png" 
               alt="StrixMind Logo" 
-              className="h-6 sm:h-9 md:h-11 w-auto object-contain"
+              className="h-7 sm:h-9 md:h-12 w-auto object-contain"
             />
           </div>
 
           {/* CONTACT INFO TOP-RIGHT */}
-          <div className="absolute top-[3%] right-[6%] text-right pointer-events-none text-[5px] sm:text-[9px] md:text-[11px] leading-snug text-slate-600 font-sans space-y-1 sm:space-y-1.5">
-            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+          <div className="absolute top-[3%] right-[8%] text-right pointer-events-none text-[5px] sm:text-[8px] md:text-[10px] leading-snug text-slate-600 font-sans space-y-0.5 sm:space-y-1">
+            <div className="flex items-center justify-end gap-1.5">
               <span>Changanassery, Kottayam</span>
-              <div 
-                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
-                style={{ background: template.primaryColor || "#003e8f" }}
-              >
-                <MapPin className="w-2 h-2 sm:w-3 sm:h-3" />
+              <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
+                <MapPin className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+            <div className="flex items-center justify-end gap-1.5">
               <span>strixmindllp@gmail.com</span>
-              <div 
-                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
-                style={{ background: template.primaryColor || "#003e8f" }}
-              >
-                <Mail className="w-2 h-2 sm:w-3 sm:h-3" />
+              <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
+                <Mail className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+            <div className="flex items-center justify-end gap-1.5">
               <span>www.strixmind.com</span>
-              <div 
-                className="w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm"
-                style={{ background: template.primaryColor || "#003e8f" }}
-              >
-                <Globe className="w-2 h-2 sm:w-3 sm:h-3" />
+              <div className="w-4 h-4 rounded-full flex items-center justify-center border" style={{ borderColor: template.primaryColor || "#003e8f" }}>
+                <Globe className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: template.primaryColor || "#003e8f" }} />
               </div>
             </div>
           </div>
 
           {/* ASYMMETRIC DIVIDER LINE */}
-          <div className="absolute top-[16%] left-[6%] right-[6%] h-[3px] flex pointer-events-none">
+          <div className="absolute top-[12.5%] left-[8%] right-[8%] h-[3.5px] flex pointer-events-none">
             <div className="w-[30%] h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
-            <div className="flex-1 h-[0.75px] self-center transition-all bg-slate-200" />
+            <div className="flex-1 h-[0.75px] self-center transition-all bg-[#121016]" />
           </div>
 
-          {/* QUAD-COLOR BOTTOM STRIP */}
-          <div className="absolute bottom-0 left-0 right-0 h-2 sm:h-3.5 flex pointer-events-none">
-            <div className="flex-1 h-full bg-[#0a192f]" />
-            <div className="flex-1 h-full transition-all" style={{ background: template.primaryColor || "#003e8f" }} />
-            <div className="flex-1 h-full bg-[#1b6ca8]" />
-            <div className="flex-1 h-full transition-all" style={{ background: template.secondaryColor || "#00d4aa" }} />
-          </div>
-
-          {/* Certificate Title */}
-          <div 
-            className="absolute left-0 right-0 text-center px-4"
-            style={{ 
-              top: `${((template.titleY ?? 150) / 595.27) * 100}%`
-            }}
-          >
+          {/* SUBJECT / DOCUMENT TITLE (Centered below header) */}
+          <div className="absolute top-[16.5%] left-0 right-0 text-center px-8">
             <h1 
-              className="text-[9px] sm:text-base md:text-xl lg:text-2xl font-bold tracking-tight transition-colors line-clamp-1 uppercase"
+              className="text-[8px] sm:text-[13px] md:text-[16px] lg:text-[18px] font-extrabold tracking-tight transition-colors uppercase"
               style={{ color: template.primaryColor || "#003e8f" }}
             >
               {template.title || "CERTIFICATE OF INTERNSHIP COMPLETION"}
             </h1>
-            <p 
-              className="text-[7px] sm:text-xs italic mt-0.5 sm:mt-1"
-              style={{ color: template.mutedColor || "#4b5563" }}
-            >
-              {template.subtitle || "This is to certify that"}
-            </p>
-          </div>
-
-          {/* Student Name */}
-          <div 
-            className="absolute left-0 right-0 text-center px-4"
-            style={{ 
-              top: `${((template.studentNameY ?? 250) / 595.27) * 100}%`
-            }}
-          >
-            <h2 
-              className="text-[12px] sm:text-xl md:text-3xl font-extrabold tracking-tight"
-              style={{ color: template.textColor || "#15140f" }}
-            >
-              {certificate.studentName}
-            </h2>
-            <div 
-              className="w-24 sm:w-48 h-[1.5px] mx-auto mt-1 sm:mt-2 transition-all"
-              style={{ background: template.secondaryColor || "#00d4aa" }}
-            />
-          </div>
-
-          {/* Paragraph body */}
-          <div 
-            className="absolute left-[10%] right-[10%] text-center px-4"
-            style={{ 
-              top: `${((template.bodyY ?? 310) / 595.27) * 100}%`
-            }}
-          >
-            <p 
-              className="text-[7px] sm:text-[10px] md:text-sm lg:text-base leading-relaxed"
-              style={{ color: template.textColor || "#15140f" }}
-            >
-              {template.bodyTemplate
-                ? template.bodyTemplate
-                    .replace("{courseName}", certificate.courseName)
-                    .replace("{startDate}", certificate.startDate)
-                    .replace("{endDate}", certificate.endDate)
-                : `has successfully completed the internship program...`}
-            </p>
-          </div>
-
-          {/* Certificate Footer Row (Signatories & Issue Date) */}
-          <div 
-            className="absolute left-[8%] right-[8%] flex justify-between px-2 items-end"
-            style={{ 
-              bottom: `${((template.footerY ?? 120) / 595.27) * 100}%`
-            }}
-          >
-            {/* Left Signatory / Date */}
-            <div className="text-center w-[30%]">
-              <div 
-                className="font-bold border-t text-[6px] sm:text-[10px] md:text-xs pt-1"
-                style={{ 
-                  borderColor: template.primaryColor || "#cbd5e1",
-                  color: template.textColor || "#15140f"
-                }}
+            {template.subtitle && (
+              <p 
+                className="text-[5px] sm:text-[9px] md:text-[11px] italic mt-0.5"
+                style={{ color: template.mutedColor || "#4b5563" }}
               >
-                {certificate.issueDate}
-              </div>
-              <div className="text-[5px] sm:text-[8px] md:text-[9px] mt-0.5" style={{ color: template.mutedColor || "#4b5563" }}>
-                Date of Issue
-              </div>
+                {template.subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* LETTER RECIPIENT & DATE HEADER */}
+          <div className="absolute top-[22%] left-[8%] right-[8%] flex justify-between items-end pointer-events-none">
+            <div>
+              <span className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
+                To: {certificate.studentName}
+              </span>
             </div>
-
-            {/* Right Signatory */}
-            <div className="text-center w-[30%]">
-              <div 
-                className="font-bold border-t text-[6px] sm:text-[10px] md:text-xs pt-1 truncate"
-                style={{ 
-                  borderColor: template.primaryColor || "#cbd5e1",
-                  color: template.textColor || "#15140f"
-                }}
-              >
-                {template.signatoryName}
-              </div>
-              <div className="text-[5px] sm:text-[8px] md:text-[9px] italic mt-0.5 truncate leading-tight" style={{ color: template.mutedColor || "#4b5563" }}>
-                {template.signatoryTitle}
-              </div>
+            <div className="text-right">
+              <span className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
+                {certificate.issueDate || "25 January, 2029"}
+              </span>
             </div>
           </div>
 
-          {/* Verification QR (Bottom Center) */}
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
-            style={{ 
-              bottom: `${((template.qrY ?? 60) / 595.27) * 100}%`
-            }}
-          >
+          {/* SALUTATION */}
+          <div className="absolute top-[28%] left-[8%] right-[8%] pointer-events-none">
+            <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
+              Dear {certificate.studentName},
+            </p>
+          </div>
+
+          {/* LETTER BODY TEXT (Supports multiple paragraphs styled as blocks) */}
+          <div className="absolute top-[32.5%] left-[8%] right-[8%] pointer-events-none text-justify space-y-2 sm:space-y-4">
+            {(template.bodyTemplate || "")
+              .replace("{courseName}", certificate.courseName)
+              .replace("{startDate}", certificate.startDate)
+              .replace("{endDate}", certificate.endDate)
+              .split("\n")
+              .map((paragraph: string, idx: number) => {
+                const trimmed = paragraph.trim();
+                if (!trimmed) return null;
+                return (
+                  <p 
+                    key={idx}
+                    className="text-[5.5px] sm:text-[10px] md:text-xs lg:text-[13px] leading-relaxed"
+                    style={{ color: template.textColor || "#15140f" }}
+                  >
+                    {trimmed}
+                  </p>
+                );
+              })}
+          </div>
+
+          {/* REGARDS & SIGNATORY (Placed below body text using custom margins or bottom anchor) */}
+          <div className="absolute bottom-[20%] left-[8%] pointer-events-none space-y-1 sm:space-y-2">
+            <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
+              Regards,
+            </p>
+            <div className="pt-2 sm:pt-4">
+              <p className="text-[6px] sm:text-[10px] md:text-xs font-extrabold" style={{ color: template.textColor || "#15140f" }}>
+                {template.signatoryName || "Antony Sebastian"}
+              </p>
+              <p className="text-[5px] sm:text-[8px] md:text-[9.5px] italic" style={{ color: template.mutedColor || "#4b5563" }}>
+                {template.signatoryTitle || "Founder, StrixMind LLP"}
+              </p>
+            </div>
+          </div>
+
+          {/* VERIFICATION QR & ID DIGITAL STAMP (Bottom-Right) */}
+          <div className="absolute bottom-[6%] right-[8%] flex flex-col items-center">
             <div 
-              className="p-0.5 border rounded bg-white flex items-center justify-center shadow-sm overflow-hidden"
+              className="p-0.5 border bg-white flex items-center justify-center shadow-sm overflow-hidden"
               style={{ 
                 borderColor: template.primaryColor || "#003e8f",
-                width: `${(template.qrSize ?? 74) * 0.7}px`,
-                height: `${(template.qrSize ?? 74) * 0.7}px`
+                width: "48px",
+                height: "48px"
               }}
             >
               {qrDataUrl ? (
                 <img src={qrDataUrl} alt="Verification QR Code" className="w-full h-full object-contain" />
               ) : (
-                <svg className="w-full h-full" viewBox="0 0 100 100">
-                  <rect x="10" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="60" y="10" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="10" y="60" width="30" height="30" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="20" y="20" width="10" height="10" fill="white" />
-                  <rect x="70" y="20" width="10" height="10" fill="white" />
-                  <rect x="20" y="70" width="10" height="10" fill="white" />
-                  <rect x="50" y="50" width="20" height="20" fill={template.primaryColor || "#003e8f"} />
-                  <rect x="75" y="75" width="15" height="15" fill={template.primaryColor || "#003e8f"} />
-                </svg>
+                <div className="w-full h-full bg-slate-100" />
               )}
             </div>
-            <span className="text-[5px] sm:text-[8px] font-mono font-bold mt-1" style={{ color: template.primaryColor || "#003e8f" }}>
-              {certificate.certCode}
+            <span className="text-[4px] sm:text-[7.5px] font-mono font-bold mt-1" style={{ color: template.primaryColor || "#003e8f" }}>
+              Scan to verify
+            </span>
+            <span className="text-[4px] sm:text-[7.5px] font-mono font-extrabold" style={{ color: template.primaryColor || "#003e8f" }}>
+              ID: {certificate.certCode}
             </span>
           </div>
         </div>

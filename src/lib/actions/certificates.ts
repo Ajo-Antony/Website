@@ -346,7 +346,7 @@ function generateUniqueCode(existingCodes: Set<string>): string {
   return code;
 }
 
-export async function addCertificateStudent(student: Omit<StudentCertificate, "id" | "certCode" | "created_at">): Promise<{ success: boolean; error?: string; code?: string }> {
+export async function addCertificateStudent(student: Omit<StudentCertificate, "id" | "certCode" | "created_at">): Promise<{ success: boolean; error?: string; code?: string; id?: string }> {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -384,7 +384,7 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
         const updated = [newStudent, ...students];
         const res = await updateCertificateStudents(updated);
         if (res.success) {
-          return { success: true, code: certCode };
+          return { success: true, code: certCode, id: newStudent.id };
         }
         return { success: false, error: res.error };
       }
@@ -392,7 +392,7 @@ export async function addCertificateStudent(student: Omit<StudentCertificate, "i
     }
 
     revalidatePath("/admin/certificates");
-    return { success: true, code: certCode };
+    return { success: true, code: certCode, id: newStudent.id };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : "Failed to add student" };
   }
@@ -529,7 +529,7 @@ export async function sendCertificateEmailAction(
     }
 
     const students = await getCertificateStudentsInternal();
-    const student = students.find((s) => s.id === studentId);
+    const student = students.find((s) => s.id === studentId || s.certCode === studentId);
     if (!student) {
       return { success: false, error: "Student certificate record not found." };
     }

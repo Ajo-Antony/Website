@@ -36,8 +36,13 @@ CREATE TABLE IF NOT EXISTS student_certificates (
   end_date         text NOT NULL,
   issue_date       text NOT NULL,
   cert_code        text UNIQUE NOT NULL,
+  student_email    text,
   created_at       timestamptz NOT NULL DEFAULT now()
 );
+
+-- Migration support for existing tables:
+-- Run this block if your student_certificates table was created previously without student_email.
+ALTER TABLE student_certificates ADD COLUMN IF NOT EXISTS student_email text;
 
 -- Index for fast code verification
 CREATE INDEX IF NOT EXISTS idx_student_certificates_code ON student_certificates(cert_code);
